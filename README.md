@@ -22,6 +22,10 @@ supabase start
 
 ### Account Creation
 ```sql
+-- Create dummy gotrue account
+insert into auth.users(id, email)
+values (uuid_generate_v4(), 'baz@supabase.io');
+
 begin;
     -- Login as an authenticated user
     select app.simulate_login('bar@supabase.io');
@@ -48,6 +52,7 @@ begin;
         contact_email := 'support@supabase.io',
         avatar_id := null::uuid
     );
+end;
 ```
 
 ### Package Publishing
@@ -57,6 +62,8 @@ insert into storage.objects(bucket_id, name)
 values ('package_version', 'supabase/math__0.3.1.sql');
 
 begin
+    select app.simulate_login('bar@supabase.io');
+    
     -- Publish a package
     select public.v0_publish_package_version(
         body := $${
@@ -70,4 +77,8 @@ begin
     where
         bucket_id = 'package_version'
         and name = 'supabase/math__0.3.1.sql';
+end;
 ```
+
+### Organization Add/Remove Membmer
+TODO
