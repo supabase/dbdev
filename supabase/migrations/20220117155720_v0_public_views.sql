@@ -2,7 +2,6 @@ create view public.v0_account as
     select
         id,
         handle,
-        auth_user_id,
         avatar_id,
         display_name,
         bio,
@@ -24,21 +23,29 @@ create view public.v0_organization as
     from
         app.organization org;
 
+
 create view public.v0_organization_member as
     select
-        aio.id,
         aio.organization_id,
         aio.account_id,
         aio.member_role,
         aio.created_at
     from
-        app.account_in_organization aio;
+        app.account_in_organization aio
+    union all
+    select
+        o.id as organization_id,
+        o.creator_id as account_id,
+        'creator' as member_role,
+        o.created_at
+    from
+        app.organization o;
 
 
 create view public.v0_package as
     select
         pa.id,
-        format('%s/%s', pa.handle, pa.partial_name) as package_name,
+        app.to_package_name(pa.handle, pa.partial_name) as package_name,
         pa.handle,
         pa.partial_name,
         pa.created_at
@@ -54,7 +61,7 @@ create view public.v0_package as
 create or replace view public.v0_package_version as
     select
         pv.id,
-        format('%s/%s', pa.handle, pa.partial_name) as package_name,
+        app.to_package_name(pa.handle, pa.partial_name) as package_name,
         app.semver_to_text(pv.semver) version,
         pv.package_id,
         pv.object_id,

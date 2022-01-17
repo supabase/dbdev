@@ -33,3 +33,31 @@ create table app.package_version_dependency(
     created_at timestamp not null default (now() at time zone 'utc'),
     unique(package_version_id, depends_on_package_id, depends_on_operator)
 );
+
+
+create function app.to_package_name(handle app.valid_name, partial_name app.valid_name)
+    returns text
+    immutable
+    language sql
+as $$
+    select format('%s/%s', $1, $1)
+$$;
+
+create function app.version_text_to_handle(version text)
+    returns app.valid_name
+    immutable
+    language sql
+as $$
+    select split_part($1, '/', 1)
+$$;
+
+create function app.version_text_to_package_partial_name(version text)
+    returns app.valid_name
+    immutable
+    language sql
+as $$
+    select split_part($1, '/', 2)
+$$;
+
+
+-- TODO: disable deletes or updates in storage.objects for package_version bucket
