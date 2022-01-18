@@ -85,6 +85,7 @@ create table app.members(
 create or replace function app.register_organization_creator_as_member()
     returns trigger
     language plpgsql
+    security definer
     as $$
     begin
         insert into app.members(organization_id, account_id, role)
