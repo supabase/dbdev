@@ -34,15 +34,8 @@ create view public.members as
         aio.role,
         aio.created_at
     from
-        app.members aio
-    union all
-    select
-        o.id as organization_id,
-        o.creator_id as account_id,
-        'creator' as member_role,
-        o.created_at
-    from
-        app.organizations o;
+        app.members aio;
+
 
 
 --create view v0.packages as

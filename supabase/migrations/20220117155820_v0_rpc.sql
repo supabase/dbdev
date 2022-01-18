@@ -13,8 +13,8 @@ begin
     insert into app.handle_registry(handle, is_organization) values ($1, true);
 
     -- Create the organization
-    insert into app.organizations(handle, display_name, bio, contact_email, avatar_id, creator_id)
-    values ($1, $2, $3, $4, $5, auth.uid());
+    insert into app.organizations(handle, display_name, bio, contact_email, avatar_id)
+    values ($1, $2, $3, $4, $5);
 
     -- Return the org
     return org from public.organizations org where org.handle = $1;
