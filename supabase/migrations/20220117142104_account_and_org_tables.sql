@@ -28,6 +28,33 @@ create table app.accounts(
         references app.handle_registry(handle, is_organization)
 );
 
+create or replace function app.register_account()
+    returns trigger
+    language plpgsql
+    as $$
+    begin
+        insert into app.handle_registry (handle, is_organization)
+          values (
+            new.raw_user_meta_data ->> 'handle',
+            false
+          );
+
+        insert into app.accounts (id, handle, display_name, bio, contact_email)
+          values (
+            new.id,
+            new.raw_user_meta_data ->> 'handle',
+            new.raw_user_meta_data ->> 'display_name',
+            new.raw_user_meta_data ->> 'bio',
+            new.raw_user_meta_data ->> 'contact_email'
+          );
+          return new;
+    end;
+    $$;
+
+create or replace trigger on_auth_user_created
+    after insert on auth.users
+    for each row execute procedure app.register_account();
+
 create table app.organizations(
     id uuid primary key default uuid_generate_v4(),
     handle app.valid_name not null unique,

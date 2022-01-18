@@ -1,8 +1,8 @@
 -- Usual signup flow to create users
-insert into auth.users(id, email)
+insert into auth.users(id, email, raw_user_meta_data)
 values
-    (uuid_generate_v4(), 'foo@supabase.io'),
-    (uuid_generate_v4(), 'bar@supabase.io');
+    (uuid_generate_v4(), 'foo@supabase.io', '{"handle": "foo"}'),
+    (uuid_generate_v4(), 'bar@supabase.io', '{"handle": "bar"}');
 
 
 -- Dummy object upload
@@ -23,25 +23,7 @@ where
 */
 begin;
     -- Login as foo@supabase.io
-    select app.simulate_login('bar@supabase.io');
-    -- Create an Account
-    select public.create_account(
-        handle := 'bar',
-        display_name := 'Bar Barswel',
-        contact_email := 'bar@supabase.io'
-    );
-end;
-
-begin;
-    -- Login as foo@supabase.io
     select app.simulate_login('foo@supabase.io');
-
-    -- Create an Account
-    select public.create_account(
-        handle := 'foo',
-        display_name := 'Foo Fooington',
-        contact_email := 'foo@supabase.io'
-    );
 
     -- Create an Organization
     select public.create_organization(

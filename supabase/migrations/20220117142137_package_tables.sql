@@ -40,7 +40,7 @@ create function app.to_package_name(handle app.valid_name, partial_name app.vali
     immutable
     language sql
 as $$
-    select format('%s/%s', $1, $1)
+    select format('%s/%s', $1, $2)
 $$;
 
 create function app.version_text_to_handle(version text)

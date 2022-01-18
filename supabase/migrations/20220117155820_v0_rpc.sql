@@ -1,27 +1,3 @@
-create function public.create_account(
-    handle app.valid_name,
-    display_name text = null,
-    bio text = null,
-    contact_email citext = null,
-    avatar_id uuid = null
-)
-    returns public.accounts
-    language plpgsql
-as $$
-begin
-    -- Register the requested handle
-    insert into app.handle_registry(handle, is_organization) values ($1, false);
-
-    -- Create the private account
-    insert into app.accounts(id, handle, display_name, bio, contact_email, avatar_id)
-    values (auth.uid(), $1, $2, $3, $4, $5);
-
-    -- Return the account
-    return acc from public.accounts acc where acc.id = auth.uid();
-end;
-$$;
-
-
 create function public.create_organization(
     handle app.valid_name,
     display_name text = null,
@@ -65,7 +41,7 @@ declare
 begin
     -- Upsert package
     insert into app.packages(partial_name, handle)
-        values (package_partial_name, acc.handle)
+        values (package_partial_name, package_handle)
         on conflict do nothing
         returning id
         into package_id;
