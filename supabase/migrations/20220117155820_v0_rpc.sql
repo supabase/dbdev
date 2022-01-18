@@ -1,11 +1,11 @@
-create function public.v0_create_account(
+create function public.create_account(
     handle app.valid_name,
     display_name text = null,
     bio text = null,
     contact_email citext = null,
     avatar_id uuid = null
 )
-    returns public.v0_account
+    returns public.accounts
     language plpgsql
 as $$
 begin
@@ -13,23 +13,23 @@ begin
     insert into app.handle_registry(handle, is_organization) values ($1, false);
 
     -- Create the private account
-    insert into app.account(id, handle, display_name, bio, contact_email, avatar_id)
+    insert into app.accounts(id, handle, display_name, bio, contact_email, avatar_id)
     values (auth.uid(), $1, $2, $3, $4, $5);
 
-    -- Return the public account
-    return acc from public.v0_account acc where acc.id = auth.uid();
+    -- Return the account
+    return acc from public.accounts acc where acc.id = auth.uid();
 end;
 $$;
 
 
-create function public.v0_create_organization(
+create function public.create_organization(
     handle app.valid_name,
     display_name text = null,
     bio text = null,
     contact_email citext = null,
     avatar_id uuid = null
 )
-    returns public.v0_account
+    returns public.accounts
     language plpgsql
 as $$
 begin
@@ -37,26 +37,26 @@ begin
     insert into app.handle_registry(handle, is_organization) values ($1, true);
 
     -- Create the organization
-    insert into app.organization(handle, display_name, bio, contact_email, avatar_id, creator_id)
+    insert into app.organizations(handle, display_name, bio, contact_email, avatar_id, creator_id)
     values ($1, $2, $3, $4, $5, auth.uid());
 
-    -- Return the public account
-    return org from public.v0_organization org where org.handle = $1;
+    -- Return the org
+    return org from public.organizations org where org.handle = $1;
 end;
 $$;
 
-create function public.v0_publish_package_version(
+create function public.publish_package_version(
     body json,
     object_id uuid -- storage.objects reference to uploaded file
 )
-    returns public.v0_package_version
+    returns public.package_versions
     language plpgsql
 as $$
 declare
     i_name text = body ->> 'name'; -- supabase/math
     i_version text = body ->> 'version'; -- 0.1.3
 
-    acc app.account = acc from app.account where id = auth.uid();
+    acc app.accounts = acc from app.accounts acc where id = auth.uid();
 
     package_handle app.valid_name = app.version_text_to_handle(i_name);
     package_partial_name app.valid_name = app.version_text_to_package_partial_name(i_name);
@@ -64,24 +64,24 @@ declare
     package_version_id uuid;
 begin
     -- Upsert package
-    insert into app.package(partial_name, handle)
-        values (partial_name, account.handle)
+    insert into app.packages(partial_name, handle)
+        values (package_partial_name, acc.handle)
         on conflict do nothing
         returning id
         into package_id;
 
     -- Insert package_version
-    insert into app.package_version(package_id, semver, object_id, upload_metadata)
+    insert into app.package_versions(package_id, semver, object_id, upload_metadata)
         values (
             package_id,
-            app.text_to_semver(version),
+            app.text_to_semver(i_version),
             object_id,
             body
         )
         returning id
         into package_version_id;
 
-    -- Return the public account
-    return pv from public.v0_package_version pv where pv.id = package_version_id;
+    -- Return the package version
+    return pv from public.package_versions pv where pv.id = package_version_id;
 end;
 $$;

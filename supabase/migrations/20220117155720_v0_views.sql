@@ -1,4 +1,5 @@
-create view public.v0_account as
+--create view v0.accounts as
+create view public.accounts as
     select
         id,
         handle,
@@ -8,10 +9,11 @@ create view public.v0_account as
         contact_email,
         created_at
     from
-        app.account;
+        app.accounts;
 
 
-create view public.v0_organization as
+--create view v0.organizations as
+create view public.organizations as
     select
         org.id,
         org.handle,
@@ -21,17 +23,18 @@ create view public.v0_organization as
         org.contact_email,
         org.created_at
     from
-        app.organization org;
+        app.organizations org;
 
 
-create view public.v0_organization_member as
+--create view v0.members as
+create view public.members as
     select
         aio.organization_id,
         aio.account_id,
-        aio.member_role,
+        aio.role,
         aio.created_at
     from
-        app.account_in_organization aio
+        app.members aio
     union all
     select
         o.id as organization_id,
@@ -39,10 +42,11 @@ create view public.v0_organization_member as
         'creator' as member_role,
         o.created_at
     from
-        app.organization o;
+        app.organizations o;
 
 
-create view public.v0_package as
+--create view v0.packages as
+create view public.packages as
     select
         pa.id,
         app.to_package_name(pa.handle, pa.partial_name) as package_name,
@@ -50,7 +54,7 @@ create view public.v0_package as
         pa.partial_name,
         pa.created_at
     from
-        app.package pa
+        app.packages pa
     group by
         pa.id,
         pa.handle,
@@ -58,7 +62,8 @@ create view public.v0_package as
         pa.created_at;
 
 
-create or replace view public.v0_package_version as
+--create view v0.package_versions as
+create view public.package_versions as
     select
         pv.id,
         app.to_package_name(pa.handle, pa.partial_name) as package_name,
@@ -68,6 +73,6 @@ create or replace view public.v0_package_version as
         pv.upload_metadata,
         pv.created_at
     from
-        app.package pa
-        join app.package_version pv
+        app.packages pa
+        join app.package_versions pv
             on pa.id = pv.package_id;

@@ -1,4 +1,4 @@
-create table app.package(
+create table app.packages(
     id uuid primary key default uuid_generate_v4(),
     partial_name app.valid_name not null, -- ex: math
     handle app.valid_name not null references app.handle_registry(handle),
@@ -9,25 +9,25 @@ create table app.package(
 );
 
 insert into storage.buckets (id, name)
-values ('package_version', 'package_version');
+values ('package_versions', 'package_versions');
 
-create table app.package_version(
+create table app.package_versions(
     id uuid primary key default uuid_generate_v4(),
-    package_id uuid not null references app.package(id),
+    package_id uuid not null references app.packages(id),
     semver app.semver not null,
     object_id uuid not null references storage.objects(id),
     upload_metadata jsonb, -- contents of package.json from payload
     created_at timestamp not null default (now() at time zone 'utc'),
     unique(package_id, semver)
 );
-create index package_version_semver_text on app.package_version (app.semver_to_text(semver));
+create index package_versions_semver_text on app.package_versions (app.semver_to_text(semver));
 
 create type app.version_operator as enum ('lt', 'lte', 'eq', 'gte', 'gt');
 
-create table app.package_version_dependency(
+create table app.package_version_dependencies(
     id uuid primary key default uuid_generate_v4(),
-    package_version_id uuid not null references app.package_version(id),
-    depends_on_package_id uuid not null references app.package(id),
+    package_version_id uuid not null references app.package_versions(id),
+    depends_on_package_id uuid not null references app.packages(id),
     depends_on_operator app.version_operator not null,
     depends_on_version app.semver not null,
     created_at timestamp not null default (now() at time zone 'utc'),
