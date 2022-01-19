@@ -17,6 +17,11 @@ create table app.package_versions(
     semver app.semver not null,
     object_id uuid not null references storage.objects(id),
     upload_metadata jsonb, -- contents of package.json from payload
+     /*
+    yanked versions are ignored during dependency resolution
+    unless the yanked version is the only version satisfying the version requirements
+    */
+    yanked_at timestamp,
     created_at timestamp not null default (now() at time zone 'utc'),
     unique(package_id, semver)
 );
