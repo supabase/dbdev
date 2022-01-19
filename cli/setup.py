@@ -17,7 +17,7 @@ def check_python_version():
 
 def read_package_variable(key, filename="__init__.py") -> str:
     """Read the value of a variable from the package without importing."""
-    module_path = os.path.join(PACKAGE_NAME, filename)
+    module_path = os.path.join('src', PACKAGE_NAME, filename)
     with open(module_path) as module:
         for line in module:
             parts = line.strip().split(" ", 2)
@@ -46,13 +46,11 @@ setuptools.setup(
     description="dbdev package manager cli",
     url="https://github.com/supabase/dbdev",
     author="Supabase",
-    packages=setuptools.find_packages("dbdev"),
-    package_data={
-        "": ["py.typed"]
-    },
+    packages=setuptools.find_packages("src", exclude=["test"]),
+    package_dir={"": "src"},
     entry_points={
         "console_scripts": [
-            "dbdev = dbdev.cli:main",
+            "dbdev = dbdev.cli:app",
         ]
     },
     classifiers=[

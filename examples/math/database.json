@@ -1,0 +1,11 @@
+{
+  "name": "dbdev/math",
+    "version": "0.0.1",
+    "engines": {
+        "postgresql": [">13.0"]
+      },
+    "params": [],
+    "steps": [
+        { "source": "math__0.0.1.sql" }
+    ]
+}
