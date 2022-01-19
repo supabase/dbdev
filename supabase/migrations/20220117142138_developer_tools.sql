@@ -25,4 +25,4 @@ as $$
             true
         ),
         set_config('role', 'authenticated', true)
-$$
+$$;

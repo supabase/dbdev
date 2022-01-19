@@ -8,22 +8,10 @@ grant insert
 -- app.accounts
 alter table app.accounts enable row level security;
 
-grant insert
-    (handle, avatar_id, display_name, bio, contact_email)
-    on app.accounts
-    to authenticated;
-
 grant update
     (avatar_id, display_name, bio, contact_email)
     on app.accounts
     to authenticated;
-
-create policy accounts_insert_policy
-    on app.accounts
-    as permissive
-    for insert
-    to authenticated
-    with check (id = auth.uid());
 
 create policy accounts_update_policy
     on app.accounts

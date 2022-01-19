@@ -61,3 +61,19 @@ begin
     return pv from public.package_versions pv where pv.id = package_version_id;
 end;
 $$;
+
+create function public.is_handle_available(handle app.valid_name)
+    returns boolean
+    stable
+    language sql
+as $$
+    select
+        not exists(
+            select
+                1
+            from
+                app.handle_registry hr
+            where
+                hr.handle = $1
+        )
+$$;
