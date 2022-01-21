@@ -1,28 +1,23 @@
-from typing import Literal, Optional
-from pathlib import Path
 import datetime as dt
 import json
-from gotrue.exceptions import APIError
-from dbdev import prompt
-import typer
 import re
+from pathlib import Path
+from typing import Literal, Optional
 
-from supabase import create_client, Client
+import typer
+from dbdev.models import validate_database_json
+from gotrue.exceptions import APIError
+
+from dbdev import config, prompt
+from supabase import Client, create_client
 
 app = typer.Typer()
 
-#URL: str = 'http://localhost:54321'
-#ANON_KEY: str = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiJ9.ZopqoUt20nEV9cklpv9e3yw3PVyZLmKs5qLD6nGL1SI'
-
-URL: str = 'https://sevhkikssrcxrzsyzvmv.supabase.co'
-ANON_KEY: str = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjQyNTkyODU1LCJleHAiOjE5NTgxNjg4NTV9.Yrx9KBPKDYllxXaXr2DHWgGY_ANK8NV7d_4D0xM1uyc'
-
-PACKAGE_CONFIG = 'package.json'
 
 @app.command()
 def sign_up() -> None:
-    """Upload a pacakge to the package index"""
-    client: Client = create_client(URL, ANON_KEY)
+    """Create a user account"""
+    client: Client = create_client(config.URL, config.ANON_KEY)
 
     email_address = prompt.email_address()
     password = prompt.password(confirm=True)
@@ -32,12 +27,12 @@ def sign_up() -> None:
 
         # Check handle availability
         resp = client.rpc(
-            fn='is_handle_available',
+            fn="is_handle_available",
             params={
                 "handle": handle,
-            }
+            },
         )
-        if resp.text == 'true' :
+        if resp.text == "true":
             break
         elif resp.status_code != 200:
             typer.echo(resp.json()["message"])
@@ -46,9 +41,7 @@ def sign_up() -> None:
 
     try:
         user = client.auth.sign_up(
-            email=email_address,
-            password = password,
-            data={"handle": handle}
+            email=email_address, password=password, data={"handle": handle}
         )
     except APIError as exc:
         typer.echo(f"An error occured")
@@ -59,53 +52,55 @@ def sign_up() -> None:
 
 
 @app.command()
-def publish(path: Path = Path(PACKAGE_CONFIG)) -> None:
+def publish(path: Path = Path(config.PACKAGE_CONFIG)) -> None:
     """Upload a pacakge to the package index"""
 
     if not path.is_file():
-        typer.echo(f"{PACKAGE_CONFIG} not found")
+        typer.echo(f"{config.PACKAGE_CONFIG} not found")
         raise typer.Abort()
 
     contents = json.loads(path.read_text())
+
+    try:
+        contents = validate_database_json(contents)
+        package_version_source_path = contents["source"][0]
+        package_version = contents["version"]
+        package_handle, _, partial_package_name = contents["name"].partition("/")
+        assert Path(package_version_source_path).is_file()
+    except Exception as exc:
+        typer.echo(f"Error while validating {config.PACKAGE_CONFIG}")
+        typer.echo(exc)
+        raise typer.Abort()
+
+    # TODO: read from env if present
     email_address = prompt.email_address()
     password = prompt.password()
 
-    # TODO: upload to storage
-    # TODO: upload version
+    try:
+        anon_client: Client = create_client(config.URL, config.ANON_KEY)
+        session = anon_client.auth.sign_in(email=email_address, password=password)
+        client: Client = create_client(config.URL, session.access_token)
+    except APIError as exc:
+        typer.echo(exc.msg)
+        raise typer.Abort()
 
-
-@app.command()
-def get(
-        package_name: str,
-        version: Optional[str],
-        include_dependencies: bool = True
-    ) -> None:
-    """Get package from the package index"""
-    client: Client = create_client(URL, ANON_KEY)
-
-    resp = (
-            client
-            .table("package_versions")
-            .select("*")
-            .execute()
+    # upload to storage
+    # TODO fails with 400: row level security policy
+    storage_client = client.storage().StorageFileAPI(id_="package_versions")
+    resp = storage_client.upload(
+        path=f"package_version/{package_handle}/{partial_package_name}/{package_version}",
+        file=package_version_source_path,
     )
+    import pdb
 
-    # TODO filter by version, supporting semver nonsense
-    typer.echo(resp)
+    pdb.set_trace()
 
+    try:
+        resp = client.rpc(
+            fn="publish_package_version", params={"body": contents, "object_id": None}
+        )
+    except APIError as exc:
+        typer.echo(exc.msg)
+        raise typer.Abort()
 
-@app.command()
-def install(as_of: Optional[str] = None) -> None:
-    """Install package dependencies"""
-    client: Client = create_client(URL, ANON_KEY)
-
-    # reads dependencies from package.json
-    # sends them w/ params to DB to resolve
-    # if dependencies are not resolvable, abort
-    # collects best version
-
-    #
-
-
-if __name__ == "__main__":
-    app()
+    typer.echo(f"Successfully published pacakge")
