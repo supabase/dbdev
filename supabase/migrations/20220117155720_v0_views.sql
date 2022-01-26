@@ -63,9 +63,12 @@ create view public.package_versions as
         app.semver_to_text(pv.semver) version,
         pv.package_id,
         pv.object_id,
+        obj.name as object_key,
         pv.upload_metadata,
         pv.created_at
     from
         app.packages pa
         join app.package_versions pv
-            on pa.id = pv.package_id;
+            on pa.id = pv.package_id
+        join storage.objects obj
+            on pv.object_id = obj.id;

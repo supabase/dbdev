@@ -23,7 +23,7 @@ $$;
 
 create function public.publish_package_version(
     body json,
-    object_id uuid -- storage.objects reference to uploaded file
+    object_name varchar(128) -- storage.objects.name
 )
     returns public.package_versions
     language plpgsql
@@ -51,7 +51,17 @@ begin
         values (
             package_id,
             app.text_to_semver(i_version),
-            object_id,
+            (
+                select 
+                    id 
+                from
+                    storage.objects
+                where
+                    name = object_name
+                    and bucket_id = 'package_versions'
+                limit
+                    1
+            ),
             body
         )
         returning id

@@ -4,6 +4,8 @@ import re
 from pathlib import Path
 from typing import Literal, Optional
 
+import dotenv
+import httpx
 import typer
 from dbdev.models import validate_database_json
 from gotrue.exceptions import APIError
@@ -11,6 +13,7 @@ from gotrue.exceptions import APIError
 from dbdev import config, prompt
 from supabase import Client, create_client
 
+dotenv.load_dotenv()
 app = typer.Typer()
 
 
@@ -51,6 +54,13 @@ def sign_up() -> None:
     typer.echo(f"Successfully created account {handle} ({email_address})")
 
 
+def storage_package_version_key(
+    package_handle: str, partial_name: str, version: str
+) -> str:
+    """Create the Storage API file key"""
+    return f"{package_handle}/{partial_name}/{version}.sql"
+
+
 @app.command()
 def publish(path: Path = Path(config.PACKAGE_CONFIG)) -> None:
     """Upload a pacakge to the package index"""
@@ -72,35 +82,52 @@ def publish(path: Path = Path(config.PACKAGE_CONFIG)) -> None:
         typer.echo(exc)
         raise typer.Abort()
 
-    # TODO: read from env if present
     email_address = prompt.email_address()
     password = prompt.password()
 
+    anon_client: Client = create_client(config.URL, config.ANON_KEY)
     try:
-        anon_client: Client = create_client(config.URL, config.ANON_KEY)
         session = anon_client.auth.sign_in(email=email_address, password=password)
-        client: Client = create_client(config.URL, session.access_token)
     except APIError as exc:
         typer.echo(exc.msg)
         raise typer.Abort()
 
-    # upload to storage
-    # TODO fails with 400: row level security policy
-    storage_client = client.storage().StorageFileAPI(id_="package_versions")
-    resp = storage_client.upload(
-        path=f"package_version/{package_handle}/{partial_package_name}/{package_version}",
+    # Using access token as apiKey because of the (incorrect) way headers are set for storage client
+    storage_client = (
+        create_client(config.URL, session.access_token)
+        .storage()
+        .StorageFileAPI(id_=config.PACKAGE_VERSION_BUCKET)
+    )
+
+    storage_object_name = storage_package_version_key(
+        package_handle=package_handle,
+        partial_name=partial_package_name,
+        version=package_version,
+    )
+
+    storage_resp = storage_client.upload(
+        path=storage_object_name,
         file=package_version_source_path,
     )
-    import pdb
 
-    pdb.set_trace()
-
-    try:
-        resp = client.rpc(
-            fn="publish_package_version", params={"body": contents, "object_id": None}
-        )
-    except APIError as exc:
-        typer.echo(exc.msg)
+    if storage_resp.status_code != 200:
+        typer.echo(storage_resp.json()["message"])
         raise typer.Abort()
 
-    typer.echo(f"Successfully published pacakge")
+    headers = {
+        "authorization": f"Bearer {session.access_token}",
+        "apiKey": config.ANON_KEY,
+    }
+    base_url = config.URL + "/rest/v1/"
+
+    resp = httpx.post(
+        base_url + "rpc/publish_package_version",
+        headers=headers,
+        json={"body": contents, "object_name": storage_object_name},
+    )
+
+    if resp.status_code != 200:
+        typer.echo(storage_resp.json()["message"])
+        raise typer.Abort()
+
+    typer.echo(f"Successfully published pacakge {contents['name']}")

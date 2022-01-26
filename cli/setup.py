@@ -70,6 +70,7 @@ setuptools.setup(
         "appdirs==1.4.4",
         "supabase==0.3.0",
         "jsonschema==4.4.0",
+        "python-dotenv==0.19.2",
     ],
     extras_require={"dev": DEV_REQUIRES},
 )

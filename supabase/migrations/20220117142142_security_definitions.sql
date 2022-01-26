@@ -171,3 +171,25 @@ create policy package_version_dependencies_select_policy
     for select
     to authenticated
     using (true);
+
+-- storage.objects
+alter table app.package_version_dependencies enable row level security;
+
+create policy storage_objects_insert_policy
+    on storage.objects
+    as permissive
+    for insert
+    to authenticated
+    with check (
+        app.is_handle_maintainer(
+            auth.uid(), 
+            (string_to_array(name, '/'::text))[1]::app.valid_name
+        )
+    );
+
+create policy storage_objects_select_policy
+    on storage.objects
+    as permissive
+    for select
+    to authenticated
+    using (true);
