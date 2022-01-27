@@ -1,5 +1,5 @@
 {
-    "name": "dbdev/math",
+    "name": "example/math",
     "version": "0.0.1",
     "source": [
         "math__0.0.1.sql"

@@ -5,10 +5,10 @@ import typer
 
 from dbdev import config
 
-VALID_NAME_REGEX = re.compile("^[A-z][A-z0-9\_]{2,14}$")
+VALID_NAME_REGEX = re.compile(r"^[A-z][A-z0-9\_]{2,14}$")
 EMAIL_ADDRESS_REGEX = re.compile(
-    "^[a-zA-Z0-9.!#$%&"
-    "*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
+    r"^[a-zA-Z0-9.!#$%&"
+    r"*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
 )
 MIN_PASSWORD_LENGTH = 7
 

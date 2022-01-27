@@ -191,5 +191,5 @@ create policy storage_objects_select_policy
     on storage.objects
     as permissive
     for select
-    to authenticated
-    using (true);
+    to public -- all roles
+    using (bucket_id in ('package_versions', 'avatars'));
