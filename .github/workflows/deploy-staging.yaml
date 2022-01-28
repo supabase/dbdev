@@ -18,6 +18,6 @@ jobs:
           SUPABASE_POSTGRES_USER: ${{ secrets.STAGING_SUPABASE_POSTGRES_USER }}
           SUPABASE_PASSWORD: ${{ secrets.STAGING_SUPABASE_PASSWORD }}
         run: |
-          supabase db remote set 'postgresql://$SUPABASE_POSTGRES_USER:$SUPABASE_PASSWORD@db.$SUPABASE_PROJECT_REF.supabase.co:5432/postgres'
+          supabase db remote set postgresql://$SUPABASE_POSTGRES_USER:$SUPABASE_PASSWORD@db.$SUPABASE_PROJECT_REF.supabase.co:5432/postgres
       - name: Push Migrations
         run: supabase db push
