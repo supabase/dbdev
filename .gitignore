@@ -3,3 +3,9 @@
 **/supabase/.temp
 **/supabase/.env
 *.swp
+venv
+.env
+*.egg-info/
+__pycache__/
+*.pyc
+.DS_Store

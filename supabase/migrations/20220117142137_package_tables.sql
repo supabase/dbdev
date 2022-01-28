@@ -15,7 +15,7 @@ create table app.package_versions(
     id uuid primary key default uuid_generate_v4(),
     package_id uuid not null references app.packages(id),
     semver app.semver not null,
-    object_id uuid not null references storage.objects(id),
+    object_id uuid not null unique references storage.objects(id),
     upload_metadata jsonb, -- contents of package.json from payload
      /*
     yanked versions are ignored during dependency resolution

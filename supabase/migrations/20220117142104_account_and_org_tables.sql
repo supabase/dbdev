@@ -31,6 +31,7 @@ create table app.accounts(
 create or replace function app.register_account()
     returns trigger
     language plpgsql
+    security definer
     as $$
     begin
         insert into app.handle_registry (handle, is_organization)

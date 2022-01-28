@@ -10,7 +10,7 @@ insert into storage.objects(id, bucket_id, name, owner)
 select
     '4714362f-c55a-4a15-9afb-c8cf43ceb145'::uuid,
     'package_versions',
-    'supabase/math__0.3.1.sql',
+    'supabase/stats/0.3.1.sql',
     id
 from
     auth.users
@@ -37,11 +37,14 @@ begin;
     -- Publish a package
     select public.publish_package_version(
         body := $${
-            "name": "supabase/math",
+            "name": "supabase/stats",
             "version": "0.3.1"
         }$$,
-        object_id := '4714362f-c55a-4a15-9afb-c8cf43ceb145'
+        object_name := 'supabase/stats/0.3.1.sql'
     );
 
     -- TODO add member to org
 end;
+
+
+select pg_stat_statements_reset();

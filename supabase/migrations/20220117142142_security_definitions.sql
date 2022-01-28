@@ -8,22 +8,10 @@ grant insert
 -- app.accounts
 alter table app.accounts enable row level security;
 
-grant insert
-    (handle, avatar_id, display_name, bio, contact_email)
-    on app.accounts
-    to authenticated;
-
 grant update
     (avatar_id, display_name, bio, contact_email)
     on app.accounts
     to authenticated;
-
-create policy accounts_insert_policy
-    on app.accounts
-    as permissive
-    for insert
-    to authenticated
-    with check (id = auth.uid());
 
 create policy accounts_update_policy
     on app.accounts
@@ -183,3 +171,25 @@ create policy package_version_dependencies_select_policy
     for select
     to authenticated
     using (true);
+
+-- storage.objects
+alter table app.package_version_dependencies enable row level security;
+
+create policy storage_objects_insert_policy
+    on storage.objects
+    as permissive
+    for insert
+    to authenticated
+    with check (
+        app.is_handle_maintainer(
+            auth.uid(), 
+            (string_to_array(name, '/'::text))[1]::app.valid_name
+        )
+    );
+
+create policy storage_objects_select_policy
+    on storage.objects
+    as permissive
+    for select
+    to public -- all roles
+    using (bucket_id in ('package_versions', 'avatars'));

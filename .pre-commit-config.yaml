@@ -12,6 +12,23 @@ repos:
     -   id: mixed-line-ending
         args: ['--fix=lf']
 
+
+   
+repos:
+-   repo: https://github.com/pre-commit/mirrors-isort
+    rev: v5.6.4
+    hooks:
+    -   id: isort
+        args: ['--multi-line=3', '--trailing-comma', '--force-grid-wrap=0', '--use-parentheses', '--line-width=88']
+
+
+-   repo: https://github.com/ambv/black
+    rev: 20.8b1
+    hooks:
+    - id: black
+      language_version: python3.10
+
+
 -   repo: https://github.com/Lucas-C/pre-commit-hooks
     rev: v1.1.10
     hooks:

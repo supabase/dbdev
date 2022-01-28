@@ -23,7 +23,7 @@ $$;
 
 create function public.publish_package_version(
     body json,
-    object_id uuid -- storage.objects reference to uploaded file
+    object_name varchar(128) -- storage.objects.name
 )
     returns public.package_versions
     language plpgsql
@@ -51,7 +51,17 @@ begin
         values (
             package_id,
             app.text_to_semver(i_version),
-            object_id,
+            (
+                select 
+                    id 
+                from
+                    storage.objects
+                where
+                    name = object_name
+                    and bucket_id = 'package_versions'
+                limit
+                    1
+            ),
             body
         )
         returning id
@@ -60,4 +70,20 @@ begin
     -- Return the package version
     return pv from public.package_versions pv where pv.id = package_version_id;
 end;
+$$;
+
+create function public.is_handle_available(handle app.valid_name)
+    returns boolean
+    stable
+    language sql
+as $$
+    select
+        not exists(
+            select
+                1
+            from
+                app.handle_registry hr
+            where
+                hr.handle = $1
+        )
 $$;
