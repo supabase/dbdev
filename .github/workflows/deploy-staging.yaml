@@ -14,9 +14,10 @@ jobs:
       - name: Set Remote DB
         shell: bash
         env:
-          SUPABASE_PASSWORD: ${{ secrets.STAGING_SUPABASE_PASSWORD }}
           SUPABASE_PROJECT_REF: ${{ secrets.STAGING_SUPABASE_PROJECT_REF }}
+          SUPABASE_POSTGRES_USER: ${{ secrets.STAGING_SUPABASE_POSTGRES_USER }}
+          SUPABASE_PASSWORD: ${{ secrets.STAGING_SUPABASE_PASSWORD }}
         run: |
-          supabase db remote set 'postgresql://supabase_admin:"$SUPABASE_PASSWORD"@db."$SUPABASE_PROJECT_REF".supabase.co:5432/postgres'
+          supabase db remote set 'postgresql://$SUPABASE_POSTGRES_USER:$SUPABASE_PASSWORD@db.$SUPABASE_PROJECT_REF.supabase.co:5432/postgres'
       - name: Push Migrations
         run: supabase db push
