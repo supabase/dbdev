@@ -5,21 +5,7 @@ on:
     branches: [ staging ]
 
 jobs:
-  changes:
-    runs-on: ubuntu-latest
-    outputs:
-      migrations: ${{ steps.filter.outputs.migrations }}
-    steps:
-    - uses: dorny/paths-filter@v2
-      id: filter
-      with:
-        filters: |
-          migrations:
-            - 'supabase/migrations/**'
-
   migration:
-    needs: changes
-    if: ${{ needs.changes.outputs.migrations == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
