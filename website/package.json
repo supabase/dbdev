@@ -13,7 +13,7 @@
     "@heroicons/react": "^1.0.5",
     "@supabase/supabase-js": "^1.29.1",
     "@supabase/ui": "^0.36.2",
-    "next": "12.0.8",
+    "next": "12.0.9",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-query": "^3.34.8"
