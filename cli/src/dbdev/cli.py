@@ -63,7 +63,7 @@ def storage_package_version_key(
 
 @app.command()
 def publish(path: Path = Path(config.PACKAGE_CONFIG)) -> None:
-    """Upload a pacakge to the package index"""
+    """Upload a package to the package index"""
 
     if not path.is_file():
         typer.echo(f"{config.PACKAGE_CONFIG} not found")
