@@ -9,7 +9,7 @@ export default function PackageList({ packages }: { packages: PackageDetail[] })
     <div className="divide-y border-b">
       {packages.map((p) => (
         <Link key={p.id} href={`/packages/${p.slug}`}>
-          <a className="p-4 block">
+          <a className="p-4 block hover:bg-gray-100">
             <Typography.Title level={4}>{p.slug}</Typography.Title>
             {['some-tag', 'other-tag'].map((tag) => (
               <span key={tag} className="pr-2">

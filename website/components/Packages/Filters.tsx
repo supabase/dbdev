@@ -25,8 +25,7 @@ export default function Filters() {
       <div className="p-4">
         <Checkbox.Group label="Compatibility">
           <Checkbox label="PostgreSQL" checked />
-          <Checkbox label="MySQL" checked />
-          <Checkbox label="Mongo" checked />
+          <Checkbox label="MySQL (Coming soon)" disabled />
         </Checkbox.Group>
       </div>
     </div>
