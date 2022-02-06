@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc"
+    "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc",
+    "gen:types": "npx openapi-typescript https://ewnkwritmuqiigajshnm.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzM4NTIwNSwiZXhwIjoxOTU4OTYxMjA1fQ.O2D17LvP_TBMKbEcQxK_bcDlZOcmk7rx9TE4iAmFVpM --output types/database.ts"
   },
   "dependencies": {
     "@headlessui/react": "^1.4.2",
