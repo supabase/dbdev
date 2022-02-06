@@ -16,7 +16,7 @@ export default function Index() {
     const { data, error } = await packages()
     if (data && !error) setPackageList(data)
   }
-  
+
   return (
     <RightSidebar sidebar={FilterBar()}>
       <div className="grid grid-cols-1 gap-4 lg:col-span-2 divide-y">

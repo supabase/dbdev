@@ -34,10 +34,7 @@ export async function packages() {
 }
 
 export async function packagesByOwner(handle: string) {
-  return supabase
-    .from<PackageSummary>('packages')
-    .select(detailFields)
-    .eq('handle', handle)
+  return supabase.from<PackageSummary>('packages').select(detailFields).eq('handle', handle)
 }
 
 export async function packageBySlug(slug: string) {

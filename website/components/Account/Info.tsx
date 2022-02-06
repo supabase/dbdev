@@ -14,10 +14,14 @@ export default function AccountInfo({ user }: { user: AuthUser }) {
         <Input className="w-full" />
       </div>
       <div className="p-4">
-        <Button className="w-full" onClick={() => {}} >Save (TBD)</Button>
+        <Button className="w-full" onClick={() => {}}>
+          Save (TBD)
+        </Button>
       </div>
       <div className="p-4">
-        <Button className="w-full" onClick={() => supabase.auth.signOut()} >Sign Out</Button>
+        <Button className="w-full" onClick={() => supabase.auth.signOut()}>
+          Sign Out
+        </Button>
       </div>
     </div>
   )

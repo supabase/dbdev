@@ -1,4 +1,4 @@
-import { SITE_INFO } from "../../lib/constants";
+import { SITE_INFO } from '../../lib/constants'
 
 const navigation = {
   main: [

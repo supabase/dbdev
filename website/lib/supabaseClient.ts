@@ -41,4 +41,3 @@ export async function signIn(email: string, password: string) {
     return error
   } else return { user, session }
 }
-

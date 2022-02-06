@@ -1,6 +1,5 @@
 import { Typography } from '@supabase/ui'
-import { useEffect, useState } from 'react'
-import { SITE_INFO } from '../../lib/constants'
+import { useState } from 'react'
 
 const comparisons = ['NPM for NodeJs', 'Cargo for Rust', 'Hex for Elixir']
 const rand = Math.random() * comparisons.length

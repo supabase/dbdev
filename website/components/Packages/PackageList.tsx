@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { packages, PackageDetail } from '../../pages/api/packages'
 
 export default function PackageList({ packages }: { packages: PackageDetail[] }) {
-
   return (
     <div className="divide-y border-b">
       {packages.map((p) => (

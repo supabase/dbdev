@@ -4,7 +4,7 @@ export function classNames(...classes: (string | undefined)[]) {
   return classes.filter(Boolean).join(' ')
 }
 
-export function apiSuccess(res: NextApiResponse, data:any) {
+export function apiSuccess(res: NextApiResponse, data: any) {
   return res.status(200).json(data)
 }
 

@@ -12,9 +12,7 @@ export default function RightSidebar({ children }: Props) {
       <div className="min-h-full">
         <Nav />
         <main>
-          <div className="grid grid-cols-1 items-start lg:grid-cols-1">
-            {children}
-          </div>
+          <div className="grid grid-cols-1 items-start lg:grid-cols-1">{children}</div>
         </main>
         <Footer />
       </div>

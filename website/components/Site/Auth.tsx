@@ -9,7 +9,6 @@ export default function Auth() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
 
-
   return (
     <div className="grid gap-4 grid-cols-2  w-3/4 my-12 m-auto">
       <div className="">

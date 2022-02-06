@@ -1,14 +1,11 @@
-import { Checkbox } from "@supabase/ui";
-import { Button, Input } from "@supabase/ui";
+import { Checkbox } from '@supabase/ui'
+import { Button, Input } from '@supabase/ui'
 
 export default function Filters() {
   return (
     <div className="divide-y">
       <div className="p-4">
-        <Input
-          className="w-full"
-          actions={[<Button key="btn-search">Search</Button>]}
-        />
+        <Input className="w-full" actions={[<Button key="btn-search">Search</Button>]} />
       </div>
       <div className="p-4">
         <Checkbox.Group label="Type">
@@ -29,5 +26,5 @@ export default function Filters() {
         </Checkbox.Group>
       </div>
     </div>
-  );
+  )
 }
