@@ -41,7 +41,7 @@ export default function Nav() {
                           target={item.target}
                           className={classNames(
                             item.href === path
-                              ? 'border-indigo-500 text-gray-900'
+                              ? 'border-neutral-500 text-gray-900'
                               : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
                             'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium'
                           )}
@@ -57,7 +57,7 @@ export default function Nav() {
                   {/* Profile dropdown */}
                   <Menu as="div" className="ml-3 relative">
                     <Link href="/account/info">
-                      <a className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                      <a className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-500">
                         <Image
                           className="h-8 w-8 rounded-full"
                           src={user.imageUrl}
@@ -71,7 +71,7 @@ export default function Nav() {
                 </div>
                 <div className="-mr-2 flex items-center sm:hidden">
                   {/* Mobile menu button */}
-                  <Disclosure.Button className="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                  <Disclosure.Button className="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-500">
                     <span className="sr-only">Open main menu</span>
                     {open ? (
                       <XIcon className="block h-6 w-6" aria-hidden="true" />
@@ -93,7 +93,7 @@ export default function Nav() {
                     href={item.href}
                     className={classNames(
                       item.href === path
-                        ? 'bg-indigo-50 border-indigo-500 text-indigo-700'
+                        ? 'bg-neutral-50 border-neutral-500 text-neutral-700'
                         : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800',
                       'block pl-3 pr-4 py-2 border-l-4 text-base font-medium'
                     )}
@@ -119,7 +119,7 @@ export default function Nav() {
                   </div>
                   <button
                     type="button"
-                    className="ml-auto bg-white flex-shrink-0 p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="ml-auto bg-white flex-shrink-0 p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-500"
                   >
                     <span className="sr-only">View notifications</span>
                     <BellIcon className="h-6 w-6" aria-hidden="true" />
