@@ -1,8 +1,10 @@
 import { classNames } from '../../lib/helpers'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
+import { SITE_LINKS } from '../../lib/constants'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 const user = {
   name: 'Tom Cook',
@@ -10,14 +12,12 @@ const user = {
   imageUrl:
     'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
 }
-const navigation = [
-  { name: 'Packages', href: '/', current: true },
-  { name: 'Docs', href: '/', current: false },
-  { name: 'Pricing', href: '/', current: false },
-  { name: 'Marketplace', href: '/', current: false },
-]
+
+const navigation = Object.values(SITE_LINKS).filter((x) => x.nav)
 
 export default function Nav() {
+  const router = useRouter()
+  const path = router.asPath
   return (
     <>
       <Disclosure as="nav" className="bg-white border-b border-gray-200">
@@ -37,18 +37,18 @@ export default function Nav() {
                   </div>
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                     {navigation.map((item) => (
-                      <Link href={item.href} key={item.name}>
+                      <Link href={item.href} key={item.label}>
                         <a
-                          href={item.href}
+                          target={item.target}
                           className={classNames(
-                            item.current
+                            item.href === path
                               ? 'border-indigo-500 text-gray-900'
                               : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
                             'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium'
                           )}
-                          aria-current={item.current ? 'page' : undefined}
+                          aria-current={item.href === path ? 'page' : undefined}
                         >
-                          {item.name}
+                          {item.label}
                         </a>
                       </Link>
                     ))}
@@ -88,18 +88,19 @@ export default function Nav() {
               <div className="pt-2 pb-3 space-y-1">
                 {navigation.map((item) => (
                   <Disclosure.Button
-                    key={item.name}
+                    key={item.label}
+                    target={item.target}
                     as="a"
                     href={item.href}
                     className={classNames(
-                      item.current
+                      item.href === path
                         ? 'bg-indigo-50 border-indigo-500 text-indigo-700'
                         : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800',
                       'block pl-3 pr-4 py-2 border-l-4 text-base font-medium'
                     )}
-                    aria-current={item.current ? 'page' : undefined}
+                    aria-current={item.href === path ? 'page' : undefined}
                   >
-                    {item.name}
+                    {item.label}
                   </Disclosure.Button>
                 ))}
               </div>

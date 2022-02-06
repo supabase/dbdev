@@ -1,11 +1,8 @@
-import { SITE_INFO } from '../../lib/constants'
+import Link from 'next/link'
+import { SITE_INFO, SITE_LINKS } from '../../lib/constants'
 
 const navigation = {
-  main: [
-    { name: 'Packages', href: '/' },
-    { name: 'Docs', href: '/' },
-    { name: 'Pricing', href: '/' },
-  ],
+  main: Object.values(SITE_LINKS).filter((x) => x.nav),
   social: [
     {
       name: 'Twitter',
@@ -38,10 +35,15 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto py-12 px-4 overflow-hidden sm:px-6 lg:px-8">
         <nav className="-mx-5 -my-2 flex flex-wrap justify-center" aria-label="Footer">
           {navigation.main.map((item) => (
-            <div key={item.name} className="px-5 py-2">
-              <a href={item.href} className="text-base text-gray-500 hover:text-gray-900">
-                {item.name}
-              </a>
+            <div key={item.label} className="px-5 py-2">
+              <Link href={item.href}>
+                <a
+                  className="text-base text-gray-500 hover:text-gray-900"
+                  target={item.target}
+                >
+                  {item.label}
+                </a>
+              </Link>
             </div>
           ))}
         </nav>
