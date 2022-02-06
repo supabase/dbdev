@@ -28,9 +28,9 @@ export default function Nav() {
                   <div className="flex-shrink-0 flex items-center">
                     <Image
                       width={128}
-                      height={48}
+                      height={38}
                       className="hidden lg:block h-8 w-auto"
-                      src="/images/dbdev-lightmode.svg"
+                      src="/images/dbdev-lightmode.png"
                       alt="dbdev"
                     />
                   </div>
