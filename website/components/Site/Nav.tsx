@@ -7,10 +7,9 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 const user = {
-  name: 'Tom Cook',
-  email: 'tom@example.com',
+  name: 'Sign in',
   imageUrl:
-    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    '/images/person.svg',
 }
 
 const navigation = Object.values(SITE_LINKS).filter((x) => x.nav)
@@ -23,7 +22,7 @@ export default function Nav() {
       <Disclosure as="nav" className="bg-white border-b border-gray-200">
         {({ open }) => (
           <>
-            <div className="px-4 sm:px-6 lg:px-8">
+            <div className="px-4">
               <div className="flex justify-between h-16">
                 <div className="flex">
                   <div className="flex-shrink-0 flex items-center">
@@ -31,8 +30,8 @@ export default function Nav() {
                       width={128}
                       height={48}
                       className="hidden lg:block h-8 w-auto"
-                      src="https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-800-text.svg"
-                      alt="Workflow"
+                      src="/images/dbdev-lightmode.svg"
+                      alt="dbdev"
                     />
                   </div>
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
@@ -117,7 +116,6 @@ export default function Nav() {
                   </div>
                   <div className="ml-3">
                     <div className="text-base font-medium text-gray-800">{user.name}</div>
-                    <div className="text-sm font-medium text-gray-500">{user.email}</div>
                   </div>
                   <button
                     type="button"

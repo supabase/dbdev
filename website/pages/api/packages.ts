@@ -7,6 +7,7 @@ import { apiSuccess, apiNotFound, apiServerError } from '../../lib/helpers'
  * TYPES
  *  Note that these aren't strictly accurate as the we haven't "Pick<>"ed the values
  */
+
 export type PackageSummary = definitions['packages']
 const summaryFields = `
     id, slug: package_name, owner: handle, name: partial_name
@@ -24,6 +25,7 @@ const detailFields = `
 /**
  * API ENTRY
  */
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     if (req.method == 'GET') {

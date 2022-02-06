@@ -1,14 +1,16 @@
 import Nav from '../Site/Nav'
 import Footer from '../Site/Footer'
 import { ReactElement } from 'react'
+import Head, { HeadProps } from './Head'
 
 type Props = {
   children: ReactElement
-}
+} & HeadProps
 
-export default function RightSidebar({ children }: Props) {
+export default function RightSidebar({ children, title, description }: Props) {
   return (
-    <>
+    <div>
+      <Head title={title} description={description} />
       <div className="min-h-full">
         <Nav />
         <main>
@@ -16,6 +18,6 @@ export default function RightSidebar({ children }: Props) {
         </main>
         <Footer />
       </div>
-    </>
+    </div>
   )
 }
