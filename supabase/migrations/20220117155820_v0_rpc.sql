@@ -1,5 +1,5 @@
 create function public.create_organization(
-    handle app.valid_name,
+    username app.valid_name,
     display_name text = null,
     bio text = null,
     contact_email citext = null,
@@ -9,15 +9,15 @@ create function public.create_organization(
     language plpgsql
 as $$
 begin
-    -- Register the requested handle
-    insert into app.handle_registry(handle, is_organization) values ($1, true);
+    -- Register the requested usernamee
+    insert into app.username_registry(username, is_organization) values ($1, true);
 
     -- Create the organization
-    insert into app.organizations(handle, display_name, bio, contact_email, avatar_id)
+    insert into app.organizations(username, display_name, bio, contact_email, avatar_id)
     values ($1, $2, $3, $4, $5);
 
     -- Return the org
-    return org from public.organizations org where org.handle = $1;
+    return org from public.organizations org where org.username = $1;
 end;
 $$;
 
@@ -34,14 +34,14 @@ declare
 
     acc app.accounts = acc from app.accounts acc where id = auth.uid();
 
-    package_handle app.valid_name = app.version_text_to_handle(i_name);
-    package_partial_name app.valid_name = app.version_text_to_package_partial_name(i_name);
+    package_username app.valid_name = app.slug_to_username(i_name);
+    package_name app.valid_name = app.slug_to_package_name(i_name);
     package_id uuid;
     package_version_id uuid;
 begin
     -- Upsert package
-    insert into app.packages(partial_name, handle)
-        values (package_partial_name, package_handle)
+    insert into app.packages(name, username)
+        values (package_name, package_username)
         on conflict do nothing
         returning id
         into package_id;
@@ -72,7 +72,7 @@ begin
 end;
 $$;
 
-create function public.is_handle_available(handle app.valid_name)
+create function public.is_username_available(username app.valid_name)
     returns boolean
     stable
     language sql
@@ -82,8 +82,8 @@ as $$
             select
                 1
             from
-                app.handle_registry hr
+                app.username_registry hr
             where
-                hr.handle = $1
+                hr.username = $1
         )
 $$;

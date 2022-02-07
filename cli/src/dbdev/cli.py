@@ -26,13 +26,13 @@ def sign_up() -> None:
     password = prompt.password(confirm=True)
 
     while True:
-        handle = prompt.handle()
+        username = prompt.username()
 
-        # Check handle availability
+        # Check username availability
         resp = client.rpc(
-            fn="is_handle_available",
+            fn="is_username_available",
             params={
-                "handle": handle,
+                "username": username,
             },
         )
         if resp.text == "true":
@@ -40,25 +40,23 @@ def sign_up() -> None:
         elif resp.status_code != 200:
             typer.echo(resp.json()["message"])
         else:
-            typer.echo(f"Requested handle unavailable. Try again")
+            typer.echo(f"Requested username unavailable. Try again")
 
     try:
         _ = client.auth.sign_up(
-            email=email_address, password=password, data={"handle": handle}
+            email=email_address, password=password, data={"username": username}
         )
     except APIError as exc:
         typer.echo(f"An error occured")
         typer.echo(exc.msg)
         raise typer.Abort()
 
-    typer.echo(f"Successfully created account {handle} ({email_address})")
+    typer.echo(f"Successfully created account {username} ({email_address})")
 
 
-def storage_package_version_key(
-    package_handle: str, partial_name: str, version: str
-) -> str:
+def storage_package_version_key(username: str, name: str, version: str) -> str:
     """Create the Storage API file key"""
-    return f"{package_handle}/{partial_name}/{version}.sql"
+    return f"{username}/{name}/{version}.sql"
 
 
 @app.command()
@@ -75,7 +73,7 @@ def publish(path: Path = Path(config.PACKAGE_CONFIG)) -> None:
         contents = validate_database_json(contents)
         package_version_source_path = contents["source"][0]
         package_version = contents["version"]
-        package_handle, _, partial_package_name = contents["name"].partition("/")
+        package_username, _, package_name = contents["name"].partition("/")
         assert Path(package_version_source_path).is_file()
     except Exception as exc:
         typer.echo(f"Error while validating {config.PACKAGE_CONFIG}")
@@ -100,8 +98,8 @@ def publish(path: Path = Path(config.PACKAGE_CONFIG)) -> None:
     )
 
     storage_object_name = storage_package_version_key(
-        package_handle=package_handle,
-        partial_name=partial_package_name,
+        username=package_username,
+        name=package_name,
         version=package_version,
     )
 
@@ -134,12 +132,12 @@ def publish(path: Path = Path(config.PACKAGE_CONFIG)) -> None:
 
 
 @app.command()
-def get(package_name: str, version: Optional[str] = None) -> None:
+def get(slug: str, version: Optional[str] = None) -> None:
     """Download a package version's source code"""
 
     # postgrest-py incorrectly url encodes variables for postgrest
     url = f"{config.get_url()}/rest/v1/package_versions"
-    url += f"?package_name=eq.{package_name}"
+    url += f"?slug=eq.{slug}"
     if version:
         url += f"&version=eq.{version}"
     url += "&order=version.desc.nullslast"
@@ -153,9 +151,7 @@ def get(package_name: str, version: Optional[str] = None) -> None:
 
     if len(rows) == 0:
         typer.echo(
-            f"No package version found for {package_name}" + f" {version}"
-            if version
-            else ""
+            f"No package version found for {slug}" + f" {version}" if version else ""
         )
         raise typer.Abort()
 
@@ -171,13 +167,13 @@ def get(package_name: str, version: Optional[str] = None) -> None:
     package_src = storage_client.download(path=object_name)
 
     # may differ in capitalization due to citext
-    row_package_name = version_row["package_name"]
+    row_slug = version_row["slug"]
     row_version = version_row["version"]
 
     # TODO: decide on a header comment format?
     typer.echo(
         f"""/*
-    package: {row_package_name}
+    package: {row_slug}
     version: {row_version}
 */"""
     )

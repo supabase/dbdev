@@ -1,8 +1,8 @@
 -- Usual signup flow to create users
 insert into auth.users(id, email, raw_user_meta_data)
 values
-    (uuid_generate_v4(), 'foo@supabase.io', '{"handle": "foo"}'),
-    (uuid_generate_v4(), 'bar@supabase.io', '{"handle": "bar"}');
+    (uuid_generate_v4(), 'foo@supabase.io', '{"username": "foo"}'),
+    (uuid_generate_v4(), 'bar@supabase.io', '{"username": "bar"}');
 
 
 -- Dummy object upload
@@ -27,7 +27,7 @@ begin;
 
     -- Create an Organization
     select public.create_organization(
-        handle := 'supabase',
+        username := 'supabase',
         display_name := 'Supabase',
         bio := null::text,
         contact_email := 'support@supabase.io',

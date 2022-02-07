@@ -1,11 +1,20 @@
+create function app.to_slug(username app.valid_name, name app.valid_name)
+    returns text
+    immutable
+    language sql
+as $$
+    select format('%s/%s', $1, $2)
+$$;
+
 create table app.packages(
     id uuid primary key default uuid_generate_v4(),
-    partial_name app.valid_name not null, -- ex: math
-    handle app.valid_name not null references app.handle_registry(handle),
+    name app.valid_name not null, -- ex: math
+    username app.valid_name not null references app.username_registry(username),
+    slug text not null generated always as (app.to_slug(username, name)) stored,
     created_at timestamp not null default (now() at time zone 'utc'),
     -- website?
     -- description in markdown?
-    unique (handle, partial_name)
+    unique (username, name)
 );
 
 insert into storage.buckets (id, name)
@@ -27,28 +36,7 @@ create table app.package_versions(
 );
 create index package_versions_semver_text on app.package_versions (app.semver_to_text(semver));
 
-create type app.version_operator as enum ('lt', 'lte', 'eq', 'gte', 'gt');
-
-create table app.package_version_dependencies(
-    id uuid primary key default uuid_generate_v4(),
-    package_version_id uuid not null references app.package_versions(id),
-    depends_on_package_id uuid not null references app.packages(id),
-    depends_on_operator app.version_operator not null,
-    depends_on_version app.semver not null,
-    created_at timestamp not null default (now() at time zone 'utc'),
-    unique(package_version_id, depends_on_package_id, depends_on_operator)
-);
-
-
-create function app.to_package_name(handle app.valid_name, partial_name app.valid_name)
-    returns text
-    immutable
-    language sql
-as $$
-    select format('%s/%s', $1, $2)
-$$;
-
-create function app.version_text_to_handle(version text)
+create function app.slug_to_username(version text)
     returns app.valid_name
     immutable
     language sql
@@ -56,7 +44,7 @@ as $$
     select split_part($1, '/', 1)
 $$;
 
-create function app.version_text_to_package_partial_name(version text)
+create function app.slug_to_package_name(version text)
     returns app.valid_name
     immutable
     language sql

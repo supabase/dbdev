@@ -12,14 +12,14 @@ export type PackageSummary = definitions['packages'] & {
   slug: string
 }
 const summaryFields = `
-    id, slug: package_name, owner: handle, name: partial_name
+    id, slug, username, name
 `
 export type PackageDetail = definitions['packages'] & {
   versions: definitions['package_versions'][]
   slug: string
 }
 const detailFields = `
-    id, slug: package_name, owner: handle, 
+    id, slug, username, 
     versions: package_versions (
         id, version, object_id, object_key
     )
@@ -51,14 +51,14 @@ export async function packages() {
   return supabase.from<PackageSummary>('packages').select(summaryFields)
 }
 
-export async function packagesByOwner(handle: string) {
-  return supabase.from<PackageSummary>('packages').select(detailFields).eq('handle', handle)
+export async function packagesByOwner(username: string) {
+  return supabase.from<PackageSummary>('packages').select(detailFields).eq('username', username)
 }
 
 export async function packageBySlug(slug: string) {
   return supabase
     .from<PackageDetail>('packages')
     .select(detailFields)
-    .eq('package_name', slug)
+    .eq('slug', slug)
     .single()
 }

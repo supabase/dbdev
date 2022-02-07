@@ -2,7 +2,7 @@
 create view public.accounts as
     select
         id,
-        handle,
+        username,
         avatar_id,
         display_name,
         bio,
@@ -16,7 +16,7 @@ create view public.accounts as
 create view public.organizations as
     select
         org.id,
-        org.handle,
+        org.username,
         org.avatar_id,
         org.display_name,
         org.bio,
@@ -42,16 +42,16 @@ create view public.members as
 create view public.packages as
     select
         pa.id,
-        app.to_package_name(pa.handle, pa.partial_name) as package_name,
-        pa.handle,
-        pa.partial_name,
+        pa.slug,
+        pa.username,
+        pa.name,
         pa.created_at
     from
         app.packages pa
     group by
         pa.id,
-        pa.handle,
-        pa.partial_name,
+        pa.username,
+        pa.name,
         pa.created_at;
 
 
@@ -59,7 +59,7 @@ create view public.packages as
 create view public.package_versions as
     select
         pv.id,
-        app.to_package_name(pa.handle, pa.partial_name) as package_name,
+        pa.slug,
         app.semver_to_text(pv.semver) version,
         pv.package_id,
         pv.object_id,

@@ -19,7 +19,7 @@ export async function signUp(username: string, email: string, password: string) 
     },
     {
       data: {
-        handle: username,
+        username: username,
       },
     }
   )
