@@ -17,7 +17,7 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.accounts.id"];
-          handle?: parameters["rowFilter.accounts.handle"];
+          username?: parameters["rowFilter.accounts.username"];
           avatar_id?: parameters["rowFilter.accounts.avatar_id"];
           display_name?: parameters["rowFilter.accounts.display_name"];
           bio?: parameters["rowFilter.accounts.bio"];
@@ -74,7 +74,7 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.accounts.id"];
-          handle?: parameters["rowFilter.accounts.handle"];
+          username?: parameters["rowFilter.accounts.username"];
           avatar_id?: parameters["rowFilter.accounts.avatar_id"];
           display_name?: parameters["rowFilter.accounts.display_name"];
           bio?: parameters["rowFilter.accounts.bio"];
@@ -95,7 +95,7 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.accounts.id"];
-          handle?: parameters["rowFilter.accounts.handle"];
+          username?: parameters["rowFilter.accounts.username"];
           avatar_id?: parameters["rowFilter.accounts.avatar_id"];
           display_name?: parameters["rowFilter.accounts.display_name"];
           bio?: parameters["rowFilter.accounts.bio"];
@@ -218,7 +218,7 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.organizations.id"];
-          handle?: parameters["rowFilter.organizations.handle"];
+          username?: parameters["rowFilter.organizations.username"];
           avatar_id?: parameters["rowFilter.organizations.avatar_id"];
           display_name?: parameters["rowFilter.organizations.display_name"];
           bio?: parameters["rowFilter.organizations.bio"];
@@ -275,7 +275,7 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.organizations.id"];
-          handle?: parameters["rowFilter.organizations.handle"];
+          username?: parameters["rowFilter.organizations.username"];
           avatar_id?: parameters["rowFilter.organizations.avatar_id"];
           display_name?: parameters["rowFilter.organizations.display_name"];
           bio?: parameters["rowFilter.organizations.bio"];
@@ -296,7 +296,7 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.organizations.id"];
-          handle?: parameters["rowFilter.organizations.handle"];
+          username?: parameters["rowFilter.organizations.username"];
           avatar_id?: parameters["rowFilter.organizations.avatar_id"];
           display_name?: parameters["rowFilter.organizations.display_name"];
           bio?: parameters["rowFilter.organizations.bio"];
@@ -323,7 +323,7 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.package_versions.id"];
-          package_name?: parameters["rowFilter.package_versions.package_name"];
+          slug?: parameters["rowFilter.package_versions.slug"];
           version?: parameters["rowFilter.package_versions.version"];
           package_id?: parameters["rowFilter.package_versions.package_id"];
           object_id?: parameters["rowFilter.package_versions.object_id"];
@@ -363,9 +363,9 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.packages.id"];
-          package_name?: parameters["rowFilter.packages.package_name"];
-          handle?: parameters["rowFilter.packages.handle"];
-          partial_name?: parameters["rowFilter.packages.partial_name"];
+          slug?: parameters["rowFilter.packages.slug"];
+          username?: parameters["rowFilter.packages.username"];
+          name?: parameters["rowFilter.packages.name"];
           created_at?: parameters["rowFilter.packages.created_at"];
           /** Filtering Columns */
           select?: parameters["select"];
@@ -409,7 +409,7 @@ export interface paths {
             /** Format: text */
             bio?: string;
             /** Format: app.valid_name */
-            handle: string;
+            username: string;
           };
         };
         header: {
@@ -423,13 +423,13 @@ export interface paths {
       };
     };
   };
-  "/rpc/is_handle_available": {
+  "/rpc/is_username_available": {
     post: {
       parameters: {
         body: {
           args: {
             /** Format: app.valid_name */
-            handle: string;
+            username: string;
           };
         };
         header: {
@@ -476,7 +476,7 @@ export interface definitions {
      */
     id?: string;
     /** Format: app.valid_name */
-    handle?: string;
+    username?: string;
     /**
      * Format: uuid
      * @description Note:
@@ -521,7 +521,7 @@ export interface definitions {
      */
     id?: string;
     /** Format: app.valid_name */
-    handle?: string;
+    username?: string;
     /**
      * Format: uuid
      * @description Note:
@@ -545,7 +545,7 @@ export interface definitions {
      */
     id?: string;
     /** Format: text */
-    package_name?: string;
+    slug?: string;
     /** Format: text */
     version?: string;
     /**
@@ -575,11 +575,11 @@ export interface definitions {
      */
     id?: string;
     /** Format: text */
-    package_name?: string;
+    slug?: string;
     /** Format: app.valid_name */
-    handle?: string;
+    username?: string;
     /** Format: app.valid_name */
-    partial_name?: string;
+    name?: string;
     /** Format: timestamp without time zone */
     created_at?: string;
   };
@@ -623,7 +623,7 @@ export interface parameters {
   /** Format: uuid */
   "rowFilter.accounts.id": string;
   /** Format: app.valid_name */
-  "rowFilter.accounts.handle": string;
+  "rowFilter.accounts.username": string;
   /** Format: uuid */
   "rowFilter.accounts.avatar_id": string;
   /** Format: character varying */
@@ -649,7 +649,7 @@ export interface parameters {
   /** Format: uuid */
   "rowFilter.organizations.id": string;
   /** Format: app.valid_name */
-  "rowFilter.organizations.handle": string;
+  "rowFilter.organizations.username": string;
   /** Format: uuid */
   "rowFilter.organizations.avatar_id": string;
   /** Format: character varying */
@@ -665,7 +665,7 @@ export interface parameters {
   /** Format: uuid */
   "rowFilter.package_versions.id": string;
   /** Format: text */
-  "rowFilter.package_versions.package_name": string;
+  "rowFilter.package_versions.slug": string;
   /** Format: text */
   "rowFilter.package_versions.version": string;
   /** Format: uuid */
@@ -683,11 +683,11 @@ export interface parameters {
   /** Format: uuid */
   "rowFilter.packages.id": string;
   /** Format: text */
-  "rowFilter.packages.package_name": string;
+  "rowFilter.packages.slug": string;
   /** Format: app.valid_name */
-  "rowFilter.packages.handle": string;
+  "rowFilter.packages.username": string;
   /** Format: app.valid_name */
-  "rowFilter.packages.partial_name": string;
+  "rowFilter.packages.name": string;
   /** Format: timestamp without time zone */
   "rowFilter.packages.created_at": string;
 }
