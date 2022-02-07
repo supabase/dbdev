@@ -1,9 +1,9 @@
 import { Badge } from '@supabase/ui'
 import { Typography } from '@supabase/ui'
 import Link from 'next/link'
-import { packages, PackageDetail } from '../../pages/api/packages'
+import {  PackageDetail, PackageSummary } from '../../pages/api/packages'
 
-export default function PackageList({ packages }: { packages: PackageDetail[] }) {
+export default function PackageList({ packages }: { packages: PackageDetail[] | PackageSummary[] }) {
   return (
     <div className="divide-y border-b">
       {packages.map((p) => (

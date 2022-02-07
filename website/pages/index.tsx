@@ -2,29 +2,26 @@ import Hero from '../components/Site/Hero'
 import Filters from '../components/Packages/Filters'
 import PackageList from '../components/Packages/PackageList'
 import RightSidebar from '../components/Layouts/RightSidebar'
-import { useEffect, useState } from 'react'
 import { packages, PackageDetail } from '../pages/api/packages'
+import { useAsync } from 'react-async-hook'
+import Loader from 'components/Site/Loader'
 
 export default function Index() {
-  const [packageList, setPackageList] = useState<PackageDetail[]>([])
-
-  useEffect(() => {
-    getPackages()
-  }, [])
-
-  async function getPackages() {
-    const { data, error } = await packages()
-    if (data && !error) setPackageList(data)
-  }
+  const { loading, error, result } = useAsync(packages, [])
+  const { data: packageList, error: apiError } = result || {}
 
   return (
     <RightSidebar sidebar={FilterBar()}>
-      <div className="grid grid-cols-1 gap-4 lg:col-span-2 divide-y">
+      <div className="grid grid-cols-1 gap-4 lg:col-span-2 ">
         <section>
           <Hero />
         </section>
         <section>
-          <PackageList packages={packageList} />
+          <h2 className="text-xl font-bold p-4">Browse Packages</h2>
+          <div className="divide-y border-t">
+            {loading && <Loader />}
+            {packageList && <PackageList packages={packageList} />}
+          </div>
         </section>
       </div>
     </RightSidebar>

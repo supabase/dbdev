@@ -1,3 +1,4 @@
+import { PostgrestError } from '@supabase/supabase-js'
 import type { NextApiResponse } from 'next'
 
 export function classNames(...classes: (string | undefined)[]) {
@@ -22,4 +23,11 @@ export function apiServerError(res: NextApiResponse, message: string) {
     message,
     error: message,
   })
+}
+
+export function asyncError(error: any, responseError: string | PostgrestError | null | undefined) {
+  if (error) return error as Error
+  if (typeof responseError === 'string') return new Error(responseError)
+  if (responseError) return new Error(responseError.message)
+  return new Error('An unknown error occurred.')
 }

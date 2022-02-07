@@ -8,12 +8,15 @@ import { apiSuccess, apiNotFound, apiServerError } from '../../lib/helpers'
  *  Note that these aren't strictly accurate as the we haven't "Pick<>"ed the values
  */
 
-export type PackageSummary = definitions['packages']
+export type PackageSummary = definitions['packages'] & {
+  slug: string
+}
 const summaryFields = `
     id, slug: package_name, owner: handle, name: partial_name
 `
 export type PackageDetail = definitions['packages'] & {
   versions: definitions['package_versions'][]
+  slug: string
 }
 const detailFields = `
     id, slug: package_name, owner: handle, 
