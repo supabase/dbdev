@@ -26,7 +26,7 @@ export default function AccountNav({ profile }: { profile: AccountDetail | null 
             </a>
           </Link>
         ))}
-        {orgs && (
+        {orgs && orgs?.length > 0 && (
           <>
             <Menu.Group title="ORGANIZATIONS" />
             {orgs.map((org) => (
