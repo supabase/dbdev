@@ -12,9 +12,9 @@ export type AccountDetail = definitions['accounts'] & {
   username: string
 }
 const detailFields = `
-    id, username: handle, 
+    id, username, 
     organizations (
-        id, handle, display_name
+        id, username, display_name
     )
 `
 

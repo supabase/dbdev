@@ -9,7 +9,7 @@ import { apiSuccess, apiNotFound, apiServerError } from '../../lib/helpers'
  */
 export type OrgSummary = definitions['organizations']
 const summaryFields = `
-    id, username: handle, handle, display_name, bio
+    id, username, display_name, bio
 `
 
 /**
