@@ -8,8 +8,7 @@ import { useRouter } from 'next/router'
 
 const user = {
   name: 'Sign in',
-  imageUrl:
-    '/images/person.svg',
+  imageUrl: '/images/person.svg',
 }
 
 const navigation = Object.values(SITE_LINKS).filter((x) => x.nav)
@@ -26,13 +25,17 @@ export default function Nav() {
               <div className="flex justify-between h-16">
                 <div className="flex">
                   <div className="flex-shrink-0 flex items-center">
-                    <Image
-                      width={128}
-                      height={38}
-                      className="hidden lg:block h-8 w-auto"
-                      src="/images/dbdev-lightmode.png"
-                      alt="dbdev"
-                    />
+                    <Link href={'/'}>
+                      <a className="flex align-middle">
+                        <Image
+                          width={128}
+                          height={38}
+                          className="hidden lg:block h-8 w-auto"
+                          src="/images/dbdev-lightmode.png"
+                          alt="dbdev"
+                        />
+                      </a>
+                    </Link>
                   </div>
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                     {navigation.map((item) => (

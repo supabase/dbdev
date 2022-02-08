@@ -395,34 +395,6 @@ export interface paths {
       };
     };
   };
-  "/rpc/create_organization": {
-    post: {
-      parameters: {
-        body: {
-          args: {
-            /** Format: text */
-            display_name?: string;
-            /** Format: extensions.citext */
-            contact_email?: string;
-            /** Format: uuid */
-            avatar_id?: string;
-            /** Format: text */
-            bio?: string;
-            /** Format: app.valid_name */
-            username: string;
-          };
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferParams"];
-        };
-      };
-      responses: {
-        /** OK */
-        200: unknown;
-      };
-    };
-  };
   "/rpc/is_username_available": {
     post: {
       parameters: {
@@ -443,15 +415,43 @@ export interface paths {
       };
     };
   };
+  "/rpc/create_organization": {
+    post: {
+      parameters: {
+        body: {
+          args: {
+            /** Format: text */
+            display_name?: string;
+            /** Format: extensions.citext */
+            contact_email?: string;
+            /** Format: text */
+            bio?: string;
+            /** Format: app.valid_name */
+            username: string;
+            /** Format: uuid */
+            avatar_id?: string;
+          };
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferParams"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
+      };
+    };
+  };
   "/rpc/publish_package_version": {
     post: {
       parameters: {
         body: {
           args: {
-            /** Format: json */
-            body: string;
             /** Format: character varying */
             object_name: string;
+            /** Format: json */
+            body: string;
           };
         };
         header: {
