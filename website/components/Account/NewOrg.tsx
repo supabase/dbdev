@@ -4,13 +4,13 @@ import { supabase } from 'lib/supabaseClient'
 import { useState } from 'react'
 
 export default function NewOrg({ user }: { user: AuthUser }) {
-  const [handle, setHandle] = useState('')
+  const [username, setUsername] = useState('')
   const [display_name, setDisplayName] = useState('')
   const [bio, setBio] = useState('')
 
   async function onCreate() {
     const { data, error } = await supabase.rpc('create_organization', {
-      handle,
+      username,
       display_name,
       bio,
       contact_email: user.email,
@@ -27,8 +27,8 @@ export default function NewOrg({ user }: { user: AuthUser }) {
       <div className="p-4">
         <Input
           label="Org Identifier"
-          value={handle}
-          onChange={(e) => setHandle(e.target.value)}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           descriptionText="letters-and-hyphens only. Must be unique across all of dbdev."
         />
       </div>

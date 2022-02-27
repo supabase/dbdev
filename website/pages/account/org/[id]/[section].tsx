@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import AccountInfo from 'components/Account/Info'
 import Orgs from 'components/Account/Orgs'
 import Packages from 'components/Account/Packages'
-import AccountNav from 'components/Account/Nav'
+import OrgNav from 'components/Org/Nav'
 import Auth from 'components/Site/Auth'
 import BasicLayout from 'components/Layouts/Basic'
 import LeftSidebar from 'components/Layouts/LeftSidebar'
@@ -38,7 +38,7 @@ export default function AccountPage() {
       <Auth />
     </BasicLayout>
   ) : (
-    <LeftSidebar key={'signed-in'} sidebar={<AccountNav profile={profile} />}>
+    <LeftSidebar key={'signed-in'} sidebar={<OrgNav profile={profile} />}>
       <>
         {loading && <Loader />}
         {error && <Error error={asyncError(error, apiError)} />}
