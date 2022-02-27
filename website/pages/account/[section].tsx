@@ -10,7 +10,7 @@ import { useAsync } from 'react-async-hook'
 import { asyncError } from 'lib/helpers'
 import { packagesByOwner, PackageSummary } from 'pages/api/packages'
 import { AuthUser } from '@supabase/supabase-js'
-import NewOrg from 'components/Account/NewOrg'
+import NewOrg from 'components/Org/NewOrg'
 import { withAuthRequired } from '@supabase/supabase-auth-helpers/nextjs'
 
 export default function AccountPage({ user }: { user: AuthUser }) {
