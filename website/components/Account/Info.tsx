@@ -3,8 +3,10 @@ import { AuthUser } from '@supabase/supabase-js'
 import { Typography } from '@supabase/ui'
 import { supabaseClient } from '@supabase/supabase-auth-helpers/nextjs'
 import { AccountDetail } from 'pages/api/account'
+import { useRouter } from 'next/router'
 
 export default function AccountInfo({ user, profile }: { user: AuthUser; profile: AccountDetail }) {
+  const router = useRouter()
   return (
     <div className="divide-y">
       <div className="p-4">
@@ -14,7 +16,15 @@ export default function AccountInfo({ user, profile }: { user: AuthUser; profile
         <Typography.Text>Username: {profile.username}</Typography.Text>
       </div>
       <div className="p-4">
-        <Button className="w-full" onClick={() => supabaseClient.auth.signOut()}>
+        <Button
+          type="secondary"
+          size="medium"
+          block
+          onClick={async () => {
+            await supabaseClient.auth.signOut()
+            router.push('/')
+          }}
+        >
           Sign Out
         </Button>
       </div>
