@@ -18,7 +18,7 @@ as $$
 $$;
 
 
-create function app.is_handle_maintainer(account_id uuid, handle app.valid_name)
+create function app.is_username_maintainer(account_id uuid, username app.valid_name)
     returns boolean
     language sql
     stable
@@ -31,7 +31,7 @@ as $$
                 app.accounts acc
             where
                 acc.id = $1
-                and acc.handle = $2
+                and acc.username = $2
         )
         or exists(
             select
@@ -43,7 +43,7 @@ as $$
             where
                 m.role = 'maintainer'
                 and m.account_id = $1
-                and o.handle = $2
+                and o.username = $2
             )
 $$;
 
@@ -62,7 +62,7 @@ as $$
             from
                 app.accounts acc
                 join app.packages p
-                    on acc.handle = p.handle
+                    on acc.username = p.username
             where
                 acc.id = $1
                 and p.id = $2
@@ -74,7 +74,7 @@ as $$
             from
                 app.packages p
                 join app.organizations o
-                    on p.handle = o.handle
+                    on p.username = o.username
                 join app.members m
                     on o.id = m.organization_id
             where

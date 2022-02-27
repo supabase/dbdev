@@ -48,15 +48,15 @@ def password(confirm: bool = False) -> str:
         return password
 
 
-def handle() -> str:
-    """Prompt user for handle"""
+def username() -> str:
+    """Prompt user for username"""
 
     while True:
-        handle = typer.prompt("Handle (ex: j_smith)")
+        username = typer.prompt("Username (ex: j_smith)")
 
-        if not VALID_NAME_REGEX.match(handle):
+        if not VALID_NAME_REGEX.match(username):
             typer.echo(
-                """Invalid handle
+                """Invalid username
 Rules
 -----
 - Starts with a letter
@@ -65,4 +65,4 @@ Rules
             )
             continue
 
-        return handle
+        return username
