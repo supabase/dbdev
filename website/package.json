@@ -15,12 +15,12 @@
     "@headlessui/react": "^1.4.2",
     "@heroicons/react": "^1.0.5",
     "@supabase/supabase-js": "^1.29.1",
-    "@supabase/ui": "^0.36.2",
-    "next": "12.0.8",
+    "@supabase/ui": "^0.37.0-alpha.38",
+    "next": "12.1.0",
     "react": "17.0.2",
     "react-async-hook": "^4.0.0",
     "react-dom": "17.0.2",
-    "react-query": "^3.34.8"
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.16.7",
