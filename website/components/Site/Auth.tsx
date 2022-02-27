@@ -1,8 +1,9 @@
-import { signUp, signIn } from '../../lib/supabaseClient'
+import { supabaseClient } from '@supabase/supabase-auth-helpers/nextjs'
 import { Form, Button, Tabs } from '@supabase/ui'
 import { useState } from 'react'
 import { Input } from '@supabase/ui'
 import { object, string, ref } from 'yup'
+import { useRouter } from 'next/router'
 
 const SignInSchema = object().shape({
   email: string().email('Invalid email.').required('Required'),
@@ -27,11 +28,50 @@ const SignUpSchema = object().shape({
     .oneOf([ref('su_password')], 'Passwords does not match'),
 })
 
+export async function signUp(username: string, email: string, password: string) {
+  const { user, session, error } = await supabaseClient.auth.signUp(
+    {
+      email,
+      password,
+    },
+    {
+      data: {
+        username: username,
+      },
+    }
+  )
+
+  if (error) {
+    alert(error.message)
+    return { error }
+  } else return { user, session }
+}
+
+export async function signIn(email: string, password: string) {
+  const { user, session, error } = await supabaseClient.auth.signIn({
+    email,
+    password,
+  })
+
+  if (error) {
+    alert(error.message)
+    return { error }
+  } else return { user, session }
+}
+
 export default function Auth() {
+  const router = useRouter()
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+
+  const { redirect } = router.query
+
+  function nextPage() {
+    if (redirect) router.push(redirect as string)
+    else router.push('/')
+  }
 
   return (
     <div className="w-3/4 my-12 m-auto">
@@ -44,8 +84,9 @@ export default function Auth() {
             }}
             validationSchema={SignInSchema}
             onSubmit={async ({ email, password }, { setSubmitting }: any) => {
-              await signIn(email, password)
+              const { session } = await signIn(email, password)
               setSubmitting(false)
+              if (session) nextPage()
             }}
           >
             {({ isSubmitting }: { isSubmitting: boolean }) => (
@@ -67,8 +108,9 @@ export default function Auth() {
             }}
             validationSchema={SignUpSchema}
             onSubmit={async ({ su_username, su_email, su_password }, { setSubmitting }: any) => {
-              await signUp(su_username, su_email, su_password)
+              const { session } = await signUp(su_username, su_email, su_password)
               setSubmitting(false)
+              if (session) nextPage()
             }}
           >
             {({ isSubmitting }: { isSubmitting: boolean }) => (

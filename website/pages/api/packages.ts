@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { supabase } from '../../lib/supabaseClient'
+import { supabaseClient } from '@supabase/supabase-auth-helpers/nextjs'
 import { definitions } from '../../types/database'
 import { apiSuccess, apiNotFound, apiServerError } from '../../lib/helpers'
 
@@ -48,15 +48,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
  */
 
 export async function packages() {
-  return supabase.from<PackageSummary>('packages').select(summaryFields)
+  return supabaseClient.from<PackageSummary>('packages').select(summaryFields)
 }
 
 export async function packagesByOwner(username: string) {
-  return supabase.from<PackageSummary>('packages').select(detailFields).eq('username', username)
+  return supabaseClient
+    .from<PackageSummary>('packages')
+    .select(detailFields)
+    .eq('username', username)
 }
 
 export async function packageBySlug(slug: string) {
-  return supabase
+  return supabaseClient
     .from<PackageDetail>('packages')
     .select(detailFields)
     .eq('slug', slug)

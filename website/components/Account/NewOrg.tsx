@@ -1,6 +1,6 @@
 import { AuthUser } from '@supabase/supabase-js'
-import { Button, Input, Typography } from '@supabase/ui'
-import { supabase } from 'lib/supabaseClient'
+import { Button, Input } from '@supabase/ui'
+import { supabaseClient } from '@supabase/supabase-auth-helpers/nextjs'
 import { useState } from 'react'
 
 export default function NewOrg({ user }: { user: AuthUser }) {
@@ -9,7 +9,7 @@ export default function NewOrg({ user }: { user: AuthUser }) {
   const [bio, setBio] = useState('')
 
   async function onCreate() {
-    const { data, error } = await supabase.rpc('create_organization', {
+    const { data, error } = await supabaseClient.rpc('create_organization', {
       username,
       display_name,
       bio,

@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { supabase } from '../../lib/supabaseClient'
 import { definitions } from '../../types/database'
 import { apiSuccess, apiNotFound, apiServerError } from '../../lib/helpers'
 

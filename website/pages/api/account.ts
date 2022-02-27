@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { supabase } from '../../lib/supabaseClient'
+import { supabaseClient } from '@supabase/supabase-auth-helpers/nextjs'
 import { definitions } from '../../types/database'
 import { apiSuccess, apiNotFound, apiServerError } from '../../lib/helpers'
 
@@ -37,9 +37,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
  */
 
 export async function account() {
-  const userId = supabase.auth.user()?.id
+  const userId = supabaseClient.auth.user()?.id
   if (!userId) {
     return { error: 'Not logged in', data: null }
   }
-  return supabase.from<AccountDetail>('accounts').select(detailFields).eq('id', userId).single()
+  return supabaseClient
+    .from<AccountDetail>('accounts')
+    .select(detailFields)
+    .eq('id', userId)
+    .single()
 }
