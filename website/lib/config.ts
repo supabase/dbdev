@@ -5,5 +5,5 @@ export type ApplicationConfig = {
 
 export const config: ApplicationConfig = {
   SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321',
-  SUPABASE_KEY_ANON: process.env.NEXT_PUBLIC_SUPABASE_KEY_ANON || '',
+  SUPABASE_KEY_ANON: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
 }
