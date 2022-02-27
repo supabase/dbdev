@@ -36,11 +36,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
  * API METHODS
  */
 
-export async function account() {
-  const userId = supabaseClient.auth.user()?.id
-  if (!userId) {
-    return { error: 'Not logged in', data: null }
-  }
+export async function account(userId: string) {
+  // const userId = supabaseClient.auth.user()?.id
+  // console.log('supabaseClient.auth.user', supabaseClient.auth.session())
+  // if (!userId) {
+  //   return { error: 'Not logged in', data: null }
+  // }
+  console.log('userId', userId)
   return supabaseClient
     .from<AccountDetail>('accounts')
     .select(detailFields)

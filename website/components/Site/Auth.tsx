@@ -71,6 +71,8 @@ export default function Auth() {
   function nextPage() {
     if (redirect) router.push(redirect as string)
     else router.push('/')
+    console.log('redirect', redirect)
+    console.log('router', router)
   }
 
   return (

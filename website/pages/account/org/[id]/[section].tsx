@@ -16,7 +16,7 @@ import { withAuthRequired } from '@supabase/supabase-auth-helpers/nextjs'
 export default function AccountPage({ user }: { user: AuthUser }) {
   const router = useRouter()
   const { section } = router.query
-  const { loading, error, result } = useAsync(account, [])
+  const { loading, error, result } = useAsync(account, [user.id])
   const { data: profile, error: apiError } = result || {}
 
   return (
