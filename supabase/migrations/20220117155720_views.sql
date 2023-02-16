@@ -1,4 +1,3 @@
---create view v0.accounts as
 create view public.accounts as
     select
         id,
@@ -12,7 +11,6 @@ create view public.accounts as
         app.accounts;
 
 
---create view v0.organizations as
 create view public.organizations as
     select
         org.id,
@@ -26,7 +24,6 @@ create view public.organizations as
         app.organizations org;
 
 
---create view v0.members as
 create view public.members as
     select
         aio.organization_id,
@@ -37,8 +34,6 @@ create view public.members as
         app.members aio;
 
 
-
---create view v0.packages as
 create view public.packages as
     select
         pa.id,
@@ -55,7 +50,6 @@ create view public.packages as
         pa.created_at;
 
 
---create view v0.package_versions as
 create view public.package_versions as
     select
         pv.id,

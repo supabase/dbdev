@@ -2,7 +2,7 @@ create table app.packages(
     id uuid primary key default uuid_generate_v4(),
     partial_name app.valid_name not null, -- ex: math
     handle app.valid_name not null references app.handle_registry(handle),
-    created_at timestamp not null default (now() at time zone 'utc'),
+    created_at timestamptz not null default now(),
     -- website?
     -- description in markdown?
     unique (handle, partial_name)
@@ -21,8 +21,8 @@ create table app.package_versions(
     yanked versions are ignored during dependency resolution
     unless the yanked version is the only version satisfying the version requirements
     */
-    yanked_at timestamp,
-    created_at timestamp not null default (now() at time zone 'utc'),
+    yanked_at timestamptz,
+    created_at timestamptz not null default now(),
     unique(package_id, semver)
 );
 create index package_versions_semver_text on app.package_versions (app.semver_to_text(semver));
@@ -35,7 +35,7 @@ create table app.package_version_dependencies(
     depends_on_package_id uuid not null references app.packages(id),
     depends_on_operator app.version_operator not null,
     depends_on_version app.semver not null,
-    created_at timestamp not null default (now() at time zone 'utc'),
+    created_at timestamptz not null default now(),
     unique(package_version_id, depends_on_package_id, depends_on_operator)
 );
 
