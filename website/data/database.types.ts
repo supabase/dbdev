@@ -39,31 +39,13 @@ export interface Database {
     Views: {
       accounts: {
         Row: {
-          avatar_id: string | null
+          avatar_path: string | null
           bio: string | null
           contact_email: string | null
           created_at: string | null
           display_name: string | null
           handle: string | null
           id: string | null
-        }
-        Insert: {
-          avatar_id?: string | null
-          bio?: string | null
-          contact_email?: string | null
-          created_at?: string | null
-          display_name?: string | null
-          handle?: string | null
-          id?: string | null
-        }
-        Update: {
-          avatar_id?: string | null
-          bio?: string | null
-          contact_email?: string | null
-          created_at?: string | null
-          display_name?: string | null
-          handle?: string | null
-          id?: string | null
         }
       }
       members: {
@@ -88,31 +70,13 @@ export interface Database {
       }
       organizations: {
         Row: {
-          avatar_id: string | null
+          avatar_path: string | null
           bio: string | null
           contact_email: string | null
           created_at: string | null
           display_name: string | null
           handle: string | null
           id: string | null
-        }
-        Insert: {
-          avatar_id?: string | null
-          bio?: string | null
-          contact_email?: string | null
-          created_at?: string | null
-          display_name?: string | null
-          handle?: string | null
-          id?: string | null
-        }
-        Update: {
-          avatar_id?: string | null
-          bio?: string | null
-          contact_email?: string | null
-          created_at?: string | null
-          display_name?: string | null
-          handle?: string | null
-          id?: string | null
         }
       }
       package_versions: {
@@ -147,7 +111,7 @@ export interface Database {
           avatar_id?: string
         }
         Returns: {
-          avatar_id: string | null
+          avatar_path: string | null
           bio: string | null
           contact_email: string | null
           created_at: string | null

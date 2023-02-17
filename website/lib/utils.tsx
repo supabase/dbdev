@@ -22,3 +22,11 @@ export function useParams(): Params {
     [query]
   )
 }
+
+export function firstStr(str: string | string[]) {
+  if (Array.isArray(str)) {
+    return str[0]
+  } else {
+    return str
+  }
+}

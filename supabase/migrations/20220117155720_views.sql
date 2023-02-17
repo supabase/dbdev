@@ -1,27 +1,31 @@
 create view public.accounts as
     select
-        id,
-        handle,
-        avatar_id,
-        display_name,
-        bio,
-        contact_email,
-        created_at
+        acc.id,
+        acc.handle,
+        obj.name as avatar_path,
+        acc.display_name,
+        acc.bio,
+        acc.contact_email,
+        acc.created_at
     from
-        app.accounts;
+        app.accounts acc
+        left join storage.objects obj
+            on acc.avatar_id = obj.id;
 
 
 create view public.organizations as
     select
         org.id,
         org.handle,
-        org.avatar_id,
+        obj.name as avatar_path,
         org.display_name,
         org.bio,
         org.contact_email,
         org.created_at
     from
-        app.organizations org;
+        app.organizations org
+        left join storage.objects obj
+            on org.avatar_id = obj.id;
 
 
 create view public.members as

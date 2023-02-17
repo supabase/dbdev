@@ -14,7 +14,7 @@ const IndexPage: NextPageWithLayout = () => {
 
         <Link
           href={{
-            pathname: '/content/[handle]',
+            pathname: '/profiles/[handle]',
             query: { handle: 'foo' },
           }}
           as="/@foo"

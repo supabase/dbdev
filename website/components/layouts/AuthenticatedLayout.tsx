@@ -1,14 +1,21 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { PropsWithChildren, useCallback } from 'react'
+import { PropsWithChildren, useCallback, useMemo } from 'react'
 import toast from 'react-hot-toast'
 import { useSignOutMutation } from '~/data/auth/sign-out-mutation'
 import { useUser, withAuth } from '~/lib/auth'
+import { getAvatarUrl } from '~/lib/avatars'
 import Avatar from '../users/Avatar'
 
 const AuthenticatedLayout = ({ children }: PropsWithChildren<{}>) => {
   const router = useRouter()
   const user = useUser()
+
+  const avatarUrl = useMemo(
+    () =>
+      user ? getAvatarUrl(user.user_metadata.avatar_path ?? null) : undefined,
+    [user]
+  )
 
   const { mutate: signOut } = useSignOutMutation()
   const handleSignOut = useCallback(() => {
@@ -32,10 +39,21 @@ const AuthenticatedLayout = ({ children }: PropsWithChildren<{}>) => {
           </div>
 
           <div className="flex items-center space-x-4">
-            <Link href="/account" className="inline-flex items-center">
+            <Link
+              href={{
+                pathname: '/profiles/[handle]/edit',
+                query: { handle: user?.user_metadata.handle },
+              }}
+              as={`/@${user?.user_metadata.handle}/edit`}
+              className="inline-flex items-center"
+            >
               <Avatar
-                name={user?.user_metadata.full_name}
-                avatarUrl={user?.user_metadata.avatar_url}
+                name={
+                  user?.user_metadata.display_name ??
+                  user?.user_metadata.handle ??
+                  'Current User'
+                }
+                avatarUrl={avatarUrl}
               />
               <span className="ml-2">
                 {user?.user_metadata.display_name ?? user?.email ?? 'Account'}

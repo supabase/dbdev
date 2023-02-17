@@ -4,6 +4,7 @@ import {
   ComponentType,
   createContext,
   PropsWithChildren,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -14,7 +15,7 @@ import { isNextPageWithLayout, NextPageWithLayout } from './types'
 
 /* Auth Context */
 
-export type AuthContext =
+export type AuthContext = { refreshSession: () => Promise<Session | null> } & (
   | {
       session: Session
       isLoading: false
@@ -27,10 +28,12 @@ export type AuthContext =
       session: null
       isLoading: false
     }
+)
 
 export const AuthContext = createContext<AuthContext>({
   session: null,
   isLoading: true,
+  refreshSession: () => Promise.resolve(null),
 })
 
 export type AuthProviderProps = {}
@@ -44,12 +47,18 @@ export const AuthProvider = ({
   useEffect(() => {
     let mounted = true
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session && mounted) {
-        setSession(session)
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        if (session && mounted) {
+          setSession(session)
+        }
+
         setIsLoading(false)
-      }
-    })
+      })
+      .catch(() => {
+        setIsLoading(false)
+      })
 
     return () => {
       mounted = false
@@ -67,13 +76,21 @@ export const AuthProvider = ({
     return subscription.unsubscribe
   }, [])
 
+  const refreshSession = useCallback(async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.refreshSession()
+
+    return session
+  }, [])
+
   const value = useMemo(() => {
     if (session) {
-      return { session, isLoading: false } as const
+      return { session, isLoading: false, refreshSession } as const
     }
 
-    return { session: null, isLoading: isLoading } as const
-  }, [session, isLoading])
+    return { session: null, isLoading: isLoading, refreshSession } as const
+  }, [session, isLoading, refreshSession])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
@@ -98,14 +115,14 @@ export function withAuth<T = {}>(
   Component: ComponentType<T> | NextPageWithLayout<T, T>
 ) {
   const WithAuth: ComponentType<T> = (props: any) => {
-    const router = useRouter()
+    const { push } = useRouter()
     const { session, isLoading } = useAuth()
 
     useEffect(() => {
       if (!isLoading && !session) {
-        router.push('/sign-in')
+        push('/sign-in')
       }
-    }, [session, isLoading, router])
+    }, [session, isLoading, push])
 
     return <Component {...props} />
   }

@@ -1,5 +1,5 @@
-insert into storage.buckets (id, name)
-values ('avatars', 'avatars');
+insert into storage.buckets ("id", "name", "public")
+values ('avatars', 'avatars', true);
 
 create table app.handle_registry(
     /*
@@ -99,3 +99,40 @@ create or replace function app.register_organization_creator_as_member()
 create or replace trigger on_app_organization_created
     after insert on app.organizations
     for each row execute procedure app.register_organization_creator_as_member();
+
+create or replace function app.update_avatar_id()
+    returns trigger
+    language plpgsql
+    security definer
+    as $$
+    declare
+        v_handle app.valid_name;
+        v_affected_account app.accounts := null;
+    begin
+        select (string_to_array(new.name, '/'::text))[1]::app.valid_name into v_handle;
+
+        update app.accounts
+        set avatar_id = new.id
+        where handle = v_handle
+        returning * into v_affected_account;
+
+        if not v_affected_account is null then
+            update auth.users u
+            set
+                "raw_user_meta_data" = u.raw_user_meta_data || jsonb_build_object(
+                    'avatar_path', new.name
+                )
+            where u.id = v_affected_account.id; 
+        else
+            update app.organizations
+            set avatar_id = new.id
+            where handle = v_handle;
+        end if;
+
+        return new;
+    end;
+    $$;
+
+create or replace trigger on_storage_object_created
+    after insert on storage.objects
+    for each row when(new.bucket_id = 'avatars') execute procedure app.update_avatar_id();

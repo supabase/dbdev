@@ -5,11 +5,11 @@ const nextConfig = {
     return [
       {
         source: '/@:handle',
-        destination: '/content/:handle',
+        destination: '/profiles/:handle',
       },
       {
         source: '/@:handle/:package',
-        destination: '/content/:handle/:package',
+        destination: '/profiles/:handle/:package',
       },
     ]
   },
