@@ -1,9 +1,12 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import DynamicLayout from '~/components/layouts/DynamicLayout'
+import { useUser } from '~/lib/auth'
 import { NextPageWithLayout } from '~/lib/types'
 
 const IndexPage: NextPageWithLayout = () => {
+  const user = useUser()
+
   return (
     <>
       <Head>

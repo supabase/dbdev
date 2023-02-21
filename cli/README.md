@@ -2,12 +2,12 @@
 
 The `dbdev` python CLI is a WIP reference implementation for the dbdev package index.
 
-
 ## Setup
 
 Requires:
 
 - Python 3.10
+
 ```sh
 $ brew install python@3.10
 ```
@@ -15,20 +15,24 @@ $ brew install python@3.10
 ### Installation
 
 Create and activate a virtual environment
+
 ```sh
 $ python3.10 -m venv venv
 ```
 
-Activate the virtual environmentt
+Activate the virtual environment
+
 ```
 $ source venv/bin/activate
 ```
 
 Install dbdev in the Environment
+
 ```
 cd cli/
 $ pip install -e .
 ```
+
 The `dbdev` command should now be available
 
 ## Usage
@@ -46,11 +50,12 @@ Options:
 
 Commands:
   get      Download a package version
-  publish  Upload a pacakge to the package index
+  publish  Upload a package to the package index
   sign-up  Create a user account
 ```
 
 ### sign-up
+
 ```
 $ dbdev sign-up --help
 
@@ -63,19 +68,21 @@ Options:
 ```
 
 ### publish
+
 ```
 $ dbdev publish --help
 
 Usage: dbdev publish [OPTIONS]
 
-  Upload a pacakge to the package index
+  Upload a package to the package index
 
 Options:
   --path PATH  [default: database.json]
   --help       Show this message and exit.
 ```
 
-### get 
+### get
+
 ```
 $ dbdev get --help
 
@@ -93,7 +100,8 @@ Options:
 
 ## Example
 
-Head over to [the example pacakge](/examples/math) for an end-to-end example 
+Head over to [the example package](/examples/math) for an end-to-end example
+
 - creating a user account
 - publishing a package
-- retreiving the pacakge
+- retrieving the package

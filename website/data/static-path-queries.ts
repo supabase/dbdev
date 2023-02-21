@@ -6,12 +6,14 @@ export async function getAllProfiles() {
       .from('organizations')
       .select('handle')
       .order('created_at', { ascending: false })
-      .limit(500),
+      .limit(500)
+      .returns<{ handle: string }[]>(),
     supabase
       .from('accounts')
       .select('handle')
       .order('created_at', { ascending: false })
-      .limit(500),
+      .limit(500)
+      .returns<{ handle: string }[]>(),
   ])
 
   return [...(organizations ?? []), ...(accounts ?? [])]
@@ -23,6 +25,7 @@ export async function getAllPackages() {
     .select('handle,partial_name')
     .order('created_at', { ascending: false })
     .limit(1000)
+    .returns<{ handle: string; partial_name: string }[]>()
 
   return data ?? []
 }

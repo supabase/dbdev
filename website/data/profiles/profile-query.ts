@@ -103,12 +103,17 @@ export const prefetchProfile = (
   )
 }
 
-export const useProfilePrefetch = ({ handle }: ProfileVariables) => {
+export const useProfilePrefetch = () => {
   const client = useQueryClient()
 
-  return useCallback(() => {
-    if (handle) {
-      prefetchProfile(client, { handle })
-    }
-  }, [client, handle])
+  return useCallback(
+    ({ handle }: ProfileVariables) => {
+      if (handle) {
+        return prefetchProfile(client, { handle })
+      }
+
+      return Promise.resolve()
+    },
+    [client]
+  )
 }
