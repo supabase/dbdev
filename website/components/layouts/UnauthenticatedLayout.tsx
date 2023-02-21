@@ -1,24 +1,12 @@
-import Link from 'next/link'
 import { PropsWithChildren } from 'react'
+import Navbar from './Navbar'
 
 const UnauthenticatedLayout = ({ children }: PropsWithChildren<{}>) => {
   return (
-    <div className="flex flex-col min-h-screen">
-      <header className="px-4 py-4 md:px-8">
-        <nav className="flex items-center justify-between">
-          <div>
-            <Link href="/">Home</Link>
-          </div>
+    <div className="flex flex-col h-full">
+      <Navbar />
 
-          <div className="flex items-center space-x-4">
-            <Link href="/sign-in">Sign In</Link>
-
-            <Link href="/sign-up">Sign Up</Link>
-          </div>
-        </nav>
-      </header>
-
-      <main className="flex flex-col flex-1 w-full max-w-3xl px-4 mx-auto">
+      <main className="flex flex-col flex-1 w-full max-w-3xl px-4 mx-auto mt-8">
         {children}
       </main>
 

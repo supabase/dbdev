@@ -1,17 +1,32 @@
-type AvatarProps = {
+import { cva, cx, VariantProps } from 'class-variance-authority'
+
+const avatar = cva('rounded-full', {
+  variants: {
+    size: {
+      small: 'w-6 h-6',
+      medium: 'w-10 h-10',
+    },
+  },
+  defaultVariants: {
+    size: 'medium',
+  },
+})
+
+type AvatarStyleProps = VariantProps<typeof avatar>
+
+type AvatarProps = AvatarStyleProps & {
   name?: string
   avatarUrl?: string
 }
 
-const Avatar = ({ name, avatarUrl }: AvatarProps) => {
+const Avatar = ({ name, avatarUrl, size }: AvatarProps) => {
   if (!avatarUrl) {
-    return <div className="w-6 h-6 bg-gray-100 rounded-full animate-pulse" />
+    return <div className={cx('bg-gray-100 animate-pulse', avatar({ size }))} />
   }
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
     <img
-      className="w-6 h-6 rounded-full"
+      className={avatar({ size })}
       alt={`Photo of ${name ?? 'Unknown'}`}
       src={avatarUrl}
     />

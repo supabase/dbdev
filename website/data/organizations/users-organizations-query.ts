@@ -12,7 +12,15 @@ export type UsersOrganizationsVariables = {
   userId?: string
 }
 
-export type UsersOrganizationsResponse = {}[]
+export type UsersOrganizationsResponse = {
+  id: string
+  created_at: string
+  handle: string
+  display_name: string
+  contact_email: string
+  bio: string | null
+  avatar_path: string | null
+}[]
 
 export async function getUsersOrganizations(
   { userId }: UsersOrganizationsVariables,
@@ -24,8 +32,9 @@ export async function getUsersOrganizations(
 
   let query = supabase
     .from('organizations')
-    .select('*,members!inner(*)')
+    .select('*,members!inner(account_id)')
     .eq('members.account_id', userId)
+    .order('created_at', { ascending: false })
 
   if (signal) {
     query = query.abortSignal(signal)
