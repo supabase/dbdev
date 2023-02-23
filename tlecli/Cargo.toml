@@ -1,0 +1,11 @@
+[package]
+name = "tlecli"
+version = "0.1.0"
+edition = "2021"
+author = "supabase"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = { version = "4.1.6", features = ["derive"] }
+sqlx = { version = "0.6.2", features = ["postgres", "chrono", "uuid", "runtime-async-std-native-tls"] }
