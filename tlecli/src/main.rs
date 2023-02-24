@@ -111,9 +111,27 @@ fn get_connection(rt: &Runtime, connection_str: &str) -> anyhow::Result<PgConnec
         .context("Failed to establish PostgreSQL connection")
 }
 
-struct ControlFile {
+struct ControlFileRef {
     filename: String,
     contents: String,
+}
+
+struct Metadata {
+    extension_name: String,
+    default_version: String,
+    comment: Option<String>,
+    requires: Option<Vec<String>>,
+}
+
+impl Metadata {
+    fn from_control_file_ref(control_file_ref: &ControlFileRef) -> anyhow::Result<Self> {
+        Ok(Self {
+            extension_name: control_file_ref.extension_name()?.clone(),
+            default_version: control_file_ref.default_version()?.clone(),
+            comment: control_file_ref.comment()?.clone(),
+            requires: control_file_ref.requires()?.clone(),
+        })
+    }
 }
 
 struct InstallFile {
@@ -130,19 +148,19 @@ struct UpgradeFile {
 }
 
 struct Payload {
-    extension_name: String,
-    comment: Option<String>,
+    metadata: Metadata,
     install_files: Vec<InstallFile>,
     upgrade_files: Vec<UpgradeFile>,
 }
 
 fn install(rt: &Runtime, payload: &Payload, mut conn: PgConnection) -> anyhow::Result<()> {
     for install_file in &payload.install_files {
-        let task = sqlx::query("select 1 from pgtle.install_extension($1, $2, $3, $4)")
-            .bind(&payload.extension_name)
+        let task = sqlx::query("select pgtle.install_extension($1, $2, $3, $4, $5)")
+            .bind(&payload.metadata.extension_name)
             .bind(&install_file.version)
-            .bind(&payload.comment)
+            .bind(&payload.metadata.comment)
             .bind(&install_file.body)
+            .bind(&payload.metadata.requires)
             .execute(&mut conn);
 
         rt.block_on(task).context(format!(
@@ -152,8 +170,8 @@ fn install(rt: &Runtime, payload: &Payload, mut conn: PgConnection) -> anyhow::R
     }
 
     for upgrade_file in &payload.upgrade_files {
-        let task = sqlx::query("select 1 from pgtle.install_update_path($1, $2, $3, $4)")
-            .bind(&payload.extension_name)
+        let task = sqlx::query("select pgtle.install_update_path($1, $2, $3, $4)")
+            .bind(&payload.metadata.extension_name)
             .bind(&upgrade_file.from_version)
             .bind(&upgrade_file.to_version)
             .bind(&upgrade_file.body)
@@ -164,6 +182,17 @@ fn install(rt: &Runtime, payload: &Payload, mut conn: PgConnection) -> anyhow::R
             upgrade_file.filename
         ))?;
     }
+
+    rt.block_on(
+        sqlx::query("select pgtle.set_default_version($1, $2)")
+            .bind(&payload.metadata.extension_name)
+            .bind(&payload.metadata.default_version)
+            .execute(&mut conn),
+    )
+    .context(format!(
+        "failed to set default version to {}",
+        &payload.metadata.default_version
+    ))?;
 
     Ok(())
 }
@@ -226,7 +255,7 @@ impl Payload {
         };
 
         // some_ext
-        let control_file = ControlFile::from_pathbuf(&control_file_path)?;
+        let control_file = ControlFileRef::from_pathbuf(&control_file_path)?;
 
         let extension_name = control_file.extension_name()?;
 
@@ -283,8 +312,7 @@ impl Payload {
         }
 
         let payload = Payload {
-            extension_name: extension_name.to_string(),
-            comment: control_file.comment()?,
+            metadata: Metadata::from_control_file_ref(&control_file)?,
             install_files,
             upgrade_files,
         };
@@ -292,7 +320,7 @@ impl Payload {
     }
 }
 
-impl ControlFile {
+impl ControlFileRef {
     fn from_pathbuf(path: &PathBuf) -> anyhow::Result<Self> {
         let control_file_name = path
             .file_name()
@@ -309,6 +337,7 @@ impl ControlFile {
         })
     }
 
+    // Name of the extension. Used in the `create extesnion <extension_name>`
     fn extension_name(&self) -> anyhow::Result<String> {
         self.filename
             .strip_suffix(".control")
@@ -316,6 +345,10 @@ impl ControlFile {
             .map(str::to_string)
     }
 
+    // A comment (any string) about the extension. The comment is applied when initially creating
+    // an extension, but not during extension updates (since that might override user-added
+    // comments). Alternatively, the extension's comment can be set by writing a COMMENT command
+    // in the script file.
     fn comment(&self) -> anyhow::Result<Option<String>> {
         for line in self.contents.lines() {
             if line.starts_with("comment") {
@@ -323,6 +356,33 @@ impl ControlFile {
             }
         }
         Ok(None)
+    }
+
+    // A list of names of extensions that this extension depends on, for example requires = 'foo,
+    // bar'. Those extensions must be installed before this one can be installed.
+    fn requires(&self) -> anyhow::Result<Option<Vec<String>>> {
+        for line in self.contents.lines() {
+            if line.starts_with("requires") {
+                let value = self.read_control_line_value(line)?;
+                let required_packages: Vec<String> = value
+                    .split(",")
+                    .collect::<Vec<&str>>()
+                    .iter()
+                    .map(|x| x.trim().to_string())
+                    .collect();
+                return Ok(Some(required_packages));
+            }
+        }
+        Ok(None)
+    }
+
+    fn default_version(&self) -> anyhow::Result<String> {
+        for line in self.contents.lines() {
+            if line.starts_with("default_version") {
+                return Ok(self.read_control_line_value(line)?);
+            }
+        }
+        Err(anyhow::anyhow!("default version is required"))
     }
 
     fn read_control_line_value(&self, line: &str) -> anyhow::Result<String> {
