@@ -1,14 +1,14 @@
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { useCallback, useMemo } from 'react'
+import { toast } from 'react-hot-toast'
+import Search from '~/components/search/Search'
+import { useSignOutMutation } from '~/data/auth/sign-out-mutation'
 import { useUsersOrganizationsQuery } from '~/data/organizations/users-organizations-query'
 import { useUser } from '~/lib/auth'
-import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
-import Link from 'next/link'
-import Avatar from '../../users/Avatar'
-import { useCallback, useMemo } from 'react'
 import { getAvatarUrl } from '~/lib/avatars'
-import { useSignOutMutation } from '~/data/auth/sign-out-mutation'
-import { toast } from 'react-hot-toast'
-import { useRouter } from 'next/router'
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import Avatar from '../../users/Avatar'
 
 const Navbar = () => {
   const router = useRouter()
@@ -55,24 +55,7 @@ const Navbar = () => {
         </div>
 
         <div className="flex-1 max-w-3xl">
-          <label htmlFor="search" className="sr-only">
-            Search Packages
-          </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <MagnifyingGlassIcon
-                className="w-5 h-5 text-gray-400"
-                aria-hidden="true"
-              />
-            </div>
-            <input
-              id="search"
-              name="search"
-              className="block w-full py-2.5 pl-10 pr-3 text-sm placeholder-gray-500 bg-white border border-gray-300 rounded-md focus:border-indigo-500 focus:text-gray-900 focus:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
-              placeholder="Search Packages"
-              type="search"
-            />
-          </div>
+          <Search />
         </div>
 
         <div className="flex items-center ml-4">

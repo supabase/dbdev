@@ -53,19 +53,19 @@ export interface Database {
           account_id: string | null
           created_at: string | null
           organization_id: string | null
-          role: 'maintainer' | null
+          role: "maintainer" | null
         }
         Insert: {
           account_id?: string | null
           created_at?: string | null
           organization_id?: string | null
-          role?: 'maintainer' | null
+          role?: "maintainer" | null
         }
         Update: {
           account_id?: string | null
           created_at?: string | null
           organization_id?: string | null
-          role?: 'maintainer' | null
+          role?: "maintainer" | null
         }
       }
       organizations: {
@@ -142,6 +142,19 @@ export interface Database {
           version: string | null
         }
       }
+      search_packages: {
+        Args: {
+          handle?: unknown
+          partial_name?: unknown
+        }
+        Returns: {
+          created_at: string | null
+          handle: string | null
+          id: string | null
+          package_name: string | null
+          partial_name: string | null
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
@@ -154,7 +167,10 @@ export interface Database {
     Tables: {
       buckets: {
         Row: {
+          allowed_mime_types: string[] | null
+          avif_autodetection: boolean | null
           created_at: string | null
+          file_size_limit: number | null
           id: string
           name: string
           owner: string | null
@@ -162,7 +178,10 @@ export interface Database {
           updated_at: string | null
         }
         Insert: {
+          allowed_mime_types?: string[] | null
+          avif_autodetection?: boolean | null
           created_at?: string | null
+          file_size_limit?: number | null
           id: string
           name: string
           owner?: string | null
@@ -170,7 +189,10 @@ export interface Database {
           updated_at?: string | null
         }
         Update: {
+          allowed_mime_types?: string[] | null
+          avif_autodetection?: boolean | null
           created_at?: string | null
+          file_size_limit?: number | null
           id?: string
           name?: string
           owner?: string | null

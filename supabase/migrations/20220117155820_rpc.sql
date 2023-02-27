@@ -87,3 +87,22 @@ as $$
                 hr.handle = $1
         )
 $$;
+
+create or replace function public.search_packages(
+    handle app.valid_name default null,
+    partial_name app.valid_name default null
+)
+    returns setof public.packages
+    stable
+    language sql
+as $$
+    select *
+    from public.packages
+    where
+        ($1 is null or handle <% $1)
+        and
+        ($2 is null or partial_name <% $2)
+    order by
+        coalesce(extensions.similarity($1, handle), 0) + coalesce(extensions.similarity($2, partial_name), 0) desc,
+        created_at desc;
+$$;

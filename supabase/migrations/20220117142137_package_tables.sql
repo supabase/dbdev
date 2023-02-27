@@ -7,6 +7,8 @@ create table app.packages(
     -- description in markdown?
     unique (handle, partial_name)
 );
+create index packages_partial_name_search_idx on app.packages using gin (partial_name extensions.gin_trgm_ops);
+create index packages_handle_search_idx on app.packages using gin (handle extensions.gin_trgm_ops);
 
 insert into storage.buckets (id, name)
 values ('package_versions', 'package_versions');

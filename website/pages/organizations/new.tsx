@@ -29,12 +29,12 @@ const NewOrganizationPage: NextPageWithLayout = () => {
   const [handle, setHandle] = useState('')
 
   const handleCreate = () => {
-    if (!user) return
+    if (!user?.email) return
 
     mutate({
       handle: handle,
       displayName: handle,
-      contactEmail: 'alaister@supabase.io',
+      contactEmail: user.email,
       userId: user.id,
     })
   }

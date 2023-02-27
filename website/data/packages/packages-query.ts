@@ -54,7 +54,7 @@ export const usePackagesQuery = <TData = PackagesData>(
   }: UseQueryOptions<PackagesData, PackagesError, TData> = {}
 ) =>
   useQuery<PackagesData, PackagesError, TData>(
-    ['packages', handle],
+    ['packages', { handle }],
     ({ signal }) => getPackages({ handle }, signal),
     {
       enabled: enabled && typeof handle !== 'undefined',
@@ -66,7 +66,7 @@ export const prefetchPackages = (
   client: QueryClient,
   { handle }: PackagesVariables
 ) => {
-  return client.prefetchQuery(['packages', handle], ({ signal }) =>
+  return client.prefetchQuery(['packages', { handle }], ({ signal }) =>
     getPackages({ handle }, signal)
   )
 }
