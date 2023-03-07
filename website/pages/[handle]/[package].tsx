@@ -1,6 +1,7 @@
 import { dehydrate, QueryClient } from '@tanstack/react-query'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import DynamicLayout from '~/components/layouts/DynamicLayout'
+import H1 from '~/components/ui/typography/H1'
 import {
   prefetchPackageVersions,
   usePackageVersionsQuery,
@@ -25,7 +26,7 @@ const PackagePage: NextPageWithLayout = () => {
 
   return (
     <div>
-      <h1>{isPkgSuccess && `@${pkg.package_name}`}</h1>
+      <H1>{isPkgSuccess && `${pkg.package_name}`}</H1>
 
       {isPkgVersionsSuccess &&
         pkgVersions.map((pkgVersion) => (

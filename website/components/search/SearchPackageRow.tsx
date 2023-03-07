@@ -11,15 +11,11 @@ const SearchPackageRow = ({
   partialName,
   createdAt,
 }: SearchPackageRowProps) => {
-  const name = `@${handle}/${partialName}`
+  const name = `${handle}/${partialName}`
 
   return (
     <Link
-      href={{
-        pathname: '/profiles/[handle]/[package]',
-        query: { handle, package: partialName },
-      }}
-      as={name}
+      href={`/${name}`}
       className="flex items-center justify-between px-4 py-4"
     >
       <span>{name}</span>

@@ -1,8 +1,9 @@
 import AuthenticatedLayout from '~/components/layouts/AuthenticatedLayout'
-import { NextPageWithLayout } from '~/lib/types'
-import supabase from '~/lib/supabase'
-import { useParams } from '~/lib/utils'
+import H1 from '~/components/ui/typography/H1'
 import { useAuth } from '~/lib/auth'
+import supabase from '~/lib/supabase'
+import { NextPageWithLayout } from '~/lib/types'
+import { useParams } from '~/lib/utils'
 
 const EditAccountPage: NextPageWithLayout = () => {
   const { handle } = useParams()
@@ -35,7 +36,7 @@ const EditAccountPage: NextPageWithLayout = () => {
 
   return (
     <div>
-      <h1>Edit Account</h1>
+      <H1>Edit Account</H1>
 
       <h2>Upload Profile</h2>
       <input type="file" onChange={uploadAvatar} />

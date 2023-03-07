@@ -1,5 +1,11 @@
+import { ClassValue, clsx } from 'clsx'
 import { useRouter } from 'next/router'
-import { useMemo, useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { twMerge } from 'tailwind-merge'
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
 
 type Params = {
   [k: string]: string | undefined

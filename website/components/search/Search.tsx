@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import { usePackagesSearchQuery } from '~/data/packages/packages-search-query'
 import { useDebounce } from '~/lib/utils'
-import Spinner from '../generic/Spinner'
+import Spinner from '../ui/Spinner'
 import SearchInput from './SearchInput'
 import SearchPackageRow from './SearchPackageRow'
 
@@ -83,8 +83,14 @@ const Search = () => {
                   ))}
                 </div>
               ) : (
-                <div className="flex items-center justify-center px-4 py-6">
-                  <p className="text-sm text-gray-500">No results found</p>
+                <div className="flex flex-col items-center justify-center gap-4 px-4 py-6 text-center">
+                  <p className="text-gray-600">No results found</p>
+                  <p className="text-sm text-gray-500">
+                    To search packages in an organization, try prefixing your
+                    query with an @ symbol.
+                    <br />
+                    For example @supabase to see packages from Supabase.
+                  </p>
                 </div>
               ))}
           </Dialog.Content>

@@ -1,5 +1,4 @@
 import Head from 'next/head'
-import Link from 'next/link'
 import DynamicLayout from '~/components/layouts/DynamicLayout'
 import { NextPageWithLayout } from '~/lib/types'
 

@@ -4,11 +4,11 @@ import { useRouter } from 'next/router'
 import { useCallback, useMemo } from 'react'
 import { toast } from 'react-hot-toast'
 import Search from '~/components/search/Search'
+import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/Avatar'
 import { useSignOutMutation } from '~/data/auth/sign-out-mutation'
 import { useUsersOrganizationsQuery } from '~/data/organizations/users-organizations-query'
 import { useUser } from '~/lib/auth'
 import { getAvatarUrl } from '~/lib/avatars'
-import Avatar from '../../users/Avatar'
 
 const Navbar = () => {
   const router = useRouter()
@@ -27,6 +27,16 @@ const Navbar = () => {
       user ? getAvatarUrl(user.user_metadata.avatar_path ?? null) : undefined,
     [user]
   )
+
+  const avatarName: string =
+    user?.user_metadata.display_name ??
+    user?.user_metadata.handle ??
+    'Current User'
+
+  const avatarFallback = avatarName
+    .split(' ')
+    .map((n) => n[0])
+    .join(' ')
 
   const { mutate: signOut } = useSignOutMutation()
   const handleSignOut = useCallback(() => {
@@ -62,14 +72,10 @@ const Navbar = () => {
           {user ? (
             <DropdownMenu.Root>
               <DropdownMenu.Trigger>
-                <Avatar
-                  name={
-                    user?.user_metadata.display_name ??
-                    user?.user_metadata.handle ??
-                    'Current User'
-                  }
-                  avatarUrl={avatarUrl}
-                />
+                <Avatar>
+                  <AvatarImage src={avatarUrl} alt={avatarName} />
+                  <AvatarFallback>{avatarFallback}</AvatarFallback>
+                </Avatar>
               </DropdownMenu.Trigger>
 
               <DropdownMenu.Portal>
@@ -80,22 +86,13 @@ const Navbar = () => {
                 >
                   <DropdownMenu.Item asChild>
                     <Link
-                      href={{
-                        pathname: '/profiles/[handle]/edit',
-                        query: { handle: user?.user_metadata.handle },
-                      }}
-                      as={`/@${user?.user_metadata.handle}/edit`}
+                      href={`/${user?.user_metadata.handle}/edit`}
                       className="flex items-center"
                     >
-                      <Avatar
-                        name={
-                          user?.user_metadata.display_name ??
-                          user?.user_metadata.handle ??
-                          'Current User'
-                        }
-                        avatarUrl={avatarUrl}
-                        size="small"
-                      />
+                      <Avatar size="sm">
+                        <AvatarImage src={avatarUrl} alt={avatarName} />
+                        <AvatarFallback>{avatarFallback}</AvatarFallback>
+                      </Avatar>
 
                       <span className="ml-2 text-lg">
                         {user?.user_metadata.display_name ??
@@ -115,14 +112,8 @@ const Navbar = () => {
                     {isOrganizationsSuccess &&
                       organizations.map((org) => (
                         <DropdownMenu.Item key={org.id} asChild>
-                          <Link
-                            href={{
-                              pathname: '/profiles/[handle]',
-                              query: { handle: org.handle },
-                            }}
-                            as={`/@${org.handle}`}
-                          >
-                            {org.display_name} (@{org.handle})
+                          <Link href={`/${org.handle}`}>
+                            {org.display_name} ({org.handle})
                           </Link>
                         </DropdownMenu.Item>
                       ))}

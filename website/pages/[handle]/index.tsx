@@ -2,6 +2,7 @@ import { dehydrate, QueryClient } from '@tanstack/react-query'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import Link from 'next/link'
 import DynamicLayout from '~/components/layouts/DynamicLayout'
+import H1 from '~/components/ui/typography/H1'
 import {
   prefetchPackages,
   usePackagesQuery,
@@ -22,7 +23,7 @@ const AccountPage: NextPageWithLayout = () => {
 
   return (
     <div>
-      <h1>hello {handle}</h1>
+      <H1>{profile?.display_name ?? handle}</H1>
 
       <img
         src={profile?.avatar_url ?? DEFAULT_AVATAR_SRC_URL}
@@ -32,14 +33,7 @@ const AccountPage: NextPageWithLayout = () => {
 
       {isPackagesSuccess &&
         packages.map((pkg) => (
-          <Link
-            key={pkg.id}
-            href={{
-              pathname: '/profiles/[handle]/[package]',
-              query: { handle: pkg.handle, package: pkg.partial_name },
-            }}
-            as={`/@${pkg.package_name}`}
-          >
+          <Link key={pkg.id} href={`/${pkg.handle}/${pkg.partial_name}`}>
             {pkg.partial_name} package
           </Link>
         ))}
