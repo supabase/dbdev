@@ -43,48 +43,4 @@ DBDEV_URL=http://localhost:54321
 DBDEV_ANON_KEY=<anon key from previous step>
 ```
 
-### Create a User Account
-
-We can create a new user account with the `dbdev sign-up` command. If `DBDEV_EMAIL` and `DBDEV_PASSWORD` are set in `.env` they will be used as your email address and password. If not, you will be prompted.
-
-Then we must choose a `handle`. Since handles are prefixed to pacakge names, you must use the handle `"example"` or update `database.json`'s `name` field with your choice.
-
-```
-$ dbdev sign-up
-
-Handle (ex: j_smith):   example
-Successfully created account example (example@domain.com)
-```
-
-
-### Publish the package
-
-Now that we have a user account that owns the handle `example` we can publish the package. If credentials are not provided in `.env` you will be prompted for an email address and password.
-
-```
-$ dbdev publish
-Successfully published pacakge example/math
-```
-
-### Retrieve the Package's Source Code from the Package Index
-
-```
-$ dbdev get example/math --version=0.0.1
-
-/*
-    package: example/math
-    version: 0.0.1
-*/
-create schema math if not exsits;
-
-create function math.add(int, int)
-    returns int
-    immutable
-    strict
-    language sql
-as $$
-    select $1 + $2
-$$;
-```
-
-If `version` is not provided, the highest version is used.
+<WORK-IN-PROGRESS>
