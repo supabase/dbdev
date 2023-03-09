@@ -10,7 +10,7 @@ export default function Index() {
       <div className="min-h-full">
         <Nav />
         <main>
-          
+
             <div className="grid grid-cols-1 items-start lg:grid-cols-3 divide-x">
               {/* Left column */}
               <div className="grid grid-cols-1 gap-4 lg:col-span-2 divide-y">
@@ -26,7 +26,7 @@ export default function Index() {
                 <FilterBar />
               </div>
             </div>
-            
+
         </main>
         <Footer />
       </div>
