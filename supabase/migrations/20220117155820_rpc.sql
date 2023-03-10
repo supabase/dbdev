@@ -52,8 +52,8 @@ begin
             package_id,
             app.text_to_semver(i_version),
             (
-                select 
-                    id 
+                select
+                    id
                 from
                     storage.objects
                 where

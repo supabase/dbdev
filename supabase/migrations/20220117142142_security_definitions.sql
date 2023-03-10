@@ -182,7 +182,7 @@ create policy storage_objects_insert_policy
     to authenticated
     with check (
         app.is_handle_maintainer(
-            auth.uid(), 
+            auth.uid(),
             (string_to_array(name, '/'::text))[1]::app.valid_name
         )
     );
