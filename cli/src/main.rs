@@ -48,13 +48,9 @@ enum Commands {
     },
 }
 
-fn main() -> anyhow::Result<()> {
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();
-
-    let runtime = tokio::runtime::Builder::new_current_thread()
-        .enable_all()
-        .build()
-        .unwrap();
 
     // You can check for the existence of subcommands, and if found use their
     // matches just as you would the top level cmd
@@ -63,8 +59,8 @@ fn main() -> anyhow::Result<()> {
             connection,
             package,
         } => {
-            let conn = util::get_connection(&runtime, &connection)?;
-            commands::uninstall::uninstall(&runtime, package, conn)?;
+            let conn = util::get_connection(&connection).await?;
+            commands::uninstall::uninstall(package, conn).await?;
             Ok(())
         }
 
@@ -75,8 +71,8 @@ fn main() -> anyhow::Result<()> {
         } => {
             if let Some(rel_or_abs_path) = path {
                 let payload = models::Payload::from_pathbuf(rel_or_abs_path)?;
-                let conn = util::get_connection(&runtime, &connection)?;
-                commands::install::install(&runtime, &payload, conn)?;
+                let conn = util::get_connection(&connection).await?;
+                commands::install::install(&payload, conn).await?;
                 Ok(())
             } else {
                 if let Some(package) = package {
