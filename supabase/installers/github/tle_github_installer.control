@@ -1,0 +1,3 @@
+comment = 'Github installer for TLE compatible extensions'
+default_version = '0.0.1'
+requires = http
