@@ -4,6 +4,7 @@ use clap::{Parser, Subcommand};
 use std::path::PathBuf;
 use tokio;
 
+mod client;
 mod commands;
 mod models;
 mod util;
@@ -46,6 +47,19 @@ enum Commands {
         /// Package name on database.new in form handle/package
         package: String,
     },
+
+    /// Signup for a dbdev account
+    Signup {
+        /// User handle
+        #[arg(long)]
+        handle: String,
+
+        #[arg(long)]
+        email: String,
+
+        #[arg(long)]
+        password: String,
+    },
 }
 
 #[tokio::main]
@@ -55,6 +69,15 @@ async fn main() -> anyhow::Result<()> {
     // You can check for the existence of subcommands, and if found use their
     // matches just as you would the top level cmd
     match &cli.command {
+        Commands::Signup {
+            handle,
+            email,
+            password,
+        } => {
+            let client = client::APIClient::new(API_BASE_URL, API_KEY);
+            commands::signup::signup(&client, email, password, handle).await?;
+            Ok(())
+        }
         Commands::Uninstall {
             connection,
             package,
@@ -86,3 +109,5 @@ async fn main() -> anyhow::Result<()> {
         }
     }
 }
+const API_BASE_URL: &str = "http://localhost:54321";
+const API_KEY: &str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0";
