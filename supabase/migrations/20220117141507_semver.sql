@@ -116,30 +116,3 @@ as $$
             else format('+%s', $1.build)
         end
 $$;
-
-
--- Implement app.max for app.semver type
-create function app.max_semver_s_func(left_ app.semver, right_ app.semver)
-    returns app.semver
-    language sql
-as $$
-    select
-        case
-            when left_ is null then right_
-            when right_ is null then left_
-            when left_ > right_ then left_
-            else right_
-        end;
-$$;
-
-
-create aggregate app.max (app.semver)
-(
-    sfunc = app.max_semver_s_func,
-    stype = app.semver
-);
-
-/*
-To completely conform to the semver spec we would also need to override
-< and >, but I expect it will significantly reduce performance during dependency resolution
-*/

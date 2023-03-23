@@ -1,18 +1,16 @@
---create view v0.accounts as
 create view public.accounts as
     select
-        id,
-        handle,
-        avatar_id,
-        display_name,
-        bio,
-        contact_email,
-        created_at
+        acc.id,
+        acc.handle,
+        acc.avatar_id,
+        acc.display_name,
+        acc.bio,
+        acc.contact_email,
+        acc.created_at
     from
-        app.accounts;
+        app.accounts acc;
 
 
---create view v0.organizations as
 create view public.organizations as
     select
         org.id,
@@ -26,7 +24,6 @@ create view public.organizations as
         app.organizations org;
 
 
---create view v0.members as
 create view public.members as
     select
         aio.organization_id,
@@ -37,38 +34,26 @@ create view public.members as
         app.members aio;
 
 
-
---create view v0.packages as
 create view public.packages as
     select
         pa.id,
-        app.to_package_name(pa.handle, pa.partial_name) as package_name,
+        pa.name,
         pa.handle,
         pa.partial_name,
         pa.created_at
     from
-        app.packages pa
-    group by
-        pa.id,
-        pa.handle,
-        pa.partial_name,
-        pa.created_at;
+        app.packages pa;
 
 
---create view v0.package_versions as
 create view public.package_versions as
     select
         pv.id,
-        app.to_package_name(pa.handle, pa.partial_name) as package_name,
-        app.semver_to_text(pv.semver) version,
         pv.package_id,
-        pv.object_id,
-        obj.name as object_key,
-        pv.upload_metadata,
+        pa.name as package_name,
+        pv.control_comment,
+        app.semver_to_text(pv.semver) version,
         pv.created_at
     from
         app.packages pa
         join app.package_versions pv
             on pa.id = pv.package_id
-        join storage.objects obj
-            on pv.object_id = obj.id;

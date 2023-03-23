@@ -24,12 +24,14 @@ $$;
 create function public.publish_package_version(
     body json,
     object_name varchar(128) -- storage.objects.name
+    -- source_object_name
+    -- description_object_name
 )
     returns public.package_versions
     language plpgsql
 as $$
 declare
-    i_name text = body ->> 'name'; -- supabase/math
+    i_name text = body ->> 'name'; -- supabase-math
     i_version text = body ->> 'version'; -- 0.1.3
 
     acc app.accounts = acc from app.accounts acc where id = auth.uid();

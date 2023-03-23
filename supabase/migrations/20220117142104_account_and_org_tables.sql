@@ -8,7 +8,7 @@ create table app.handle_registry(
     */
     handle app.valid_name primary key not null,
     is_organization boolean not null,
-    created_at timestamp not null default (now() at time zone 'utc'),
+    created_at timestamptz not null default now(),
     unique (handle, is_organization)
 );
 
@@ -21,7 +21,7 @@ create table app.accounts(
     display_name varchar(128),
     bio varchar(512),
     contact_email app.email_address,
-    created_at timestamp not null default (now() at time zone 'utc'),
+    created_at timestamptz not null default now(),
 
     constraint fk_handle_registry
         foreign key (handle, is_organization)
@@ -65,7 +65,7 @@ create table app.organizations(
     bio varchar(512),
     contact_email app.email_address,
     -- enforced so organization always have at least 1 admin member
-    created_at timestamp not null default (now() at time zone 'utc'),
+    created_at timestamptz not null default now(),
 
     constraint fk_handle_registry
         foreign key (handle, is_organization)
@@ -79,7 +79,7 @@ create table app.members(
     organization_id uuid not null references app.organizations(id),
     account_id uuid not null references app.accounts(id),
     role app.membership_role not null,
-    created_at timestamp not null default (now() at time zone 'utc'),
+    created_at timestamptz not null default now(),
     unique (organization_id, account_id)
 );
 

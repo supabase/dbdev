@@ -120,12 +120,8 @@ create policy packages_select_policy
 alter table app.package_versions enable row level security;
 
 grant insert
-    (package_id, semver, object_id, upload_metadata)
-    on app.package_versions
-    to authenticated;
-
-grant update
-    (yanked_at)
+    (package_id, semver, source_object_id, description_object_id, control_comment, control_encoding,
+     control_requires, control_relocatable)
     on app.package_versions
     to authenticated;
 
@@ -149,43 +145,6 @@ create policy package_versions_select_policy
     for select
     to authenticated
     using (true);
-
--- app.package_version_dependencies
-alter table app.package_version_dependencies enable row level security;
-
-grant insert
-    (package_version_id, depends_on_package_id, depends_on_operator, depends_on_version)
-    on app.package_version_dependencies
-    to authenticated;
-
-create policy package_version_dependencies_insert_policy
-    on app.package_version_dependencies
-    as permissive
-    for insert
-    to authenticated
-    with check (app.is_package_version_maintainer(auth.uid(), package_version_id) );
-
-create policy package_version_dependencies_select_policy
-    on app.package_version_dependencies
-    as permissive
-    for select
-    to authenticated
-    using (true);
-
--- storage.objects
-alter table app.package_version_dependencies enable row level security;
-
-create policy storage_objects_insert_policy
-    on storage.objects
-    as permissive
-    for insert
-    to authenticated
-    with check (
-        app.is_handle_maintainer(
-            auth.uid(),
-            (string_to_array(name, '/'::text))[1]::app.valid_name
-        )
-    );
 
 create policy storage_objects_select_policy
     on storage.objects
