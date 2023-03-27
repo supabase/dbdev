@@ -126,6 +126,9 @@ impl APIClient {
             files.push(file);
         }
 
+        // TODO: add upgrade pathes
+        // TODO: call the SQL RPC to finialize the package
+
         Ok(())
     }
 }
