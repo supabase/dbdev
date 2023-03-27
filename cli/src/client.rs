@@ -21,38 +21,18 @@ impl APIClient {
         }
     }
 
-    pub async fn is_handle_available(&self, handle: &str) -> anyhow::Result<bool> {
-        let mut args = HashMap::new();
-        args.insert("handle", handle);
-        let response = self
-            .api_client
-            .rpc("is_handle_available", serde_json::json!(args).to_string())
-            .execute()
-            .await
-            .context("Failed to check handle availability")?;
-
-        match response.status().into() {
-            200 => {
-                let data = response.text().await.context("Failed to get text")?;
-                let is_avail: bool = data.parse().context("failed to parse bool")?;
-                Ok(is_avail)
-            }
-            x => Err(anyhow::anyhow!("non-200 response {x}")),
-        }
-    }
-
     pub async fn create_user(
         &self,
         email: &str,
         password: &str,
         handle: &str,
-    ) -> anyhow::Result<serde_json::Value> {
+    ) -> anyhow::Result<SignupResponse> {
         let user = User {
             email: email.to_string(),
             password: password.to_string(),
-            data: [("handle".to_string(), handle.to_string())]
-                .into_iter()
-                .collect(),
+            data: UserMetadata {
+                handle: handle.to_string(),
+            },
         };
 
         let url = format!("{}/auth/v1/signup", self.base_url);
@@ -69,22 +49,33 @@ impl APIClient {
             return Err(anyhow::anyhow!(response.text().await?));
         }
 
-        //let resp = response.json::<SignupResponse>().await?;
-        let resp = response.json::<serde_json::Value>().await?;
-        //.context("failed to parse create user json response")?;
+        let resp = response.json::<SignupResponse>().await?;
         Ok(resp)
     }
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 struct User {
     email: String,
     password: String,
-    data: HashMap<String, String>,
+    data: UserMetadata,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct UserMetadata {
+    handle: String,
 }
 
 #[derive(Deserialize, Debug)]
 pub struct SignupResponse {
-    pub email: String,
     pub access_token: String,
+    pub refresh_token: String,
+    pub user: SignupResponseUser,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct SignupResponseUser {
+    pub email: String,
+    pub id: uuid::Uuid,
+    pub user_metadata: UserMetadata,
 }
