@@ -42,6 +42,8 @@ pub struct UpgradeFile {
 }
 
 pub struct Payload {
+    /// Absolute path to extension directory
+    pub abs_path: Option<PathBuf>,
     pub metadata: Metadata,
     pub install_files: Vec<InstallFile>,
     pub upgrade_files: Vec<UpgradeFile>,
@@ -64,7 +66,7 @@ impl Payload {
         let mut control_files = vec![];
         let mut sql_files = vec![];
 
-        for entry in fs::read_dir(abs_path).unwrap() {
+        for entry in fs::read_dir(&abs_path).unwrap() {
             match entry {
                 Ok(dir_entry) => {
                     let entry_path = dir_entry.path();
@@ -150,6 +152,7 @@ impl Payload {
         }
 
         let payload = Payload {
+            abs_path: Some(abs_path),
             metadata: Metadata::from_control_file_ref(&control_file)?,
             install_files,
             upgrade_files,

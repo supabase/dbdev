@@ -15,7 +15,7 @@ create table app.handle_registry(
 create table app.accounts(
     -- 1:1 with auth.users
     id uuid primary key references auth.users(id),
-    handle app.valid_name not null unique,
+    handle citext not null unique,
     is_organization boolean generated always as (false) stored,
     avatar_id uuid references storage.objects(id),
     display_name varchar(128),
@@ -58,7 +58,7 @@ create or replace trigger on_auth_user_created
 
 create table app.organizations(
     id uuid primary key default uuid_generate_v4(),
-    handle app.valid_name not null unique,
+    handle citext not null unique,
     is_organization boolean generated always as (true) stored,
     avatar_id uuid references storage.objects(id),
     display_name varchar(128),

@@ -1,7 +1,8 @@
 create table app.packages(
     id uuid primary key default uuid_generate_v4(),
-    partial_name app.valid_name not null, -- ex: math
-    handle app.valid_name not null references app.handle_registry(handle),
+    -- TODO set to app.valid_name
+    partial_name citext not null, -- ex: math
+    handle citext not null references app.handle_registry(handle),
     created_at timestamp not null default (now() at time zone 'utc'),
     -- website?
     -- description in markdown?
@@ -9,7 +10,8 @@ create table app.packages(
 );
 
 insert into storage.buckets (id, name)
-values ('package_versions', 'package_versions');
+values
+    ('package_versions', 'package_versions');
 
 create table app.package_versions(
     id uuid primary key default uuid_generate_v4(),

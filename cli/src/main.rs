@@ -60,11 +60,29 @@ enum Commands {
         #[arg(long)]
         password: String,
     },
+
+    /// Publish a package
+    Publish {
+        #[arg(long)]
+        handle: String,
+
+        #[arg(long)]
+        email: String,
+
+        #[arg(long)]
+        password: String,
+
+        /// From local directory
+        #[arg(long)]
+        path: PathBuf,
+    },
 }
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();
+
+    let client = client::APIClient::new(API_BASE_URL, API_KEY);
 
     // You can check for the existence of subcommands, and if found use their
     // matches just as you would the top level cmd
@@ -74,8 +92,18 @@ async fn main() -> anyhow::Result<()> {
             email,
             password,
         } => {
-            let client = client::APIClient::new(API_BASE_URL, API_KEY);
             commands::signup::signup(&client, email, password, handle).await?;
+            Ok(())
+        }
+
+        Commands::Publish {
+            handle,
+            email,
+            password,
+            path,
+        } => {
+            let payload = models::Payload::from_pathbuf(path)?;
+            commands::publish::publish(&client, &payload, email, password, handle).await?;
             Ok(())
         }
         Commands::Uninstall {

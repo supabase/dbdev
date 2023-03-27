@@ -1,5 +1,4 @@
 use crate::client;
-use anyhow::Context;
 
 pub async fn signup(
     client: &client::APIClient,
