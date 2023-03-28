@@ -20,6 +20,7 @@ create table app.packages(
     description_md varchar(250000),
     control_description varchar(1000),
     control_relocatable bool not null default false,
+    control_requires varchar(128)[] default '{}'::varchar(128)[],
     created_at timestamp not null default now(),
     unique (handle, partial_name)
 );
