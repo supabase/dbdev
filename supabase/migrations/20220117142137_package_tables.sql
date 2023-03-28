@@ -11,7 +11,8 @@ create table app.packages(
 
 insert into storage.buckets (id, name)
 values
-    ('package_versions', 'package_versions');
+    ('package_versions', 'package_versions'),
+    ('package_upgrades', 'package_upgrades');
 
 create table app.package_versions(
     id uuid primary key default uuid_generate_v4(),

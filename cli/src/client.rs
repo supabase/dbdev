@@ -123,6 +123,45 @@ impl APIClient {
                 return Err(anyhow::anyhow!(response.text().await?));
             }
 
+            println!(
+                "{:?}",
+                response.json::<serde_json::Value>().await?.to_string()
+            );
+
+            files.push(file);
+        }
+
+        for upgrade_file in &payload.upgrade_files {
+            let filepath = dirpath.join(&upgrade_file.filename);
+            let mut file = File::open(filepath).await?;
+            let mut file_buffer = Vec::new();
+            file.read_to_end(&mut file_buffer).await?;
+
+            let url = format!(
+                "{}/storage/v1/object/package_upgrades/{}-{}",
+                self.base_url, &handle, &upgrade_file.filename
+            );
+
+            println!("{}", url);
+
+            let response = self
+                .http_client
+                .post(&url)
+                .header("ContentType", "text/plain")
+                .header(
+                    "Authorization",
+                    &format!("Bearer {}", access_token.access_token),
+                )
+                .header("apiKey", &self.api_key)
+                .body(file_buffer)
+                .send()
+                .await
+                .context("failed to upload artifact")?;
+
+            if response.status() != 200 {
+                return Err(anyhow::anyhow!(response.text().await?));
+            }
+
             files.push(file);
         }
 

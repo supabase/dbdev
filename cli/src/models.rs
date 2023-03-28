@@ -41,6 +41,21 @@ pub struct UpgradeFile {
     pub body: String,
 }
 
+pub trait HasFilename {
+    fn filename(&self) -> String;
+}
+
+impl HasFilename for InstallFile {
+    fn filename(&self) -> String {
+        self.filename.clone()
+    }
+}
+impl HasFilename for UpgradeFile {
+    fn filename(&self) -> String {
+        self.filename.clone()
+    }
+}
+
 pub struct Payload {
     /// Absolute path to extension directory
     pub abs_path: Option<PathBuf>,

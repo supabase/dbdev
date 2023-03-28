@@ -22,24 +22,21 @@ end;
 $$;
 
 create function public.publish_package_version(
-    body json,
-    object_name varchar(128) -- storage.objects.name
+    handle app.valid_name,
+    package_partial_name app.valid_name,
+    version app.semver,
+    storage_object_name text -- storage.objects.name
 )
     returns public.package_versions
     language plpgsql
 as $$
 declare
-    i_name text = body ->> 'name'; -- supabase/math
-    i_version text = body ->> 'version'; -- 0.1.3
-
     acc app.accounts = acc from app.accounts acc where id = auth.uid();
-
-    package_handle app.valid_name = app.version_text_to_handle(i_name);
-    package_partial_name app.valid_name = app.version_text_to_package_partial_name(i_name);
     package_id uuid;
     package_version_id uuid;
 begin
     -- Upsert package
+    -- TODO add description or markdown object
     insert into app.packages(partial_name, handle)
         values (package_partial_name, package_handle)
         on conflict do nothing
@@ -57,7 +54,7 @@ begin
                 from
                     storage.objects
                 where
-                    name = object_name
+                    name = storage_object_name
                     and bucket_id = 'package_versions'
                 limit
                     1
