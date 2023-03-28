@@ -8,20 +8,20 @@ create table app.handle_registry(
     */
     handle app.valid_name primary key not null,
     is_organization boolean not null,
-    created_at timestamp not null default (now() at time zone 'utc'),
+    created_at timestamp not null default now(),
     unique (handle, is_organization)
 );
 
 create table app.accounts(
     -- 1:1 with auth.users
     id uuid primary key references auth.users(id),
-    handle citext not null unique,
+    handle app.valid_name not null unique,
     is_organization boolean generated always as (false) stored,
     avatar_id uuid references storage.objects(id),
     display_name varchar(128),
     bio varchar(512),
     contact_email app.email_address,
-    created_at timestamp not null default (now() at time zone 'utc'),
+    created_at timestamp not null default now(),
 
     constraint fk_handle_registry
         foreign key (handle, is_organization)
@@ -58,14 +58,14 @@ create or replace trigger on_auth_user_created
 
 create table app.organizations(
     id uuid primary key default uuid_generate_v4(),
-    handle citext not null unique,
+    handle app.valid_name not null unique,
     is_organization boolean generated always as (true) stored,
     avatar_id uuid references storage.objects(id),
     display_name varchar(128),
     bio varchar(512),
     contact_email app.email_address,
     -- enforced so organization always have at least 1 admin member
-    created_at timestamp not null default (now() at time zone 'utc'),
+    created_at timestamp not null default now(),
 
     constraint fk_handle_registry
         foreign key (handle, is_organization)
@@ -79,7 +79,7 @@ create table app.members(
     organization_id uuid not null references app.organizations(id),
     account_id uuid not null references app.accounts(id),
     role app.membership_role not null,
-    created_at timestamp not null default (now() at time zone 'utc'),
+    created_at timestamp not null default now(),
     unique (organization_id, account_id)
 );
 

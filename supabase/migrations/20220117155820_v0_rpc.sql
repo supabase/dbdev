@@ -5,7 +5,7 @@ create function public.create_organization(
     contact_email citext = null,
     avatar_id uuid = null
 )
-    returns public.accounts
+    returns public.organizations
     language plpgsql
 as $$
 begin
@@ -24,8 +24,9 @@ $$;
 create function public.publish_package_version(
     handle app.valid_name,
     package_partial_name app.valid_name,
-    version app.semver,
-    storage_object_name text -- storage.objects.name
+    version text,
+    description_md text,
+    sql text
 )
     returns public.package_versions
     language plpgsql
@@ -37,29 +38,70 @@ declare
 begin
     -- Upsert package
     -- TODO add description or markdown object
-    insert into app.packages(partial_name, handle)
+    insert into app.packages(partial_name, handle, description_md)
         values (package_partial_name, package_handle)
-        on conflict do nothing
+        on conflict do update
+        set description_md = excluded.description_md
         returning id
         into package_id;
 
     -- Insert package_version
-    insert into app.package_versions(package_id, semver, object_id, upload_metadata)
+    insert into app.package_versions(package_id, version_struct, sql)
         values (
             package_id,
-            app.text_to_semver(i_version),
-            (
-                select
-                    id
-                from
-                    storage.objects
-                where
-                    name = storage_object_name
-                    and bucket_id = 'package_versions'
-                limit
-                    1
-            ),
-            body
+            app.text_to_semver(version),
+            sql
+        )
+        returning id
+        into package_version_id;
+
+    -- Return the package version
+    return pv from public.package_versions pv where pv.id = package_version_id;
+end;
+$$;
+
+create function public.publish_package_upgrade(
+    handle app.valid_name,
+    package_partial_name app.valid_name,
+    from_version text,
+    to_version text,
+    sql text
+)
+    returns public.package_versions
+    language plpgsql
+as $$
+declare
+    acc app.accounts = acc from app.accounts acc where id = auth.uid();
+    package_id uuid;
+    package_version_id uuid;
+begin
+    select
+        ap.id
+    from
+        app.packages ap
+    where
+        ap.handle = $1
+        and ap.partial_name = $2
+    into
+        package_id;
+
+    if package_id is null then
+        perform app.exception('Unknown package' || handle || '-' || package_partial_name);
+    end if;
+
+    insert into app.packages(partial_name, handle, description_md)
+        values (package_partial_name, package_handle)
+        on conflict do update
+        set description_md = excluded.description_md
+        returning id
+        into package_id;
+
+    -- Insert package_version
+    insert into app.package_versions(package_id, version_struct, sql)
+        values (
+            package_id,
+            app.text_to_semver(version),
+            sql
         )
         returning id
         into package_version_id;

@@ -1,5 +1,6 @@
---create view v0.accounts as
-create view public.accounts as
+create view public.accounts
+    with (security_invoker=true)
+    as
     select
         id,
         handle,
@@ -11,9 +12,9 @@ create view public.accounts as
     from
         app.accounts;
 
-
---create view v0.organizations as
-create view public.organizations as
+create view public.organizations
+    with (security_invoker=true)
+    as
     select
         org.id,
         org.handle,
@@ -25,9 +26,9 @@ create view public.organizations as
     from
         app.organizations org;
 
-
---create view v0.members as
-create view public.members as
+create view public.members
+    with (security_invoker=true)
+    as
     select
         aio.organization_id,
         aio.account_id,
@@ -36,39 +37,45 @@ create view public.members as
     from
         app.members aio;
 
-
-
---create view v0.packages as
-create view public.packages as
+create view public.packages
+    with (security_invoker=true)
+    as
     select
         pa.id,
-        app.to_package_name(pa.handle, pa.partial_name) as package_name,
+        pa.package_name,
         pa.handle,
         pa.partial_name,
         pa.created_at
     from
-        app.packages pa
-    group by
-        pa.id,
-        pa.handle,
-        pa.partial_name,
-        pa.created_at;
+        app.packages pa;
 
-
---create view v0.package_versions as
-create view public.package_versions as
+create view public.package_versions
+    with (security_invoker=true)
+    as
     select
         pv.id,
-        app.to_package_name(pa.handle, pa.partial_name) as package_name,
-        app.semver_to_text(pv.semver) version,
         pv.package_id,
-        pv.object_id,
-        obj.name as object_key,
-        pv.upload_metadata,
+        pa.package_name,
+        pv.version,
+        pv.sql,
         pv.created_at
     from
         app.packages pa
         join app.package_versions pv
-            on pa.id = pv.package_id
-        join storage.objects obj
-            on pv.object_id = obj.id;
+            on pa.id = pv.package_id;
+
+create view public.package_upgrades
+    with (security_invoker=true)
+    as
+    select
+        pu.id,
+        pu.package_id,
+        pa.package_name,
+        pu.from_version,
+        pu.to_version,
+        pu.sql,
+        pu.created_at
+    from
+        app.packages pa
+        join app.package_upgrades pu
+            on pa.id = pu.package_id;

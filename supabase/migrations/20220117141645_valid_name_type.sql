@@ -7,7 +7,6 @@ create domain app.valid_name
         value ~ '^[A-z][A-z0-9\_]{2,14}$'
 );
 
-/*
 create or replace function app.exception(message text)
     returns text
         language plpgsql
@@ -17,6 +16,7 @@ create or replace function app.exception(message text)
         end;
         $$;
 
+/*
 create domain app.valid_name
     as extensions.citext
     check (
