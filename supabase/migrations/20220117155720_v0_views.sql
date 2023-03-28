@@ -1,5 +1,4 @@
 create view public.accounts
-    with (security_invoker=true)
     as
     select
         id,
@@ -13,7 +12,6 @@ create view public.accounts
         app.accounts;
 
 create view public.organizations
-    with (security_invoker=true)
     as
     select
         org.id,
@@ -27,7 +25,6 @@ create view public.organizations
         app.organizations org;
 
 create view public.members
-    with (security_invoker=true)
     as
     select
         aio.organization_id,
@@ -38,7 +35,6 @@ create view public.members
         app.members aio;
 
 create view public.packages
-    with (security_invoker=true)
     as
     select
         pa.id,
@@ -50,7 +46,6 @@ create view public.packages
         app.packages pa;
 
 create view public.package_versions
-    with (security_invoker=true)
     as
     select
         pv.id,
@@ -65,7 +60,6 @@ create view public.package_versions
             on pa.id = pv.package_id;
 
 create view public.package_upgrades
-    with (security_invoker=true)
     as
     select
         pu.id,
