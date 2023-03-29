@@ -5,11 +5,13 @@ CLI tooling for creating, publishing, and installing [TLE](https://github.com/aw
 Note that this tooling is primarily intended for package authors. There is a WIP TLE package that will be pre-installed in the database (or installed via this CLI) that will be the main way end-users fetch packages into their database. For example:
 
 Once the `dbdev` TLE is installed
+
 ```sql
 select dbdev.install('math', '0.0.1');
 ```
 
 Where the `dbdev` CLI functions as a backup solution for installing packages when requirements for the `dbdev` TLE are not met (no [pgsql-http](https://github.com/pramsey/pgsql-http))
+
 ```
 dbdev install --connection 'postgresql://...' --package 'math' --version '0.0.1'
 ```
@@ -17,11 +19,13 @@ dbdev install --connection 'postgresql://...' --package 'math' --version '0.0.1'
 ## Objective Statements
 
 As a package author, I want to:
+
 - install extensions from a local directory into a database
 - sign up for an account with a package index
 - publish extensions to a package index
 
 As an end user, I want to:
+
 - install the TLE that enables remotely installing packages from the dbdev package index
 - install extensions from a package index into a database (a backup solution the dbdev TLE is not available in the database)
 - uninstall extensions from a database

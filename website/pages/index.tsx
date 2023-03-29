@@ -1,41 +1,23 @@
-import Nav from "./components/Nav";
-import Hero from "./components/Hero";
-import Filters from "./components/Filters";
-import Footer from "./components/Footer";
-import PackageList from "./components/PackageList";
+import Head from 'next/head'
+import DynamicLayout from '~/components/layouts/DynamicLayout'
+import { NextPageWithLayout } from '~/lib/types'
 
-export default function Index() {
+const IndexPage: NextPageWithLayout = () => {
   return (
     <>
-      <div className="min-h-full">
-        <Nav />
-        <main>
+      <Head>
+        <title>Home | The Database Package Manager</title>
+      </Head>
 
-            <div className="grid grid-cols-1 items-start lg:grid-cols-3 divide-x">
-              {/* Left column */}
-              <div className="grid grid-cols-1 gap-4 lg:col-span-2 divide-y">
-                <section>
-                  <Hero />
-                </section>
-                <section>
-                  <PackageList />
-                </section>
-              </div>
-              {/* Right column */}
-              <div className="grid grid-cols-1 gap-4 ">
-                <FilterBar />
-              </div>
-            </div>
-
-        </main>
-        <Footer />
+      <div className="flex items-center justify-center flex-1">
+        <h1 className="text-2xl font-extrabold -translate-y-10 sm:text-4xl md:text-7xl lg:text-9xl">
+          The Database Package Manager
+        </h1>
       </div>
     </>
-  );
+  )
 }
 
-const FilterBar = () => (
-  <section>
-      <Filters />
-  </section>
-);
+IndexPage.getLayout = (page) => <DynamicLayout>{page}</DynamicLayout>
+
+export default IndexPage
