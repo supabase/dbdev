@@ -1,5 +1,5 @@
-insert into storage.buckets (id, name)
-values ('avatars', 'avatars');
+insert into storage.buckets ("id", "name", "public")
+values ('avatars', 'avatars', true);
 
 create table app.handle_registry(
     /*
@@ -8,7 +8,7 @@ create table app.handle_registry(
     */
     handle app.valid_name primary key not null,
     is_organization boolean not null,
-    created_at timestamp not null default now(),
+    created_at timestamptz not null default now(),
     unique (handle, is_organization)
 );
 
@@ -18,10 +18,10 @@ create table app.accounts(
     handle app.valid_name not null unique,
     is_organization boolean generated always as (false) stored,
     avatar_id uuid references storage.objects(id),
-    display_name varchar(128),
-    bio varchar(512),
+    display_name text check (length(display_name) <= 128),
+    bio text check (length(bio) <= 512),
     contact_email app.email_address,
-    created_at timestamp not null default now(),
+    created_at timestamptz not null default now(),
 
     constraint fk_handle_registry
         foreign key (handle, is_organization)
@@ -61,11 +61,11 @@ create table app.organizations(
     handle app.valid_name not null unique,
     is_organization boolean generated always as (true) stored,
     avatar_id uuid references storage.objects(id),
-    display_name varchar(128),
-    bio varchar(512),
+    display_name text check (length(display_name) <= 128),
+    bio text check (length(bio) <= 512),
     contact_email app.email_address,
     -- enforced so organization always have at least 1 admin member
-    created_at timestamp not null default now(),
+    created_at timestamptz not null default now(),
 
     constraint fk_handle_registry
         foreign key (handle, is_organization)
@@ -79,7 +79,7 @@ create table app.members(
     organization_id uuid not null references app.organizations(id),
     account_id uuid not null references app.accounts(id),
     role app.membership_role not null,
-    created_at timestamp not null default now(),
+    created_at timestamptz not null default now(),
     unique (organization_id, account_id)
 );
 
@@ -99,3 +99,40 @@ create or replace function app.register_organization_creator_as_member()
 create or replace trigger on_app_organization_created
     after insert on app.organizations
     for each row execute procedure app.register_organization_creator_as_member();
+
+create or replace function app.update_avatar_id()
+    returns trigger
+    language plpgsql
+    security definer
+    as $$
+    declare
+        v_handle app.valid_name;
+        v_affected_account app.accounts := null;
+    begin
+        select (string_to_array(new.name, '-'::text))[1]::app.valid_name into v_handle;
+
+        update app.accounts
+        set avatar_id = new.id
+        where handle = v_handle
+        returning * into v_affected_account;
+
+        if not v_affected_account is null then
+            update auth.users u
+            set
+                "raw_user_meta_data" = u.raw_user_meta_data || jsonb_build_object(
+                    'avatar_path', new.name
+                )
+            where u.id = v_affected_account.id;
+        else
+            update app.organizations
+            set avatar_id = new.id
+            where handle = v_handle;
+        end if;
+
+        return new;
+    end;
+    $$;
+
+create or replace trigger on_storage_object_created
+    after insert on storage.objects
+    for each row when(new.bucket_id = 'avatars') execute procedure app.update_avatar_id();

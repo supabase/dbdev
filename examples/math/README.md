@@ -2,12 +2,11 @@
 
 dbdev/math is a sample library intended for testing the `dbdev` CLI.
 
-
 We will walk through:
 
 - creating a user account
 - publishing a package
-- retreiving the pacakge
+- retrieving the package
 
 ### Setup
 
@@ -26,7 +25,6 @@ service_role key: ...
 ```
 
 next, copy the `anon key` into the local `.env` file under the `DBDEV_ANON_KEY` key.
-
 
 Now we're ready to use the `dbdev` CLI.
 
