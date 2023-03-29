@@ -18,14 +18,14 @@ asciiplot is a toy library for producing ASCII scatterplots for queries in Postg
 -- Enable dbdev
 create extension dbdev;
 
--- Fetch the supabase-statistics package from the package index
-dbdev.install('@supabase-asciiplot');
+-- Fetch the package from the package index
+dbdev.install('olirice-asciiplot');
 
 -- Create the extension
 create schema plot;
-create extension "@olirice-asciiplot"
+create extension "olirice-asciiplot"
     schema 'plot'
-    version '0.0.1';
+    version '0.0.2';
 ```
 
 ### Usage
@@ -53,7 +53,7 @@ values (
 (select id from app.packages where package_name = 'olirice-asciiplot'),
 (0,0,1),
 $asciiplot$
-CREATE TYPE plot.scatter_state AS (
+CREATE TYPE scatter_state AS (
   x_arr NUMERIC[],
   y_arr NUMERIC[],
   title TEXT,
@@ -63,10 +63,8 @@ CREATE TYPE plot.scatter_state AS (
   width INTEGER
 );
 
---drop function plot.scatter_sfunc
-
-CREATE OR REPLACE FUNCTION plot.scatter_sfunc(
-  state plot.scatter_state,
+CREATE OR REPLACE FUNCTION scatter_sfunc(
+  state scatter_state,
   x numeric,
   y numeric,
   title TEXT,
@@ -75,7 +73,7 @@ CREATE OR REPLACE FUNCTION plot.scatter_sfunc(
   height INTEGER,
   width INTEGER
 )
-RETURNS plot.scatter_state
+RETURNS scatter_state
 LANGUAGE plpgsql
 AS $$
 BEGIN
@@ -91,8 +89,8 @@ END;
 $$;
 
 
-CREATE OR REPLACE FUNCTION plot.scatter_internal(
-  state plot.scatter_state
+CREATE OR REPLACE FUNCTION scatter_internal(
+  state scatter_state
 )
 RETURNS TEXT
 LANGUAGE plpgsql
@@ -132,7 +130,7 @@ end;
 $$;
 
 
-CREATE AGGREGATE plot.scatter(
+CREATE AGGREGATE scatter(
   x NUMERIC,
   y NUMERIC,
   title TEXT,
@@ -141,9 +139,23 @@ CREATE AGGREGATE plot.scatter(
   height INTEGER,
   width INTEGER
 ) (
-  STYPE = plot.scatter_state,
-  SFUNC = plot.scatter_sfunc,
-  FINALFUNC = plot.scatter_internal
+  STYPE = scatter_state,
+  SFUNC = scatter_sfunc,
+  FINALFUNC = scatter_internal
 );
+
+comment on type scatter_state is e'internal';
+
+$asciiplot$
+);
+
+
+insert into app.package_upgrades(package_id, from_version_struct, to_version_struct, sql)
+values (
+(select id from app.packages where package_name = 'olirice-asciiplot'),
+(0,0,1),
+(0,0,2),
+$asciiplot$
+comment on type scatter_state is e'internal';
 $asciiplot$
 );

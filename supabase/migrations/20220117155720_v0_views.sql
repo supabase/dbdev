@@ -41,6 +41,8 @@ create view public.packages
         pa.package_name,
         pa.handle,
         pa.partial_name,
+        pa.control_description,
+        pa.control_requires,
         pa.created_at
     from
         app.packages pa;
@@ -53,6 +55,8 @@ create view public.package_versions
         pa.package_name,
         pv.version,
         pv.sql,
+        pa.control_description,
+        pa.control_requires,
         pv.created_at
     from
         app.packages pa

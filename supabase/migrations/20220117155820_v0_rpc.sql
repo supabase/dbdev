@@ -1,3 +1,4 @@
+/*
 create function public.create_organization(
     handle app.valid_name,
     display_name text = null,
@@ -126,3 +127,4 @@ as $$
                 hr.handle = $1
         )
 $$;
+*/
