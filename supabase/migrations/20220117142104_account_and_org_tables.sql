@@ -109,7 +109,7 @@ create or replace function app.update_avatar_id()
         v_handle app.valid_name;
         v_affected_account app.accounts := null;
     begin
-        select (string_to_array(new.name, '/'::text))[1]::app.valid_name into v_handle;
+        select (string_to_array(new.name, '-'::text))[1]::app.valid_name into v_handle;
 
         update app.accounts
         set avatar_id = new.id
@@ -122,7 +122,7 @@ create or replace function app.update_avatar_id()
                 "raw_user_meta_data" = u.raw_user_meta_data || jsonb_build_object(
                     'avatar_path', new.name
                 )
-            where u.id = v_affected_account.id; 
+            where u.id = v_affected_account.id;
         else
             update app.organizations
             set avatar_id = new.id

@@ -4,6 +4,7 @@ use clap::{Parser, Subcommand};
 use std::path::PathBuf;
 use tokio;
 
+mod client;
 mod commands;
 mod models;
 mod util;
@@ -46,25 +47,71 @@ enum Commands {
         /// Package name on database.new in form handle/package
         package: String,
     },
+
+    /// Signup for a dbdev account
+    Signup {
+        /// User handle
+        #[arg(long)]
+        handle: String,
+
+        #[arg(long)]
+        email: String,
+
+        #[arg(long)]
+        password: String,
+    },
+
+    /// Publish a package
+    Publish {
+        #[arg(long)]
+        handle: String,
+
+        #[arg(long)]
+        email: String,
+
+        #[arg(long)]
+        password: String,
+
+        /// From local directory
+        #[arg(long)]
+        path: PathBuf,
+    },
 }
 
-fn main() -> anyhow::Result<()> {
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();
 
-    let runtime = tokio::runtime::Builder::new_current_thread()
-        .enable_all()
-        .build()
-        .unwrap();
+    let client = client::APIClient::new(API_BASE_URL, API_KEY);
 
     // You can check for the existence of subcommands, and if found use their
     // matches just as you would the top level cmd
     match &cli.command {
+        Commands::Signup {
+            handle,
+            email,
+            password,
+        } => {
+            commands::signup::signup(&client, email, password, handle).await?;
+            Ok(())
+        }
+
+        Commands::Publish {
+            handle,
+            email,
+            password,
+            path,
+        } => {
+            let payload = models::Payload::from_pathbuf(path)?;
+            commands::publish::publish(&client, &payload, email, password, handle).await?;
+            Ok(())
+        }
         Commands::Uninstall {
             connection,
             package,
         } => {
-            let conn = util::get_connection(&runtime, &connection)?;
-            commands::uninstall::uninstall(&runtime, package, conn)?;
+            let conn = util::get_connection(&connection).await?;
+            commands::uninstall::uninstall(package, conn).await?;
             Ok(())
         }
 
@@ -75,8 +122,8 @@ fn main() -> anyhow::Result<()> {
         } => {
             if let Some(rel_or_abs_path) = path {
                 let payload = models::Payload::from_pathbuf(rel_or_abs_path)?;
-                let conn = util::get_connection(&runtime, &connection)?;
-                commands::install::install(&runtime, &payload, conn)?;
+                let conn = util::get_connection(&connection).await?;
+                commands::install::install(&payload, conn).await?;
                 Ok(())
             } else {
                 if let Some(package) = package {
@@ -90,3 +137,5 @@ fn main() -> anyhow::Result<()> {
         }
     }
 }
+const API_BASE_URL: &str = "http://localhost:54321";
+const API_KEY: &str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0";

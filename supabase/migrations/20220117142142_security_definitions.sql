@@ -27,7 +27,6 @@ create policy accounts_select_policy
     to authenticated
     using (true);
 
-
 -- app.organizations
 alter table app.organizations enable row level security;
 
@@ -98,7 +97,11 @@ create policy members_select_policy
 -- app.packages
 alter table app.packages enable row level security;
 
-grant insert (partial_name, handle)
+grant insert (partial_name, handle, description_md)
+    on app.packages
+    to authenticated;
+
+grant update (description_md)
     on app.packages
     to authenticated;
 
@@ -120,12 +123,7 @@ create policy packages_select_policy
 alter table app.package_versions enable row level security;
 
 grant insert
-    (package_id, semver, object_id, upload_metadata)
-    on app.package_versions
-    to authenticated;
-
-grant update
-    (yanked_at)
+    (package_id, version_struct, sql)
     on app.package_versions
     to authenticated;
 
@@ -147,33 +145,39 @@ create policy package_versions_select_policy
     on app.package_versions
     as permissive
     for select
-    to authenticated
+    to public
     using (true);
 
--- app.package_version_dependencies
-alter table app.package_version_dependencies enable row level security;
+-- app.package_upgrades
+alter table app.package_upgrades enable row level security;
 
 grant insert
-    (package_version_id, depends_on_package_id, depends_on_operator, depends_on_version)
-    on app.package_version_dependencies
+    (package_id, from_version_struct, to_version_struct, sql)
+    on app.package_upgrades
     to authenticated;
 
-create policy package_version_dependencies_insert_policy
-    on app.package_version_dependencies
+create policy package_upgrades_insert_policy
+    on app.package_upgrades
     as permissive
     for insert
     to authenticated
-    with check (app.is_package_version_maintainer(auth.uid(), package_version_id) );
+    with check ( app.is_package_maintainer(auth.uid(), package_id) );
 
-create policy package_version_dependencies_select_policy
-    on app.package_version_dependencies
+create policy package_upgrades_update_policy
+    on app.package_upgrades
+    as permissive
+    for update
+    to authenticated
+    using ( app.is_package_maintainer(auth.uid(), package_id) );
+
+create policy package_upgrades_select_policy
+    on app.package_upgrades
     as permissive
     for select
-    to authenticated
+    to public
     using (true);
 
 -- storage.objects
-alter table app.package_version_dependencies enable row level security;
 
 create policy storage_objects_insert_policy
     on storage.objects
@@ -183,7 +187,7 @@ create policy storage_objects_insert_policy
     with check (
         app.is_handle_maintainer(
             auth.uid(),
-            (string_to_array(name, '/'::text))[1]::app.valid_name
+            (string_to_array(name, '-'::text))[1]::app.valid_name
         )
     );
 
@@ -192,4 +196,4 @@ create policy storage_objects_select_policy
     as permissive
     for select
     to public -- all roles
-    using (bucket_id in ('package_versions', 'avatars'));
+    using (bucket_id = 'avatars');

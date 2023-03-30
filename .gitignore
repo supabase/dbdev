@@ -2,6 +2,7 @@
 **/supabase/.branches
 **/supabase/.temp
 **/supabase/.env
+cli/seed.sh
 *.swp
 venv
 .env

@@ -12,7 +12,6 @@ create view public.accounts as
         left join storage.objects obj
             on acc.avatar_id = obj.id;
 
-
 create view public.organizations as
     select
         org.id,
@@ -27,7 +26,6 @@ create view public.organizations as
         left join storage.objects obj
             on org.avatar_id = obj.id;
 
-
 create view public.members as
     select
         aio.organization_id,
@@ -37,36 +35,44 @@ create view public.members as
     from
         app.members aio;
 
-
 create view public.packages as
     select
         pa.id,
-        app.to_package_name(pa.handle, pa.partial_name) as package_name,
+        pa.package_name,
         pa.handle,
         pa.partial_name,
+        pa.control_description,
+        pa.control_requires,
         pa.created_at
     from
-        app.packages pa
-    group by
-        pa.id,
-        pa.handle,
-        pa.partial_name,
-        pa.created_at;
-
+        app.packages pa;
 
 create view public.package_versions as
     select
         pv.id,
-        app.to_package_name(pa.handle, pa.partial_name) as package_name,
-        app.semver_to_text(pv.semver) version,
         pv.package_id,
-        pv.object_id,
-        obj.name as object_key,
-        pv.upload_metadata,
+        pa.package_name,
+        pv.version,
+        pv.sql,
+        pa.control_description,
+        pa.control_requires,
         pv.created_at
     from
         app.packages pa
         join app.package_versions pv
-            on pa.id = pv.package_id
-        join storage.objects obj
-            on pv.object_id = obj.id;
+            on pa.id = pv.package_id;
+
+create view public.package_upgrades
+    as
+    select
+        pu.id,
+        pu.package_id,
+        pa.package_name,
+        pu.from_version,
+        pu.to_version,
+        pu.sql,
+        pu.created_at
+    from
+        app.packages pa
+        join app.package_upgrades pu
+            on pa.id = pu.package_id;
