@@ -37,8 +37,6 @@ select
     val::numeric, --x
     val::numeric, -- y
     'stonks!', -- title
-    'time', --x_label
-    'value', -- y_label
     15, -- height
     50 --width
   )
@@ -57,8 +55,6 @@ CREATE TYPE scatter_state AS (
   x_arr NUMERIC[],
   y_arr NUMERIC[],
   title TEXT,
-  x_label TEXT,
-  y_label TEXT,
   height INTEGER,
   width INTEGER
 );
@@ -68,8 +64,6 @@ CREATE OR REPLACE FUNCTION scatter_sfunc(
   x numeric,
   y numeric,
   title TEXT,
-  x_label TEXT,
-  y_label TEXT,
   height INTEGER,
   width INTEGER
 )
@@ -80,8 +74,6 @@ BEGIN
   state.x_arr := array_append(coalesce(state.x_arr, array[]::numeric[]), x);
   state.y_arr := array_append(coalesce(state.y_arr, array[]::numeric[]), y);
   state.title := coalesce(state.title, title);
-  state.x_label := coalesce(state.x_label, x_label);
-  state.y_label := coalesce(state.y_label, y_label);
   state.height := coalesce(state.height, height);
   state.width := coalesce(state.width, width);
   RETURN state;
@@ -108,10 +100,11 @@ DECLARE
   y_range numeric := abs(max_y - min_y);
 
   x_scale numeric := x_range / (state.width);
-  y_scale numeric := y_range / (state.height);
+  y_scale numeric := y_range / (state.height - 2);
   point_idx int;
+  header text;
 begin
-  for i in 1..state.height loop
+  for i in 1..(state.height - 2) loop
     plot := array_append(plot, repeat(' ', state.width));
   end loop;
 
@@ -122,8 +115,15 @@ begin
     plot[i] := overlay(plot[i] placing '*' from j for 1);
   end loop;
 
+  header = (
+    repeat(' ', (state.width - character_length(state.title)) / 2)
+    || state.title
+    || repeat(' ', (state.width - character_length(state.title)) / 2)
+  );
+  header = header || E'\n' || repeat('-', state.width) || E'\n';
+
   return
-          string_agg(v_elem, E'\n'  order by ix desc)
+        header || string_agg(v_elem, E'\n'  order by ix desc)
     from
         unnest(plot) with ordinality v_arr(v_elem, ix);
 end;
@@ -134,8 +134,6 @@ CREATE AGGREGATE scatter(
   x NUMERIC,
   y NUMERIC,
   title TEXT,
-  x_label TEXT,
-  y_label TEXT,
   height INTEGER,
   width INTEGER
 ) (
