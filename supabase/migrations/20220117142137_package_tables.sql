@@ -16,7 +16,6 @@ create table app.packages(
     package_name text not null generated always as (app.to_package_name(handle, partial_name)) stored,
     handle app.valid_name not null references app.handle_registry(handle),
     partial_name app.valid_name not null, -- ex: math
-    description_md varchar(250000),
     control_description varchar(1000),
     control_relocatable bool not null default false,
     control_requires varchar(128)[] default '{}'::varchar(128)[],
@@ -32,6 +31,7 @@ create table app.package_versions(
     version_struct app.semver not null,
     version text not null generated always as (app.semver_to_text(version_struct)) stored,
     sql varchar(250000),
+    description_md varchar(250000),
     created_at timestamptz not null default now(),
     unique(package_id, version_struct)
 );
