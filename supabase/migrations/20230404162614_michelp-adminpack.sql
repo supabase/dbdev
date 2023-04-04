@@ -3,14 +3,11 @@ insert into app.packages(
     partial_name,
     control_description,
     control_relocatable,
-    control_requires,
-    description_md
+    control_requires
 )
-values ('michelp', 'adminpack', 'A bunch of useful queries for DBA to manage and inspect databases', false, '{}',
-$adminpack$
-$adminpack$);
+values ('michelp', 'adminpack', 'A bunch of useful queries for DBA to manage and inspect databases', false, '{}');
 
-insert into app.package_versions(package_id, version_struct, sql)
+insert into app.package_versions(package_id, version_struct, sql, description_md)
 values (
 (select id from app.packages where package_name = 'michelp-adminpack'),
 (0,0,1),
@@ -1060,5 +1057,11 @@ FROM
   JOIN pg_namespace n ON n.oid = c.relnamespace
 WHERE
   c.relkind = 'v';
-$adminpack$
+$adminpack$,
+
+$description_md$
+# michelp-adminpack
+
+A collection of helper views for views to assist with database administration
+$description_md$
 );
