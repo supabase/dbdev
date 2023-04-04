@@ -3,82 +3,18 @@ insert into app.packages(
     partial_name,
     control_description,
     control_relocatable,
-    control_requires,
-    description_md
+    control_requires
 )
 values (
     'olirice',
     'index_advisor',
     'PostgreSQL functions that read PostgREST headers for adding functionality to your database',
     true,
-    '{hypopg}',
-$description_md$
-
-# Index Advisor
-
-A PostgreSQL extension for recommending indexes to improve query performance.
-
-Features:
-- Supports generic parameters e.g. `$1`, `$2`
-- Supports materialized views
-- Identifies tables/columns obfuscaed by views
-
-
-```sql
-select
-    *
-from
-    index_advisor('
-        select
-            book.id,
-            book.title,
-            publisher.name as publisher_name,
-            author.name as author_name,
-            review.body review_body
-        from
-            book
-            join publisher
-                on book.publisher_id = publisher.id
-            join author
-                on book.author_id = author.id
-            join review
-                on book.id = review.book_id
-        where
-            author.id = $1
-            and publisher.id = $2
-    ');
-
- startup_cost_before | startup_cost_after | total_cost_before | total_cost_after |                  index_statements
----------------------+--------------------+-------------------+------------------+----------------------------------------------------------
- 27.26               | 12.77              | 68.48             | 42.37            | {"CREATE INDEX ON public.book USING btree (author_id)",
-                                                                                    "CREATE INDEX ON public.book USING btree (publisher_id)",
-                                                                                    "CREATE INDEX ON public.review USING btree (book_id)"}
-(1 row)
-```
-
-## API
-
-```sql
-index_advisor(query text)
-returns
-    table  (
-        startup_cost_before jsonb,
-        startup_cost_after jsonb,
-        total_cost_before jsonb,
-        total_cost_after jsonb,
-        index_statements text[]
-    )
-```
-
-#### Description
-For a given *query*, searches for a set of SQL DDL `create index` statements that improve the query's execution time;
-
-$description_md$
+    '{hypopg}'
 );
 
 
-
-insert into app.package_versions(package_id, version_struct, sql)
+insert into app.package_versions(package_id, version_struct, sql, description_md)
 values (
 (select id from app.packages where package_name = 'olirice-index_advisor'),
 (0,1,0),
@@ -248,5 +184,69 @@ begin
 end;
 $$;
 
-$pkg$
+$pkg$,
+
+$description_md$
+
+# Index Advisor
+
+A PostgreSQL extension for recommending indexes to improve query performance.
+
+Features:
+- Supports generic parameters e.g. `$1`, `$2`
+- Supports materialized views
+- Identifies tables/columns obfuscaed by views
+
+
+```sql
+select
+    *
+from
+    index_advisor('
+        select
+            book.id,
+            book.title,
+            publisher.name as publisher_name,
+            author.name as author_name,
+            review.body review_body
+        from
+            book
+            join publisher
+                on book.publisher_id = publisher.id
+            join author
+                on book.author_id = author.id
+            join review
+                on book.id = review.book_id
+        where
+            author.id = $1
+            and publisher.id = $2
+    ');
+
+ startup_cost_before | startup_cost_after | total_cost_before | total_cost_after |                  index_statements
+---------------------+--------------------+-------------------+------------------+----------------------------------------------------------
+ 27.26               | 12.77              | 68.48             | 42.37            | {"CREATE INDEX ON public.book USING btree (author_id)",
+                                                                                    "CREATE INDEX ON public.book USING btree (publisher_id)",
+                                                                                    "CREATE INDEX ON public.review USING btree (book_id)"}
+(1 row)
+```
+
+## API
+
+```sql
+index_advisor(query text)
+returns
+    table  (
+        startup_cost_before jsonb,
+        startup_cost_after jsonb,
+        total_cost_before jsonb,
+        total_cost_after jsonb,
+        index_statements text[]
+    )
+```
+
+#### Description
+For a given *query*, searches for a set of SQL DDL `create index` statements that improve the query's execution time;
+
+$description_md$
+
 );
