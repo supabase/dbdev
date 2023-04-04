@@ -3,17 +3,13 @@ insert into app.packages(
     partial_name,
     control_description,
     control_relocatable,
-    control_requires,
-    description_md
+    control_requires
 )
-values ('supabase', 'dbdev', 'Install pacakges from the dbdev package index', false, '{}',
-$pkg$
-## dbdev
-$pkg$
-);
+values ('supabase', 'dbdev', 'Install pacakges from the dbdev package index', false, '{}');
 
 
-insert into app.package_versions(package_id, version_struct, sql)
+
+insert into app.package_versions(package_id, version_struct, sql, description_md)
 values (
 (select id from app.packages where package_name = 'supabase-dbdev'),
 (0,0,1),
@@ -150,5 +146,10 @@ begin
 end;
 $$;
 
-$pkg$
+$pkg$,
+
+$description$
+## dbdev
+$description$
+
 );

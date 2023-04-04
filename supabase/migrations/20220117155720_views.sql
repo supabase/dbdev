@@ -41,11 +41,20 @@ create view public.packages as
         pa.package_name,
         pa.handle,
         pa.partial_name,
+        newest_ver.version as latest_version,
+        newest_ver.description_md,
         pa.control_description,
         pa.control_requires,
         pa.created_at
     from
-        app.packages pa;
+        app.packages pa,
+        lateral (
+            select *
+            from app.package_versions pv
+            where pv.package_id = pa.id
+            order by pv.version_struct
+            limit 1
+        ) newest_ver;
 
 create view public.package_versions as
     select
@@ -54,6 +63,7 @@ create view public.package_versions as
         pa.package_name,
         pv.version,
         pv.sql,
+        pv.description_md,
         pa.control_description,
         pa.control_requires,
         pv.created_at

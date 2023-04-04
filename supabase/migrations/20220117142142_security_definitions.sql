@@ -97,11 +97,7 @@ create policy members_select_policy
 -- app.packages
 alter table app.packages enable row level security;
 
-grant insert (partial_name, handle, description_md)
-    on app.packages
-    to authenticated;
-
-grant update (description_md)
+grant insert (partial_name, handle)
     on app.packages
     to authenticated;
 
@@ -123,7 +119,7 @@ create policy packages_select_policy
 alter table app.package_versions enable row level security;
 
 grant insert
-    (package_id, version_struct, sql)
+    (package_id, version_struct, sql, description_md)
     on app.package_versions
     to authenticated;
 
