@@ -49,7 +49,8 @@ create table app.downloads(
     created_at timestamptz not null default now()
 );
 
-create index downloads_package_id
+-- Speed up metrics query
+create index downloads_package_id_ip
   on app.downloads (package_id);
 
 create index downloads_created_at
@@ -67,3 +68,26 @@ $$
   from app.packages ap
   where ap.package_name = $1
 $$;
+
+
+-- Public facing download metrics view. For website only. Not a stable part of dbdev API
+create materialized view public.download_metrics
+as
+  select
+    dl.package_id,
+    count(dl.id) downloads_all_time,
+    count(dl.id) filter (where dl.created_at > now() - '180 days'::interval) downloads_180_days,
+    count(dl.id) filter (where dl.created_at > now() - '90 days'::interval) downloads_90_days,
+    count(dl.id) filter (where dl.created_at > now() - '30 days'::interval) downloads_30_day
+  from
+    app.downloads dl
+  group by
+      dl.package_id;
+
+
+-- High frequency refresh for debugging
+select cron.schedule(
+  'refresh download metrics',
+  '*/30 * * * *',
+  'refresh materialized view public.download_metrics;'
+);
