@@ -57,7 +57,7 @@ create or replace trigger on_auth_user_created
     for each row execute procedure app.register_account();
 
 create table app.organizations(
-    id uuid primary key default uuid_generate_v4(),
+    id uuid primary key default gen_random_uuid(),
     handle app.valid_name not null unique,
     is_organization boolean generated always as (true) stored,
     avatar_id uuid references storage.objects(id),

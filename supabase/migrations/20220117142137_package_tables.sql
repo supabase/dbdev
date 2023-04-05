@@ -12,7 +12,7 @@ as $$
 $$;
 
 create table app.packages(
-    id uuid primary key default uuid_generate_v4(),
+    id uuid primary key default gen_random_uuid(),
     package_name text not null generated always as (app.to_package_name(handle, partial_name)) stored,
     handle app.valid_name not null references app.handle_registry(handle),
     partial_name app.valid_name not null, -- ex: math
