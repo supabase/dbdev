@@ -151,6 +151,29 @@ begin
         end if;
     end loop;
 
+    --------------------------
+    -- Send Download Notice --
+    --------------------------
+    -- Notifies dbdev that a package has been downloaded and records IP + user agent so we can compute unique download counts
+    execute  $stmt$select row_to_json(x)
+    from $stmt$ || pg_catalog.quote_ident(http_ext_schema::text) || $stmt$.http(
+        (
+            'POST',
+            format(
+                '%srpc/register_download',
+                $stmt$ || pg_catalog.quote_literal(base_url) || $stmt$
+            ),
+            array[
+                ('apiKey', $stmt$ || pg_catalog.quote_literal(apikey) || $stmt$)::http_header,
+                ('x-client-info', 'dbdev/0.0.2')::http_header
+            ],
+            'application/json',
+            json_build_object('package_name', $stmt$ || pg_catalog.quote_literal($1) || $stmt$)::text
+        )
+    ) x
+    limit 1; $stmt$
+    into rec;
+
     return true;
 end;
 $$;
