@@ -1,4 +1,0 @@
-# math extension
-comment = 'Math functions'
-default_version = '0.0.1'
-relocatable = false
