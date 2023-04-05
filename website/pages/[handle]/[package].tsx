@@ -1,7 +1,10 @@
 import { dehydrate, QueryClient } from '@tanstack/react-query'
 import { GetStaticPaths, GetStaticProps } from 'next'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import DynamicLayout from '~/components/layouts/DynamicLayout'
 import H1 from '~/components/ui/typography/H1'
+import H2 from '~/components/ui/typography/H2'
 import {
   prefetchPackageVersions,
   usePackageVersionsQuery,
@@ -25,15 +28,32 @@ const PackagePage: NextPageWithLayout = () => {
     })
 
   return (
-    <div>
-      <H1>{isPkgSuccess && `${pkg.package_name}`}</H1>
+    <div className="flex flex-col gap-8 mb-16">
+      {isPkgSuccess && (
+        <div className="flex flex-col gap-8">
+          <H1>{pkg.package_name}</H1>
 
-      {isPkgVersionsSuccess &&
-        pkgVersions.map((pkgVersion) => (
-          <div key={pkgVersion.id}>
-            <h2>{pkgVersion.version}</h2>
+          <div className="prose max-w-none">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {pkg.description_md}
+            </ReactMarkdown>
           </div>
-        ))}
+        </div>
+      )}
+
+      {isPkgVersionsSuccess && (
+        <div className="flex flex-col gap-2">
+          <H2>Versions</H2>
+
+          <div className="flex flex-col gap-1">
+            {pkgVersions.map((pkgVersion) => (
+              <div key={pkgVersion.id}>
+                <h2>{pkgVersion.version}</h2>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

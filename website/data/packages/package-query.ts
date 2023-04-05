@@ -7,6 +7,8 @@ import {
 } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import supabase from '~/lib/supabase'
+import { NonNullableObject } from '~/lib/types'
+import { Database } from '../database.types'
 import { NotFoundError } from '../utils'
 
 export type PackageVariables = {
@@ -14,13 +16,9 @@ export type PackageVariables = {
   partialName?: string
 }
 
-export type PackageResponse = {
-  id: string
-  handle: string
-  created_at: string
-  package_name: string
-  partial_name: string
-}
+export type PackageResponse = NonNullableObject<
+  Database['public']['Views']['packages']['Row']
+>
 
 export async function getPackage(
   { handle, partialName }: PackageVariables,

@@ -7,22 +7,17 @@ import {
 } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import supabase from '~/lib/supabase'
+import { NonNullableObject } from '~/lib/types'
+import { Database } from '../database.types'
 
 export type PackageVersionsVariables = {
   handle?: string
   partialName?: string
 }
 
-export type PackageVersionsResponse = {
-  id: string
-  created_at: string
-  package_id: string
-  package_name: string
-  version: string
-  object_id: string
-  object_key: string
-  upload_metadata: { [key: string]: any }
-}[]
+export type PackageVersionsResponse = NonNullableObject<
+  Database['public']['Views']['package_versions']['Row']
+>[]
 
 export async function getPackageVersions(
   { handle, partialName }: PackageVersionsVariables,
@@ -38,7 +33,8 @@ export async function getPackageVersions(
   let query = supabase
     .from('package_versions')
     .select('*')
-    .eq('package_name', `${handle}/${partialName}`)
+    .eq('package_name', `${handle}-${partialName}`)
+    .order('created_at', { ascending: false })
 
   if (signal) {
     query = query.abortSignal(signal)

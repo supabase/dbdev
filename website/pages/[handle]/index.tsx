@@ -3,6 +3,7 @@ import { GetStaticPaths, GetStaticProps } from 'next'
 import Link from 'next/link'
 import DynamicLayout from '~/components/layouts/DynamicLayout'
 import H1 from '~/components/ui/typography/H1'
+import H2 from '~/components/ui/typography/H2'
 import {
   prefetchPackages,
   usePackagesQuery,
@@ -22,21 +23,28 @@ const AccountPage: NextPageWithLayout = () => {
   })
 
   return (
-    <div>
+    <div className="flex flex-col gap-8 mb-16">
       <H1>{profile?.display_name ?? handle}</H1>
 
-      <img
-        src={profile?.avatar_url ?? DEFAULT_AVATAR_SRC_URL}
-        alt={`${profile?.display_name || handle}'s avatar`}
-        className="rounded-full"
-      />
+      <div>
+        <img
+          src={profile?.avatar_url ?? DEFAULT_AVATAR_SRC_URL}
+          alt={`${profile?.display_name || handle}'s avatar`}
+          className="rounded-full"
+        />
+      </div>
 
-      {isPackagesSuccess &&
-        packages.map((pkg) => (
-          <Link key={pkg.id} href={`/${pkg.handle}/${pkg.partial_name}`}>
-            {pkg.partial_name} package
-          </Link>
-        ))}
+      {isPackagesSuccess && (
+        <div className="flex flex-col gap-2">
+          <H2>Packages</H2>
+
+          {packages.map((pkg) => (
+            <Link key={pkg.id} href={`/${pkg.handle}/${pkg.partial_name}`}>
+              {pkg.partial_name} package
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

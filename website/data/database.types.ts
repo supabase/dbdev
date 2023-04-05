@@ -53,19 +53,19 @@ export interface Database {
           account_id: string | null
           created_at: string | null
           organization_id: string | null
-          role: "maintainer" | null
+          role: 'maintainer' | null
         }
         Insert: {
           account_id?: string | null
           created_at?: string | null
           organization_id?: string | null
-          role?: "maintainer" | null
+          role?: 'maintainer' | null
         }
         Update: {
           account_id?: string | null
           created_at?: string | null
           organization_id?: string | null
-          role?: "maintainer" | null
+          role?: 'maintainer' | null
         }
       }
       organizations: {
@@ -79,78 +79,58 @@ export interface Database {
           id: string | null
         }
       }
-      package_versions: {
+      package_upgrades: {
         Row: {
           created_at: string | null
+          from_version: string | null
           id: string | null
-          object_id: string | null
-          object_key: string | null
           package_id: string | null
           package_name: string | null
-          upload_metadata: Json | null
+          sql: string | null
+          to_version: string | null
+        }
+      }
+      package_versions: {
+        Row: {
+          control_description: string | null
+          control_requires: string[] | null
+          created_at: string | null
+          description_md: string | null
+          id: string | null
+          package_id: string | null
+          package_name: string | null
+          sql: string | null
           version: string | null
         }
       }
       packages: {
         Row: {
+          control_description: string | null
+          control_requires: string[] | null
           created_at: string | null
+          description_md: string | null
           handle: string | null
           id: string | null
+          latest_version: string | null
           package_name: string | null
           partial_name: string | null
         }
       }
     }
     Functions: {
-      create_organization: {
-        Args: {
-          handle: unknown
-          display_name?: string
-          bio?: string
-          contact_email?: string
-          avatar_id?: string
-        }
-        Returns: {
-          avatar_path: string | null
-          bio: string | null
-          contact_email: string | null
-          created_at: string | null
-          display_name: string | null
-          handle: string | null
-          id: string | null
-        }
-      }
-      is_handle_available: {
-        Args: {
-          handle: unknown
-        }
-        Returns: boolean
-      }
-      publish_package_version: {
-        Args: {
-          body: Json
-          object_name: string
-        }
-        Returns: {
-          created_at: string | null
-          id: string | null
-          object_id: string | null
-          object_key: string | null
-          package_id: string | null
-          package_name: string | null
-          upload_metadata: Json | null
-          version: string | null
-        }
-      }
       search_packages: {
         Args: {
           handle?: unknown
           partial_name?: unknown
         }
         Returns: {
+          control_description: string | null
+          control_requires: string[] | null
           created_at: string | null
+          description_md: string | null
           handle: string | null
           id: string | null
+          latest_version: string | null
           package_name: string | null
           partial_name: string | null
         }[]

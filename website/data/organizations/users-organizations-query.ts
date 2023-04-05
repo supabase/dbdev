@@ -7,20 +7,16 @@ import {
 } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import supabase from '~/lib/supabase'
+import { NonNullableObject } from '~/lib/types'
+import { Database } from '../database.types'
 
 export type UsersOrganizationsVariables = {
   userId?: string
 }
 
-export type UsersOrganizationsResponse = {
-  id: string
-  created_at: string
-  handle: string
-  display_name: string
-  contact_email: string
-  bio: string | null
-  avatar_path: string | null
-}[]
+export type UsersOrganizationsResponse = NonNullableObject<
+  Database['public']['Views']['organizations']['Row']
+>[]
 
 export async function getUsersOrganizations(
   { userId }: UsersOrganizationsVariables,

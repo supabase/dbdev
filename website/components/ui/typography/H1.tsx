@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef, ElementRef, forwardRef } from 'react'
+import { ComponentPropsWithoutRef, forwardRef } from 'react'
 import { cn } from '~/lib/utils'
 
 export interface H1Props extends ComponentPropsWithoutRef<'h1'> {}
