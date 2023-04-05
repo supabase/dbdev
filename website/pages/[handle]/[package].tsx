@@ -33,11 +33,13 @@ const PackagePage: NextPageWithLayout = () => {
         <div className="flex flex-col gap-8">
           <H1>{pkg.package_name}</H1>
 
-          <div className="prose max-w-none">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {pkg.description_md}
-            </ReactMarkdown>
-          </div>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            linkTarget="_blank"
+            className="prose max-w-none"
+          >
+            {pkg.description_md}
+          </ReactMarkdown>
         </div>
       )}
 
