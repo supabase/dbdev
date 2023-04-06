@@ -32,6 +32,7 @@
     "react-final-form": "^6.5.9",
     "react-hot-toast": "^2.4.0",
     "react-markdown": "^8.0.6",
+    "rehype-highlight": "^6.0.0",
     "remark-gfm": "^3.0.1",
     "tailwind-merge": "^1.10.0",
     "tailwindcss-animate": "^1.0.5",

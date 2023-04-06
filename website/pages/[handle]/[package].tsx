@@ -1,8 +1,7 @@
 import { dehydrate, QueryClient } from '@tanstack/react-query'
 import { GetStaticPaths, GetStaticProps } from 'next'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
 import DynamicLayout from '~/components/layouts/DynamicLayout'
+import Markdown from '~/components/ui/Markdown'
 import H1 from '~/components/ui/typography/H1'
 import H2 from '~/components/ui/typography/H2'
 import {
@@ -33,13 +32,7 @@ const PackagePage: NextPageWithLayout = () => {
         <div className="flex flex-col gap-8">
           <H1>{pkg.package_name}</H1>
 
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            linkTarget="_blank"
-            className="prose max-w-none"
-          >
-            {pkg.description_md}
-          </ReactMarkdown>
+          <Markdown>{pkg.description_md}</Markdown>
         </div>
       )}
 
