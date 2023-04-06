@@ -7,6 +7,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      boxShadow: {
+        underline: 'inset 0 -1px 0 0 currentColor, 0 1px 0 0 currentColor',
+      },
       keyframes: {
         'accordion-down': {
           from: { height: 0 },

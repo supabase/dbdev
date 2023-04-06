@@ -10,10 +10,14 @@ type MarkdownProps = ComponentPropsWithoutRef<typeof ReactMarkdown>
 const getDefaultComponents: (args: {
   rawMarkdown: string
 }) => MarkdownProps['components'] = ({ rawMarkdown }) => ({
-  code({ node, className, children, ...props }) {
+  code({ node, inline, className, children, ...props }) {
     return (
       <code {...props} className={cn('relative', className)}>
-        <CopyButton value={rawMarkdown} className="absolute top-0 right-0" />
+        <CopyButton
+          value={rawMarkdown}
+          className="absolute top-0 right-0"
+          variant="dark"
+        />
 
         {children}
       </code>

@@ -1,7 +1,9 @@
 import { dehydrate, QueryClient } from '@tanstack/react-query'
+import dayjs from '~/lib/dayjs'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import DynamicLayout from '~/components/layouts/DynamicLayout'
 import Markdown from '~/components/ui/Markdown'
+import Tabs, { TabsContent, TabsList, TabsTrigger } from '~/components/ui/Tabs'
 import H1 from '~/components/ui/typography/H1'
 import H2 from '~/components/ui/typography/H2'
 import {
@@ -13,6 +15,7 @@ import { getAllPackages } from '~/data/static-path-queries'
 import { NotFoundError } from '~/data/utils'
 import { NextPageWithLayout } from '~/lib/types'
 import { firstStr, useParams } from '~/lib/utils'
+import CopyButton from '~/components/ui/CopyButton'
 
 const PackagePage: NextPageWithLayout = () => {
   const { handle, package: partialPackageName } = useParams()
@@ -28,27 +31,47 @@ const PackagePage: NextPageWithLayout = () => {
 
   return (
     <div className="flex flex-col gap-8 mb-16">
-      {isPkgSuccess && (
-        <div className="flex flex-col gap-8">
-          <H1>{pkg.package_name}</H1>
-
-          <Markdown>{pkg.description_md}</Markdown>
+      <div className="flex flex-col gap-2">
+        <div className="flex items-end gap-3">
+          <H1>{pkg?.package_name ?? 'Loading...'}</H1>
+          {pkg && <CopyButton value={pkg.package_name} />}
         </div>
-      )}
 
-      {isPkgVersionsSuccess && (
-        <div className="flex flex-col gap-2">
-          <H2>Versions</H2>
+        <div className="flex items-center gap-1 text-slate-700">
+          <span>{pkg?.latest_version ?? '0.0.0'}</span>
+          <span>&bull;</span>
+          <span>
+            Created {pkg ? dayjs(pkg.created_at).fromNow() : 'Loading...'}
+          </span>
+        </div>
+      </div>
 
-          <div className="flex flex-col gap-1">
-            {pkgVersions.map((pkgVersion) => (
-              <div key={pkgVersion.id}>
-                <h2>{pkgVersion.version}</h2>
+      <Tabs defaultValue="description">
+        <TabsList>
+          <TabsTrigger value="description">Description</TabsTrigger>
+          <TabsTrigger value="versions">Versions</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="description">
+          {isPkgSuccess && <Markdown>{pkg.description_md}</Markdown>}
+        </TabsContent>
+
+        <TabsContent value="versions">
+          {isPkgVersionsSuccess && (
+            <div className="flex flex-col gap-2">
+              <H2>Versions</H2>
+
+              <div className="flex flex-col gap-1">
+                {pkgVersions.map((pkgVersion) => (
+                  <div key={pkgVersion.id}>
+                    <h2>{pkgVersion.version}</h2>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-      )}
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

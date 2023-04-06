@@ -1,10 +1,28 @@
 'use client'
 
 import { CheckIcon, ClipboardDocumentIcon } from '@heroicons/react/24/outline'
+import { cva, VariantProps } from 'class-variance-authority'
 import { HTMLAttributes, useEffect, useState } from 'react'
 import { cn } from '~/lib/utils'
 
-interface CopyButtonProps extends HTMLAttributes<HTMLButtonElement> {
+export const copyButtonVariants = cva(
+  'relative z-20 inline-flex items-center justify-center rounded-md p-2 text-sm font-medium transition-all',
+  {
+    variants: {
+      variant: {
+        light: 'text-slate-900 border-slate-200 hover:bg-slate-100',
+        dark: 'text-white border-slate-900 hover:bg-slate-900',
+      },
+    },
+    defaultVariants: {
+      variant: 'light',
+    },
+  }
+)
+
+interface CopyButtonProps
+  extends HTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof copyButtonVariants> {
   value: string
 }
 
@@ -32,10 +50,7 @@ const CopyButton = ({ value, className, ...props }: CopyButtonProps) => {
 
   return (
     <button
-      className={cn(
-        'relative z-20 inline-flex items-center justify-center rounded-md border-slate-900 p-2 text-sm font-medium text-white transition-all hover:bg-slate-900 focus:outline-none',
-        className
-      )}
+      className={cn(copyButtonVariants(), className)}
       onClick={() => {
         copyToClipboardWithMeta(value)
         setHasCopied(true)
