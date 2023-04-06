@@ -23,14 +23,19 @@ export const copyButtonVariants = cva(
 interface CopyButtonProps
   extends HTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof copyButtonVariants> {
-  value: string
+  getValue: () => string
 }
 
 async function copyToClipboardWithMeta(value: string) {
   navigator.clipboard.writeText(value)
 }
 
-const CopyButton = ({ value, className, ...props }: CopyButtonProps) => {
+const CopyButton = ({
+  getValue,
+  className,
+  variant,
+  ...props
+}: CopyButtonProps) => {
   const [hasCopied, setHasCopied] = useState(false)
 
   useEffect(() => {
@@ -50,9 +55,9 @@ const CopyButton = ({ value, className, ...props }: CopyButtonProps) => {
 
   return (
     <button
-      className={cn(copyButtonVariants(), className)}
+      className={cn(copyButtonVariants({ variant }), className)}
       onClick={() => {
-        copyToClipboardWithMeta(value)
+        copyToClipboardWithMeta(getValue())
         setHasCopied(true)
       }}
       {...props}

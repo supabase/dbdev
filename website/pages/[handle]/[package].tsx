@@ -1,7 +1,7 @@
 import { dehydrate, QueryClient } from '@tanstack/react-query'
-import dayjs from '~/lib/dayjs'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import DynamicLayout from '~/components/layouts/DynamicLayout'
+import CopyButton from '~/components/ui/CopyButton'
 import Markdown from '~/components/ui/Markdown'
 import Tabs, { TabsContent, TabsList, TabsTrigger } from '~/components/ui/Tabs'
 import H1 from '~/components/ui/typography/H1'
@@ -13,9 +13,9 @@ import {
 import { prefetchPackage, usePackageQuery } from '~/data/packages/package-query'
 import { getAllPackages } from '~/data/static-path-queries'
 import { NotFoundError } from '~/data/utils'
+import dayjs from '~/lib/dayjs'
 import { NextPageWithLayout } from '~/lib/types'
 import { firstStr, useParams } from '~/lib/utils'
-import CopyButton from '~/components/ui/CopyButton'
 
 const PackagePage: NextPageWithLayout = () => {
   const { handle, package: partialPackageName } = useParams()
@@ -34,7 +34,7 @@ const PackagePage: NextPageWithLayout = () => {
       <div className="flex flex-col gap-2">
         <div className="flex items-end gap-3">
           <H1>{pkg?.package_name ?? 'Loading...'}</H1>
-          {pkg && <CopyButton value={pkg.package_name} />}
+          {pkg && <CopyButton getValue={() => pkg.package_name} />}
         </div>
 
         <div className="flex items-center gap-1 text-slate-700">
