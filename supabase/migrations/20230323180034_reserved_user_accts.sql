@@ -47,7 +47,7 @@ values
     ('service', false),
     ('info', false),
     ('webmaster', false),
-    ('security', false)
+    ('security', false),
     ('installer', false);
 
 begin;
