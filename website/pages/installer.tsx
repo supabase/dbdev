@@ -10,8 +10,11 @@ const InstallerPage: NextPageWithLayout = () => {
         <title>Installer | The Database Package Manager</title>
       </Head>
 
-      <Markdown>
-        {`# Install dbdev
+      <div className="mb-16">
+        <Markdown>
+          {`# Install dbdev
+
+To install the dbdev extension into your database, copy and run the following SQL:
 
 \`\`\`sql
 create extension if not exists http with schema extensions;
@@ -50,7 +53,8 @@ select dbdev.install('supabase-dbdev');
 drop extension if exists "supabase-dbdev";
 create extension "supabase-dbdev";
 \`\`\``}
-      </Markdown>
+        </Markdown>
+      </div>
     </>
   )
 }
