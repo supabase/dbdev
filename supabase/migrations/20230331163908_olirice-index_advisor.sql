@@ -20,8 +20,27 @@ values (
 (0,1,0),
 $pkg$
 
--- Short term solution until pg_tle handles native extension requirements
-create extension if not exists hypopg;
+
+-- Enforce requirements
+-- Workaround to https://github.com/aws/pg_tle/issues/183
+do $$
+    declare
+        hypopg_exists boolean = exists(
+            select 1
+            from pg_available_extensions
+            where
+                name = 'hypopg'
+                and installed_version is not null
+        );
+    begin
+
+        if not hypopg_exists then
+            raise
+                exception '"olirice-index_advisor" requires "hypopg"'
+                using hint = 'Run "create extension hypopg" and try again';
+        end if;
+    end
+$$;
 
 
 create type index_advisor_output as (
@@ -197,7 +216,14 @@ Features:
 - Supports materialized views
 - Identifies tables/columns obfuscaed by views
 
+### Installation
+```sql
+select dbdev.install('olirice-index_advisor');
+create extension if not exists hypopg;
+create extension "olirice-index-advisor");
+```
 
+### Usage
 ```sql
 select
     *
@@ -229,6 +255,8 @@ from
                                                                                     "CREATE INDEX ON public.review USING btree (book_id)"}
 (1 row)
 ```
+
+Note: the referenced tables must exist.
 
 ## API
 

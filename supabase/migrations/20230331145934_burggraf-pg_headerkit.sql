@@ -21,10 +21,6 @@ values (
 (select id from app.packages where package_name = 'burggraf-pg_headerkit'),
 (1,0,0),
 $pkg$
-
---complain if script is sourced in psql, rather than via CREATE EXTENSION
-\echo Use "CREATE EXTENSION supascript CASCADE" to load this file. \quit
-
 CREATE SCHEMA IF NOT EXISTS hdr;
 
 CREATE TABLE IF NOT EXISTS hdr.allow_list (
@@ -269,6 +265,4 @@ See: [PostgREST Header Hacking](https://github.com/burggraf/postgrest-header-hac
 | hdr.is_ipad()                  | is ipad?                                                | none        | boolean                        |
 | hdr.is_android()               | is android?                                             | none        | boolean                        |
 $description$
-
-
 );

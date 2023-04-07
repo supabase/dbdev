@@ -10,7 +10,7 @@ values (
     'read_once',
     'Send messages that can only be read once',
     false,
-    '{}'
+    '{pg_cron}'
 );
 
 
@@ -19,6 +19,29 @@ values (
 (select id from app.packages where package_name = 'olirice-read_once'),
 (0,3,1),
 $pkg$
+
+-- Enforce requirements
+-- Workaround to https://github.com/aws/pg_tle/issues/183
+do $$
+    declare
+        pg_cron_exists boolean = exists(
+            select 1
+            from pg_available_extensions
+            where
+                name = 'pg_cron'
+                and installed_version is not null
+        );
+    begin
+
+        if not pg_cron_exists then
+            raise
+                exception '"olirice-read_once" requires "pg_cron"'
+                using hint = 'Run "create extension pg_cron" and try again';
+        end if;
+    end
+$$;
+
+
 create schema read_once;
 
 create unlogged table read_once.messages(
