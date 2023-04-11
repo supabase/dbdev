@@ -207,23 +207,67 @@ $pkg$,
 
 $description_md$
 
-# Index Advisor
+# index_advisor
 
-A PostgreSQL extension for recommending indexes to improve query performance.
+`index_advisor` is an extension that recommends indexes to improve performance of a given query.
 
-Features:
-- Supports generic parameters e.g. `$1`, `$2`
-- Supports materialized views
-- Identifies tables/columns obfuscaed by views
+## Installation
 
-### Installation
+Note:
+
+`hypopg` is a dependency of index_advisor.
+Dependency resolution is currently under development.
+In the near future it will not be necessary to manually create dependencies.
+
+
 ```sql
 select dbdev.install('olirice-index_advisor');
 create extension if not exists hypopg;
-create extension "olirice-index-advisor");
+create extension "olirice-index_advisor" cascade;
 ```
 
-### Usage
+## Example
+
+For a simple example, consider the following table:
+
+```sql
+create table book(
+  id int primary key,
+  title text not null
+);
+```
+
+Lets say we want to query `book` by `title`, and return the relevant id.
+That query would be `select book.id from book where title = $1`.
+
+We can get `index_advisor` to recommend indexes that would improve performance on that query as follows:
+
+
+```sql
+
+select
+    *
+from
+  index_advisor('select book.id from book where title = $1');
+
+ startup_cost_before | startup_cost_after | total_cost_before | total_cost_after |                  index_statements
+---------------------+--------------------+-------------------+------------------+-----------------------------------------------------
+ 0.00                | 1.17               | 25.88             | 6.40             | {"CREATE INDEX ON public.book USING btree (title)"},
+(1 row)
+```
+
+where the output columns show top level statistics from the query explain plan (startup_cost, total_cost) and an array of `index_statements` that improve `total_cost`.
+
+## Features:
+
+- Generic parameters e.g. `$1`, `$2`
+- Support for Materialized Views
+- Identifies Tables/Columns Oobfuscaed by Views
+
+## Usage
+
+`index_advisor` is not limited to simple use cases. A more complex example could be:
+
 ```sql
 select
     *
