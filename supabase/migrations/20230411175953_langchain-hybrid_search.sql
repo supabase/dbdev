@@ -135,10 +135,7 @@ const url = process.env.SUPABASE_URL;
 if (!url) throw new Error(`Expected env var SUPABASE_URL`);
 
 export const run = async () => {
-  const client = createClient(
-    process.env.SUPABASE_URL || "",
-    process.env.SUPABASE_PRIVATE_KEY || ""
-  );
+  const client = createClient(url, privateKey);
 
   const embeddings = new OpenAIEmbeddings();
 
