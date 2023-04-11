@@ -1,5 +1,6 @@
 import { dehydrate, QueryClient } from '@tanstack/react-query'
 import { GetStaticPaths, GetStaticProps } from 'next'
+import Head from 'next/head'
 import Layout from '~/components/layouts/Layout'
 import CopyButton from '~/components/ui/CopyButton'
 import Link from '~/components/ui/Link'
@@ -37,76 +38,85 @@ create extension "${pkg?.package_name ?? 'Loading...'}"
     version '${pkg?.latest_version ?? '0.0.0'}';`
 
   return (
-    <div className="flex flex-col w-full gap-8 px-4 mx-auto mb-16 max-w-7xl">
-      <div className="flex flex-col gap-2">
-        <div className="flex items-end gap-3">
-          <H1>{pkg?.package_name ?? 'Loading...'}</H1>
-          {pkg && <CopyButton getValue={() => pkg.package_name} />}
-        </div>
+    <>
+      <Head>
+        <title>
+          {pkg?.package_name}
+          {pkg && ' | '}The Database Package Manager
+        </title>
+      </Head>
 
-        <div className="flex items-center gap-1 text-slate-700">
-          <span>{pkg?.latest_version ?? '0.0.0'}</span>
-          <span>&bull;</span>
-          <span>
-            Created {pkg ? dayjs(pkg.created_at).fromNow() : 'Loading...'}
-          </span>
-        </div>
-      </div>
-
-      <Tabs defaultValue="description">
-        <TabsList>
-          <TabsTrigger value="description">Description</TabsTrigger>
-          <TabsTrigger value="versions">Versions</TabsTrigger>
-        </TabsList>
-
-        <div className="grid gap-x-2 md:grid-cols-6">
-          <div className="md:col-span-4">
-            <TabsContent value="description">
-              {isPkgSuccess && <Markdown>{pkg.description_md}</Markdown>}
-            </TabsContent>
-
-            <TabsContent value="versions">
-              {isPkgVersionsSuccess && (
-                <div className="flex flex-col gap-2">
-                  <H2>Versions</H2>
-
-                  <div className="flex flex-col gap-1">
-                    {pkgVersions.map((pkgVersion) => (
-                      <div key={pkgVersion.id}>
-                        <h2>{pkgVersion.version}</h2>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </TabsContent>
+      <div className="flex flex-col w-full gap-8 px-4 mx-auto mb-16 max-w-7xl">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-end gap-3">
+            <H1>{pkg?.package_name ?? 'Loading...'}</H1>
+            {pkg && <CopyButton getValue={() => pkg.package_name} />}
           </div>
 
-          <div className="flex flex-col gap-3 mt-2 rounded-md border border-slate-200 p-6 min-h-[64px] order-first md:order-last md:col-span-2">
-            <div className="flex items-center justify-between pb-1 border-b border-b-slate-200">
-              <H2 variant="borderless">Install</H2>
+          <div className="flex items-center gap-1 text-slate-700">
+            <span>{pkg?.latest_version ?? '0.0.0'}</span>
+            <span>&bull;</span>
+            <span>
+              Created {pkg ? dayjs(pkg.created_at).fromNow() : 'Loading...'}
+            </span>
+          </div>
+        </div>
 
-              {pkg && <CopyButton getValue={() => installCode} />}
+        <Tabs defaultValue="description">
+          <TabsList>
+            <TabsTrigger value="description">Description</TabsTrigger>
+            <TabsTrigger value="versions">Versions</TabsTrigger>
+          </TabsList>
+
+          <div className="grid gap-x-2 md:grid-cols-6">
+            <div className="md:col-span-4">
+              <TabsContent value="description">
+                {isPkgSuccess && <Markdown>{pkg.description_md}</Markdown>}
+              </TabsContent>
+
+              <TabsContent value="versions">
+                {isPkgVersionsSuccess && (
+                  <div className="flex flex-col gap-2">
+                    <H2>Versions</H2>
+
+                    <div className="flex flex-col gap-1">
+                      {pkgVersions.map((pkgVersion) => (
+                        <div key={pkgVersion.id}>
+                          <h2>{pkgVersion.version}</h2>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </TabsContent>
             </div>
 
-            <ol role="list" className="list-decimal list-inside">
-              <li>
-                <Link href="/installer">
-                  Install the <code>dbdev</code> package manager
-                </Link>
-              </li>
-              <li>Install the package:</li>
-            </ol>
+            <div className="flex flex-col gap-3 mt-2 rounded-md border border-slate-200 p-6 min-h-[64px] order-first md:order-last md:col-span-2">
+              <div className="flex items-center justify-between pb-1 border-b border-b-slate-200">
+                <H2 variant="borderless">Install</H2>
 
-            <Markdown copyableCode={false}>
-              {`\`\`\`sql
+                {pkg && <CopyButton getValue={() => installCode} />}
+              </div>
+
+              <ol role="list" className="list-decimal list-inside">
+                <li>
+                  <Link href="/installer">
+                    Install the <code>dbdev</code> package manager
+                  </Link>
+                </li>
+                <li>Install the package:</li>
+              </ol>
+
+              <Markdown copyableCode={false}>
+                {`\`\`\`sql
 ${installCode}
 \`\`\``}
-            </Markdown>
+              </Markdown>
+            </div>
           </div>
-        </div>
-      </Tabs>
-    </div>
+        </Tabs>
+      </div>
+    </>
   )
 }
 
