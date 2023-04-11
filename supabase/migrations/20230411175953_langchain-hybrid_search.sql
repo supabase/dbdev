@@ -76,11 +76,6 @@ begin
 end;
 $$;
 
--- Create an index to be used by the similarity search function
-create index on documents
-  using ivfflat (embedding vector_cosine_ops)
-  with (lists = 100);
-
 -- Create a function to keyword search for documents
 create function kw_match_documents(query_text text, match_count int)
 returns table (id bigint, content text, metadata jsonb, similarity real)
@@ -132,6 +127,12 @@ Once created, you can access the vector store for search using langchain as show
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { createClient } from "@supabase/supabase-js";
 import { SupabaseHybridSearch } from "langchain/retrievers/supabase";
+
+const privateKey = process.env.SUPABASE_PRIVATE_KEY;
+if (!privateKey) throw new Error(`Expected env var SUPABASE_PRIVATE_KEY`);
+
+const url = process.env.SUPABASE_URL;
+if (!url) throw new Error(`Expected env var SUPABASE_URL`);
 
 export const run = async () => {
   const client = createClient(
