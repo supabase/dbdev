@@ -3,6 +3,6 @@ returns setof public.download_metrics rows 1
 language sql stable
 as $$
   select *
-	from public.download_metrics dm
-	where dm.package_id = $1.id;
+  from public.download_metrics dm
+  where dm.package_id = $1.id;
 $$;

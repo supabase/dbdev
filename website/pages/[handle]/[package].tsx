@@ -34,7 +34,6 @@ const PackagePage: NextPageWithLayout = () => {
     pkg?.package_name ?? 'Loading...'
   }');
 create extension "${pkg?.package_name ?? 'Loading...'}"
-    schema 'public'
     version '${pkg?.latest_version ?? '0.0.0'}';`
 
   return (
