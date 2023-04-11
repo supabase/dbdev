@@ -24,6 +24,7 @@ values
 insert into app.handle_registry(handle, is_organization)
 values
     ('supabase', true),
+    ('langchain', true),
     -- Reserve common impersonation handles
     ('admin', false),
     ('administrator', false),
@@ -69,3 +70,12 @@ from
 where
     -- olirice is already a member because that account created it
     acc.handle <> 'olirice';
+
+begin;
+    -- Required for trigger on handle registry
+    select app.simulate_login('oliver@oliverrice.com');
+
+    insert into app.organizations(handle, display_name, bio)
+    values
+        ('langchain', 'LangChain', 'LangChain is a framework for developing applications powered by language models');
+end;
