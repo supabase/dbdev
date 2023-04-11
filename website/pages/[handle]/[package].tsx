@@ -41,8 +41,7 @@ create extension "${pkg?.package_name ?? 'Loading...'}"
     <>
       <Head>
         <title>
-          {pkg?.package_name}
-          {pkg && ' | '}The Database Package Manager
+          {`${pkg ? `${pkg.package_name} | ` : ''}The Database Package Manager`}
         </title>
       </Head>
 
