@@ -1,6 +1,6 @@
-import AuthenticatedLayout from '~/components/layouts/AuthenticatedLayout'
+import Layout from '~/components/layouts/Layout'
 import H1 from '~/components/ui/typography/H1'
-import { useAuth } from '~/lib/auth'
+import { useAuth, withAuth } from '~/lib/auth'
 import supabase from '~/lib/supabase'
 import { NextPageWithLayout } from '~/lib/types'
 import { useParams } from '~/lib/utils'
@@ -44,8 +44,6 @@ const EditAccountPage: NextPageWithLayout = () => {
   )
 }
 
-EditAccountPage.getLayout = (page) => (
-  <AuthenticatedLayout>{page}</AuthenticatedLayout>
-)
+EditAccountPage.getLayout = (page) => <Layout>{page}</Layout>
 
-export default EditAccountPage
+export default withAuth(EditAccountPage)

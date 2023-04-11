@@ -7,7 +7,7 @@ import toast from 'react-hot-toast'
 import Form, { FORM_ERROR } from '~/components/forms/Form'
 import FormButton from '~/components/forms/FormButton'
 import FormInput from '~/components/forms/FormInput'
-import UnauthenticatedLayout from '~/components/layouts/UnauthenticatedLayout'
+import Layout from '~/components/layouts/Layout'
 import H1 from '~/components/ui/typography/H1'
 import { useSignInMutation } from '~/data/auth/sign-in-mutation'
 import { NextPageWithLayout } from '~/lib/types'
@@ -85,8 +85,6 @@ const SignInPage: NextPageWithLayout = () => {
   )
 }
 
-SignInPage.getLayout = (page) => (
-  <UnauthenticatedLayout>{page}</UnauthenticatedLayout>
-)
+SignInPage.getLayout = (page) => <Layout>{page}</Layout>
 
 export default SignInPage
