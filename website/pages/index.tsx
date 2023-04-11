@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import DynamicLayout from '~/components/layouts/DynamicLayout'
+import Layout from '~/components/layouts/Layout'
 import { NextPageWithLayout } from '~/lib/types'
 
 const IndexPage: NextPageWithLayout = () => {
@@ -18,6 +18,6 @@ const IndexPage: NextPageWithLayout = () => {
   )
 }
 
-IndexPage.getLayout = (page) => <DynamicLayout>{page}</DynamicLayout>
+IndexPage.getLayout = (page) => <Layout>{page}</Layout>
 
 export default IndexPage

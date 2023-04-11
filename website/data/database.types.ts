@@ -118,6 +118,18 @@ export interface Database {
       }
     }
     Functions: {
+      download_metrics: {
+        Args: {
+          '': unknown
+        }
+        Returns: unknown[]
+      }
+      register_download: {
+        Args: {
+          package_name: string
+        }
+        Returns: undefined
+      }
       search_packages: {
         Args: {
           handle?: unknown

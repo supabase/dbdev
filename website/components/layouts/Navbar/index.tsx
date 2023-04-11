@@ -118,9 +118,9 @@ const Navbar = () => {
                         </DropdownMenu.Item>
                       ))}
 
-                    <DropdownMenu.Item asChild>
+                    {/* <DropdownMenu.Item asChild>
                       <Link href="/organizations/new">New Organization</Link>
-                    </DropdownMenu.Item>
+                    </DropdownMenu.Item> */}
                   </DropdownMenu.Group>
 
                   <DropdownMenu.Separator className="h-px my-2 bg-gray-200" />

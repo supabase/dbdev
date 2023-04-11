@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import DynamicLayout from '~/components/layouts/DynamicLayout'
+import Layout from '~/components/layouts/Layout'
 import Markdown from '~/components/ui/Markdown'
 import { NextPageWithLayout } from '~/lib/types'
 
@@ -64,6 +64,6 @@ create extension "supabase-dbdev";
   )
 }
 
-InstallerPage.getLayout = (page) => <DynamicLayout>{page}</DynamicLayout>
+InstallerPage.getLayout = (page) => <Layout>{page}</Layout>
 
 export default InstallerPage

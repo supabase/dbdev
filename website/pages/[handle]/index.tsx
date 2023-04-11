@@ -1,7 +1,7 @@
 import { dehydrate, QueryClient } from '@tanstack/react-query'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import Link from 'next/link'
-import DynamicLayout from '~/components/layouts/DynamicLayout'
+import Layout from '~/components/layouts/Layout'
 import H1 from '~/components/ui/typography/H1'
 import H2 from '~/components/ui/typography/H2'
 import {
@@ -89,6 +89,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   }
 }
 
-AccountPage.getLayout = (page) => <DynamicLayout>{page}</DynamicLayout>
+AccountPage.getLayout = (page) => <Layout>{page}</Layout>
 
 export default AccountPage

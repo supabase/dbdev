@@ -1,13 +1,25 @@
 import { PropsWithChildren } from 'react'
-import { withAuth } from '~/lib/auth'
+import { cn } from '~/lib/utils'
 import Navbar from './Navbar'
 
-const AuthenticatedLayout = ({ children }: PropsWithChildren<{}>) => {
+export type LayoutProps = {
+  containerWidth?: 'md' | 'full'
+}
+
+const Layout = ({
+  containerWidth = 'md',
+  children,
+}: PropsWithChildren<LayoutProps>) => {
   return (
     <div className="flex flex-col h-full">
       <Navbar />
 
-      <main className="flex flex-col flex-1 w-full max-w-3xl px-4 mx-auto mt-8">
+      <main
+        className={cn(
+          'flex flex-col flex-1 w-full mt-8',
+          containerWidth === 'md' && 'max-w-3xl px-4 mx-auto'
+        )}
+      >
         {children}
       </main>
 
@@ -25,4 +37,4 @@ const AuthenticatedLayout = ({ children }: PropsWithChildren<{}>) => {
   )
 }
 
-export default withAuth(AuthenticatedLayout)
+export default Layout

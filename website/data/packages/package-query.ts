@@ -33,7 +33,7 @@ export async function getPackage(
 
   let query = supabase
     .from('packages')
-    .select('*')
+    .select('*,download_metrics(*)')
     .eq('handle', handle)
     .eq('partial_name', partialName)
 

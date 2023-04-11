@@ -1,7 +1,8 @@
 import { dehydrate, QueryClient } from '@tanstack/react-query'
 import { GetStaticPaths, GetStaticProps } from 'next'
-import DynamicLayout from '~/components/layouts/DynamicLayout'
+import Layout from '~/components/layouts/Layout'
 import CopyButton from '~/components/ui/CopyButton'
+import Link from '~/components/ui/Link'
 import Markdown from '~/components/ui/Markdown'
 import Tabs, { TabsContent, TabsList, TabsTrigger } from '~/components/ui/Tabs'
 import H1 from '~/components/ui/typography/H1'
@@ -29,8 +30,15 @@ const PackagePage: NextPageWithLayout = () => {
       partialName: partialPackageName,
     })
 
+  const installCode = `select dbdev.install('${
+    pkg?.package_name ?? 'Loading...'
+  }');
+create extension "${pkg?.package_name ?? 'Loading...'}"
+    schema 'public'
+    version '${pkg?.latest_version ?? '0.0.0'}';`
+
   return (
-    <div className="flex flex-col gap-8 mb-16">
+    <div className="flex flex-col w-full gap-8 px-4 mx-auto mb-16 max-w-7xl">
       <div className="flex flex-col gap-2">
         <div className="flex items-end gap-3">
           <H1>{pkg?.package_name ?? 'Loading...'}</H1>
@@ -52,25 +60,52 @@ const PackagePage: NextPageWithLayout = () => {
           <TabsTrigger value="versions">Versions</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="description">
-          {isPkgSuccess && <Markdown>{pkg.description_md}</Markdown>}
-        </TabsContent>
+        <div className="grid gap-x-2 md:grid-cols-6">
+          <div className="md:col-span-4">
+            <TabsContent value="description">
+              {isPkgSuccess && <Markdown>{pkg.description_md}</Markdown>}
+            </TabsContent>
 
-        <TabsContent value="versions">
-          {isPkgVersionsSuccess && (
-            <div className="flex flex-col gap-2">
-              <H2>Versions</H2>
+            <TabsContent value="versions">
+              {isPkgVersionsSuccess && (
+                <div className="flex flex-col gap-2">
+                  <H2>Versions</H2>
 
-              <div className="flex flex-col gap-1">
-                {pkgVersions.map((pkgVersion) => (
-                  <div key={pkgVersion.id}>
-                    <h2>{pkgVersion.version}</h2>
+                  <div className="flex flex-col gap-1">
+                    {pkgVersions.map((pkgVersion) => (
+                      <div key={pkgVersion.id}>
+                        <h2>{pkgVersion.version}</h2>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </div>
+              )}
+            </TabsContent>
+          </div>
+
+          <div className="flex flex-col gap-3 mt-2 rounded-md border border-slate-200 p-6 min-h-[64px] order-first md:order-last md:col-span-2">
+            <div className="flex items-center justify-between pb-1 border-b border-b-slate-200">
+              <H2 variant="borderless">Install</H2>
+
+              {pkg && <CopyButton getValue={() => installCode} />}
             </div>
-          )}
-        </TabsContent>
+
+            <ol role="list" className="list-decimal list-inside">
+              <li>
+                <Link href="/installer">
+                  Install the <code>dbdev</code> package manager
+                </Link>
+              </li>
+              <li>Install the package:</li>
+            </ol>
+
+            <Markdown copyableCode={false}>
+              {`\`\`\`sql
+${installCode}
+\`\`\``}
+            </Markdown>
+          </div>
+        </div>
       </Tabs>
     </div>
   )
@@ -125,6 +160,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   }
 }
 
-PackagePage.getLayout = (page) => <DynamicLayout>{page}</DynamicLayout>
+PackagePage.getLayout = (page) => <Layout containerWidth="full">{page}</Layout>
 
 export default PackagePage

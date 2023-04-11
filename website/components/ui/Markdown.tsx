@@ -1,11 +1,13 @@
-import { ComponentPropsWithoutRef, ReactNode } from 'react'
+import { ComponentPropsWithoutRef } from 'react'
 import ReactMarkdown from 'react-markdown'
 import rehypeHighlight from 'rehype-highlight'
 import remarkGfm from 'remark-gfm'
 import { cn } from '~/lib/utils'
 import CopyButton from './CopyButton'
 
-type MarkdownProps = ComponentPropsWithoutRef<typeof ReactMarkdown>
+type MarkdownProps = ComponentPropsWithoutRef<typeof ReactMarkdown> & {
+  copyableCode?: boolean
+}
 
 function childrenToText(children: any): string {
   if (typeof children === 'string') {
@@ -47,6 +49,7 @@ const Markdown = ({
   rehypePlugins = [],
   linkTarget = '_blank',
   components,
+  copyableCode = true,
   children,
   ...props
 }: MarkdownProps) => (
@@ -56,7 +59,7 @@ const Markdown = ({
     linkTarget={linkTarget}
     className={cn('prose max-w-none', className)}
     components={{
-      ...DEFAULT_COMPONENTS,
+      ...(copyableCode ? DEFAULT_COMPONENTS : undefined),
       ...components,
     }}
     {...props}
