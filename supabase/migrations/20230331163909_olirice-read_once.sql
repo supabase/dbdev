@@ -91,7 +91,7 @@ Features:
 - messages can only be read one time
 - messages are not logged in PostgreSQL write-ahead-log (WAL)
 
-Note: to expose the `send_message` and `read_message` functions over HTTP, install the extension in a schema that is on the search path.
+Note: to expose the `send_message` and `read_message` functions over HTTP, install the extension in a schema that is on the search_path.
 
 For example:
 ```sql
