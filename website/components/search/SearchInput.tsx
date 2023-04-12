@@ -1,10 +1,10 @@
-import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
-import { forwardRef } from 'react'
+import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
+import { forwardRef } from "react";
 
 export type SearchInputProps = {
-  value: string
-  onChange: (value: string) => void
-}
+  value: string;
+  onChange: (value: string) => void;
+};
 
 const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   function SearchInput({ value, onChange }, ref) {
@@ -24,7 +24,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             ref={ref}
             id="search"
             name="search"
-            className="block w-full py-2.5 pl-10 pr-3 text-sm placeholder-gray-500 bg-white border border-gray-300 rounded-md focus:border-indigo-500 focus:text-gray-900 focus:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
+            className="block w-full py-2.5 pl-10 pr-3 text-sm placeholder-gray-500 bg-white border border-gray-300 rounded-md focus:border-indigo-500 focus:text-gray-900 focus:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-white"
             placeholder="Search Packages"
             type="search"
             value={value}
@@ -32,8 +32,8 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           />
         </div>
       </>
-    )
+    );
   }
-)
+);
 
-export default SearchInput
+export default SearchInput;

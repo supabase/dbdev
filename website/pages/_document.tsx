@@ -1,4 +1,4 @@
-import { Head, Html, Main, NextScript } from 'next/document'
+import { Head, Html, Main, NextScript } from "next/document";
 
 const CustomDocument = () => {
   return (
@@ -9,12 +9,12 @@ const CustomDocument = () => {
           href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css"
         />
       </Head>
-      <body>
+      <body className="light">
         <Main />
         <NextScript />
       </body>
     </Html>
-  )
-}
+  );
+};
 
-export default CustomDocument
+export default CustomDocument;

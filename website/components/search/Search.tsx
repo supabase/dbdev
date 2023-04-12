@@ -1,25 +1,25 @@
-import * as Dialog from '@radix-ui/react-dialog'
-import { useRouter } from 'next/router'
-import { useEffect, useRef, useState } from 'react'
-import { usePackagesSearchQuery } from '~/data/packages/packages-search-query'
-import { useDebounce } from '~/lib/utils'
-import Spinner from '../ui/Spinner'
-import SearchInput from './SearchInput'
-import SearchPackageRow from './SearchPackageRow'
+import * as Dialog from "@radix-ui/react-dialog";
+import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
+import { usePackagesSearchQuery } from "~/data/packages/packages-search-query";
+import { useDebounce } from "~/lib/utils";
+import Spinner from "../ui/Spinner";
+import SearchInput from "./SearchInput";
+import SearchPackageRow from "./SearchPackageRow";
 
 const Search = () => {
-  const [searchValue, setSearchValue] = useState('')
-  const [isOpen, setIsOpen] = useState(false)
+  const [searchValue, setSearchValue] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
-  const containerRef = useRef<HTMLInputElement>(null)
+  const containerRef = useRef<HTMLInputElement>(null);
 
   const onSearchChange = (value: string) => {
-    setSearchValue(value)
+    setSearchValue(value);
 
-    setIsOpen(value.trim().length > 0)
-  }
+    setIsOpen(value.trim().length > 0);
+  };
 
-  const query = useDebounce(searchValue, 300)
+  const query = useDebounce(searchValue, 300);
 
   const { data, isSuccess, isLoading, isError } = usePackagesSearchQuery(
     {
@@ -29,20 +29,20 @@ const Search = () => {
       enabled: Boolean(query),
       keepPreviousData: true,
     }
-  )
+  );
 
-  const router = useRouter()
+  const router = useRouter();
   useEffect(() => {
     const handler = () => {
-      setIsOpen(false)
-    }
+      setIsOpen(false);
+    };
 
-    router.events.on('routeChangeStart', handler)
+    router.events.on("routeChangeStart", handler);
 
     return () => {
-      router.events.off('routeChangeStart', handler)
-    }
-  }, [router.events])
+      router.events.off("routeChangeStart", handler);
+    };
+  }, [router.events]);
 
   return (
     <div className="relative">
@@ -53,9 +53,9 @@ const Search = () => {
       <Dialog.Root modal={false} open={isOpen} onOpenChange={setIsOpen}>
         <Dialog.Portal container={containerRef.current}>
           <Dialog.Content
-            className="absolute z-10 w-full mt-2 left-0 max-h-[85vh] border shadow-lg border-gray-300 rounded-md bg-white focus:outline-none"
+            className="absolute z-10 w-full mt-2 left-0 max-h-[85vh] border shadow-lg border-gray-300 rounded-md bg-white focus:outline-none dark:bg-slate-800 dark:border-slate-600"
             onOpenAutoFocus={(e) => {
-              e.preventDefault()
+              e.preventDefault();
             }}
           >
             {isLoading && (
@@ -97,7 +97,7 @@ const Search = () => {
         </Dialog.Portal>
       </Dialog.Root>
     </div>
-  )
-}
+  );
+};
 
-export default Search
+export default Search;
