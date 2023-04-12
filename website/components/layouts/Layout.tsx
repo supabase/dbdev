@@ -17,7 +17,7 @@ const Layout = ({
 
       <main
         className={cn(
-          "flex flex-col flex-1 w-full mt-8",
+          "flex flex-col flex-1 w-full mt-8 dark:bg-slate-900",
           containerWidth === "md" && "max-w-3xl px-4 mx-auto"
         )}
       >

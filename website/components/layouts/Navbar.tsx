@@ -17,8 +17,9 @@ const Navbar = () => {
   const [theme, setTheme] = useState<string>();
 
   useEffect(() => {
+    const theme = localStorage.dbdev_theme;
     if (
-      localStorage.dbdev_theme === "dark" ||
+      theme === "dark" ||
       (!("dbdev_theme" in localStorage) &&
         window.matchMedia("(prefers-color-scheme: dark)").matches)
     ) {
@@ -31,8 +32,8 @@ const Navbar = () => {
 
   useEffect(() => {
     if (theme) localStorage.setItem("dbdev_theme", theme);
-    if (theme === "light") document.body.classList.replace("dark", "light");
     if (theme === "dark") document.body.classList.replace("light", "dark");
+    if (theme === "light") document.body.classList.replace("dark", "light");
   }, [theme]);
 
   const {

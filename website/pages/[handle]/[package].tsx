@@ -73,18 +73,7 @@ create extension "${pkg?.package_name ?? "Loading..."}"
           <div className="grid gap-x-2 md:grid-cols-6">
             <div className="md:col-span-4">
               <TabsContent value="description">
-                {isPkgSuccess && (
-                  // [Joshen] Components can probably be directly imported in the Markdown component
-                  <Markdown
-                    components={{
-                      h2({ children }) {
-                        return <H2>{children}</H2>;
-                      },
-                    }}
-                  >
-                    {pkg.description_md}
-                  </Markdown>
-                )}
+                {isPkgSuccess && <Markdown>{pkg.description_md}</Markdown>}
               </TabsContent>
 
               <TabsContent value="versions">
@@ -112,7 +101,7 @@ create extension "${pkg?.package_name ?? "Loading..."}"
               </div>
 
               <ol role="list" className="list-decimal list-inside">
-                <li>
+                <li className="dark:text-white">
                   <Link href="/installer">
                     Install the <code>dbdev</code> package manager
                   </Link>
