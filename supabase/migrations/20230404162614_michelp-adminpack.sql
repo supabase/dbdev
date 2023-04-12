@@ -1097,6 +1097,8 @@ updates and deletes can cause space in index data structures to go
 unused.  Understanding when this is happening is not obvious, so there
 is a rather complex query you can run to detect it.
 
+`index_bloat`
+
 |      Column      |       Type       |
 |------------------|------------------|
 | current_database | name             |
@@ -1117,6 +1119,8 @@ is a rather complex query you can run to detect it.
 Like index bloat, tables with high update and delete rates can also
 end up containing lots of allocated but unused space.  This query
 shows which tables have the most bloat.
+
+`table_bloat`
 
 |      Column      |       Type       |
 |------------------|------------------|
@@ -1139,6 +1143,8 @@ can form a tree, where A blocks B, which blocks C, and so on.  This
 query formats blocking queries into a tree structure so it's easy to
 see what query is causing the blockage.
 
+`blocking_pid_tree`
+
 |  Column   | Type |
 |-----------|------|
 | PID       | text |
@@ -1152,6 +1158,8 @@ If a table contains duplicate indexes, then unecessary work is done
 updating and storing them, this query will show up to 4 duplicate
 indexes per table if they exist.
 
+`duplicate_indexes`
+
 | Column |   Type   |
 |--------|----------|
 | size   | text     |
@@ -1164,6 +1172,8 @@ indexes per table if they exist.
 ## Table Sizes
 
 This view shows tables and their sizes.
+
+`table_sizes`
 
 |      Column      |       Type       |
 |------------------|------------------|
@@ -1182,6 +1192,8 @@ This view shows tables and their sizes.
 This view shows schemas and their sizes, which is the sum of the sizes
 of all the tables and indexes in the schema.
 
+`schema_sizes`
+
 |   Column    |  Type   |
 |-------------|---------|
 | schemaname  | name    |
@@ -1196,6 +1208,8 @@ of all the tables and indexes in the schema.
 This view shows index size and usage.  An unused index still needs to
 be updated and that takes time an storage, so it's a good candidate to
 drop.
+
+`index_usage`
 
 |     Column      |  Type  |
 |-----------------|--------|
@@ -1215,6 +1229,8 @@ drop.
 
 This views shows the last time a table was vacuumed an analyzed.
 
+`last_vacuum_analyze`
+
 |       Column        |           Type           |
 |---------------------|--------------------------|
 | relname             | name                     |
@@ -1230,6 +1246,8 @@ This views shows the last time a table was vacuumed an analyzed.
 This view shows estimates for the number of rows in a table.  This is
 just an estimate and depends on up to date table statistics.
 
+`table_row_estimates`
+
 |   Column   |  Type  |
 |------------|--------|
 | schemaname | name   |
@@ -1239,6 +1257,8 @@ just an estimate and depends on up to date table statistics.
 ## PGMeta Columns
 
 This view shows infromation for the columns of tables in the system.
+
+`pgmeta_columns`
 
 |       Column        |   Type   |
 |---------------------|----------|
@@ -1263,6 +1283,8 @@ This view shows infromation for the columns of tables in the system.
 ## PGMeta Config
 
 This views shows the configuration of the database.
+
+`pgmeta_config`
 
 |     Column      |  Type   |
 |-----------------|---------|
@@ -1290,6 +1312,8 @@ This views shows the configuration of the database.
 
 This view shows installed extensions in the database.
 
+`pgmeta_extensions`
+
 |      Column       | Type |
 |-------------------|------|
 | name              | name |
@@ -1302,6 +1326,8 @@ This view shows installed extensions in the database.
 
 This view shows foreign tables in the database.
 
+`pgmeta_foreign_tables`
+
 | Column  |  Type  |
 |---------|--------|
 | id      | bigint |
@@ -1312,6 +1338,8 @@ This view shows foreign tables in the database.
 ## PGMeta Functions
 
 This view shows functions in the database.
+
+`pgmeta_functions`
 
 |          Column           |  Type   |
 |---------------------------|---------|
@@ -1336,6 +1364,8 @@ This view shows functions in the database.
 
 This view shows materialized views in the database.
 
+`pgmeta_materialized_views`
+
 |    Column    |  Type   |
 |--------------|---------|
 | id           | bigint  |
@@ -1347,6 +1377,8 @@ This view shows materialized views in the database.
 ## PGMeta Policies
 
 This view shows Row Level Security Policies in the database.
+
+`pgmeta_policies`
 
 |   Column   |  Type  |
 |------------|--------|
@@ -1365,6 +1397,8 @@ This view shows Row Level Security Policies in the database.
 
 This view shows primary keys in the database.
 
+`pgmeta_primary_keys`
+
 |   Column   |  Type  |
 |------------|--------|
 | schema     | name   |
@@ -1375,6 +1409,8 @@ This view shows primary keys in the database.
 ## PGMeta Publications
 
 This view shows logical replication publishers in the database.
+
+`pgmeta_publications`
 
 |      Column      |  Type   |
 |------------------|---------|
@@ -1391,6 +1427,8 @@ This view shows logical replication publishers in the database.
 
 This view shows foreign key relationships in the database.
 
+`pgmeta_relationships`
+
 |       Column        |  Type  |
 |---------------------|--------|
 | id                  | bigint |
@@ -1406,6 +1444,8 @@ This view shows foreign key relationships in the database.
 
 This view shows roles in the database system.  Note that roles are
 global objects and apply to all databases.
+
+`pgmeta_roles`
 
 |       Column        |           Type           |
 |---------------------|--------------------------|
@@ -1428,6 +1468,8 @@ global objects and apply to all databases.
 
 This view shows all schemas in the database.
 
+`pgmeta_schemas`
+
 | Column |  Type  |
 |--------|--------|
 | id     | bigint |
@@ -1437,6 +1479,8 @@ This view shows all schemas in the database.
 ## PGMeta Tables
 
 This view shows all tables in the database.
+
+`pgmeta_tables`
 
 |       Column       |  Type   |
 |--------------------|---------|
@@ -1455,6 +1499,8 @@ This view shows all tables in the database.
 ## PGMeta Triggers
 
 This view shows all triggers in the database.
+
+`pgmeta_triggers`
 
 |     Column      |               Type                |
 |-----------------|-----------------------------------|
@@ -1476,6 +1522,8 @@ This view shows all triggers in the database.
 
 This view shows all types in the database.
 
+`pgmeta_types`
+
 |   Column   |  Type  |
 |------------|--------|
 | id         | bigint |
@@ -1490,6 +1538,8 @@ This view shows all types in the database.
 
 This view shows the current database version.
 
+`pgmeta_version`
+
 |       Column       |  Type  |
 |--------------------|--------|
 | version            | text   |
@@ -1500,6 +1550,8 @@ This view shows the current database version.
 ## PGMeta Views
 
 This view shows all views in the database.
+
+`pgmeta_views`
 
 |    Column    |  Type   |
 |--------------|---------|
