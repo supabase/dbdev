@@ -117,7 +117,7 @@ Please note that it is not indended for serious use.
 
 ```sql
 select
-  plot.scatter(
+  scatter(
     val::numeric, --x
     val::numeric, -- y
     'stonks!', -- title

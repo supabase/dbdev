@@ -237,7 +237,7 @@ create table book(
 );
 ```
 
-Lets say we want to query `book` by `title`, and return the relevant id.
+Lets say we want to query `book` by `title`, and return the relevant `id`.
 That query would be `select book.id from book where title = $1`.
 
 We can get `index_advisor` to recommend indexes that would improve performance on that query as follows:
