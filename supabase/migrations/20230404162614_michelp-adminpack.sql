@@ -1060,7 +1060,7 @@ WHERE
 $adminpack$,
 
 $description_md$
-# supabase-adminpack
+# michelp-adminpack
 
 A Trusted Language Extension containing a variety of useful databse admin queries.
 
