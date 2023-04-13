@@ -39,7 +39,7 @@ const IndexPage: NextPageWithLayout = () => {
       </Head>
 
       <div className="flex flex-col justify-center pb-20">
-        <div className="mt-52">
+        <div className="mt-48">
           <h1 className="text-gray-900 dark:text-gray-100 text-2xl font-bold -translate-y-10 sm:text-4xl md:text-7xl">
             The Database
             <br />

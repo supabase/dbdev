@@ -74,6 +74,18 @@ const Navbar = () => {
     });
   }, [router, signOut]);
 
+  const AvatarWrapper = () =>
+    user?.user_metadata.avatar_path === undefined ? (
+      <div className="flex items-center justify-center w-6 h-6 rounded-full border-1 bg-gray-300 border-gray-400 text-gray-600 dark:border-slate-400 dark:bg-slate-500 dark:text-white">
+        {user?.user_metadata.display_name[0].toUpperCase()}
+      </div>
+    ) : (
+      <Avatar size="sm">
+        <AvatarImage src={avatarUrl} alt={avatarName} />
+        <AvatarFallback>{avatarFallback}</AvatarFallback>
+      </Avatar>
+    );
+
   return (
     <header className="px-4 py-4 border-b border-gray-100 dark:border-slate-700 shadow-sm md:px-8">
       <nav className="flex items-center justify-between gap-4 md:gap-6">
@@ -100,29 +112,26 @@ const Navbar = () => {
             {user ? (
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger>
-                  <Avatar>
-                    <AvatarImage src={avatarUrl} alt={avatarName} />
-                    <AvatarFallback>{avatarFallback}</AvatarFallback>
-                  </Avatar>
+                  <AvatarWrapper />
                 </DropdownMenu.Trigger>
 
                 <DropdownMenu.Portal>
                   <DropdownMenu.Content
                     align="end"
                     sideOffset={5}
-                    className="px-4 py-2 bg-white border border-gray-200 rounded shadow-lg"
+                    className="border bg-white dark:bg-slate-900 dark:border-slate-600 shadow py-2 rounded"
                   >
-                    <DropdownMenu.Item asChild>
+                    <DropdownMenu.Item
+                      asChild
+                      className="px-4 py-1 dark:text-white"
+                    >
                       <Link
                         href={`/${user?.user_metadata.handle}/edit`}
                         className="flex items-center"
                       >
-                        <Avatar size="sm">
-                          <AvatarImage src={avatarUrl} alt={avatarName} />
-                          <AvatarFallback>{avatarFallback}</AvatarFallback>
-                        </Avatar>
+                        <AvatarWrapper />
 
-                        <span className="ml-2 text-lg">
+                        <span className="ml-2 text-sm">
                           {user?.user_metadata.display_name ??
                             user?.email ??
                             "Account"}
@@ -130,31 +139,48 @@ const Navbar = () => {
                       </Link>
                     </DropdownMenu.Item>
 
-                    <DropdownMenu.Separator className="h-px my-2 bg-gray-200" />
+                    <DropdownMenu.Separator className="h-px my-2 bg-gray-20 dark:bg-slate-700" />
 
                     <DropdownMenu.Group className="flex flex-col">
-                      <DropdownMenu.Label className="text-xs text-gray-600">
+                      <DropdownMenu.Label className="text-xs text-gray-600 dark:text-gray-400 px-4 mb-1">
                         Organizations
                       </DropdownMenu.Label>
 
                       {isOrganizationsSuccess &&
                         organizations.map((org) => (
-                          <DropdownMenu.Item key={org.id} asChild>
+                          <DropdownMenu.Item
+                            key={org.id}
+                            asChild
+                            className="px-4 py-1 text-sm dark:text-white"
+                          >
                             <Link href={`/${org.handle}`}>
                               {org.display_name} ({org.handle})
                             </Link>
                           </DropdownMenu.Item>
                         ))}
 
-                      <DropdownMenu.Item asChild>
-                        <Link href="/organizations/new">New Organization</Link>
+                      <DropdownMenu.Item
+                        asChild
+                        className="px-4 py-1 hover:bg-gray-100 dark:hover:bg-slate-800"
+                      >
+                        <Link
+                          href="/organizations/new"
+                          className="text-sm dark:text-white"
+                        >
+                          New organization
+                        </Link>
                       </DropdownMenu.Item>
                     </DropdownMenu.Group>
 
-                    <DropdownMenu.Separator className="h-px my-2 bg-gray-200" />
+                    <DropdownMenu.Separator className="h-px my-2 bg-gray-200 dark:bg-slate-700" />
 
                     <DropdownMenu.Item asChild>
-                      <button onClick={handleSignOut}>Sign Out</button>
+                      <button
+                        onClick={handleSignOut}
+                        className="px-4 py-1 text-sm dark:text-white"
+                      >
+                        Sign out
+                      </button>
                     </DropdownMenu.Item>
 
                     <DropdownMenu.Arrow className="fill-gray-100" />
@@ -189,28 +215,37 @@ const Navbar = () => {
                   )}
                 </div>
               </DropdownMenu.Trigger>
-              <DropdownMenu.Content className="w-28 border bg-white dark:bg-slate-900 dark:border-slate-600 shadow py-2 rounded">
-                <DropdownMenu.RadioGroup value={theme} onValueChange={setTheme}>
-                  <DropdownMenu.RadioItem
-                    value="light"
-                    className="cursor-pointer pl-4 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center space-x-1 py-1"
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content
+                  align="center"
+                  sideOffset={5}
+                  className="w-28 border bg-white dark:bg-slate-900 dark:border-slate-600 shadow py-2 rounded"
+                >
+                  <DropdownMenu.RadioGroup
+                    value={theme}
+                    onValueChange={setTheme}
                   >
-                    <div className="dark:text-white">
-                      <SunIcon className="w-4 h-4 text-gray-400" />
-                    </div>
-                    <p className="pl-2 text-sm dark:text-white">Light</p>
-                  </DropdownMenu.RadioItem>
-                  <DropdownMenu.RadioItem
-                    value="dark"
-                    className="cursor-pointer pl-4 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center space-x-1 py-1"
-                  >
-                    <div className="dark:text-white">
-                      <MoonIcon className="w-4 h-4 text-gray-400" />
-                    </div>
-                    <p className="pl-2 text-sm dark:text-white">Dark</p>
-                  </DropdownMenu.RadioItem>
-                </DropdownMenu.RadioGroup>
-              </DropdownMenu.Content>
+                    <DropdownMenu.RadioItem
+                      value="light"
+                      className="cursor-pointer pl-4 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center space-x-1 py-1"
+                    >
+                      <div className="dark:text-white">
+                        <SunIcon className="w-4 h-4 text-gray-400" />
+                      </div>
+                      <p className="pl-2 text-sm dark:text-white">Light</p>
+                    </DropdownMenu.RadioItem>
+                    <DropdownMenu.RadioItem
+                      value="dark"
+                      className="cursor-pointer pl-4 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center space-x-1 py-1"
+                    >
+                      <div className="dark:text-white">
+                        <MoonIcon className="w-4 h-4 text-gray-400" />
+                      </div>
+                      <p className="pl-2 text-sm dark:text-white">Dark</p>
+                    </DropdownMenu.RadioItem>
+                  </DropdownMenu.RadioGroup>
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
             </DropdownMenu.Root>
             <Link
               href="https://github.com/supabase/dbdev"
