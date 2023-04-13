@@ -124,6 +124,20 @@ export interface Database {
         }
         Returns: unknown[]
       }
+      popular_packages: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          control_description: string | null
+          control_requires: string[] | null
+          created_at: string | null
+          description_md: string | null
+          handle: string | null
+          id: string | null
+          latest_version: string | null
+          package_name: string | null
+          partial_name: string | null
+        }[]
+      }
       register_download: {
         Args: {
           package_name: string
@@ -223,6 +237,7 @@ export interface Database {
           owner: string | null
           path_tokens: string[] | null
           updated_at: string | null
+          version: string | null
         }
         Insert: {
           bucket_id?: string | null
@@ -234,6 +249,7 @@ export interface Database {
           owner?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
+          version?: string | null
         }
         Update: {
           bucket_id?: string | null
@@ -245,6 +261,7 @@ export interface Database {
           owner?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
+          version?: string | null
         }
       }
     }
@@ -252,6 +269,15 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
+      can_insert_object: {
+        Args: {
+          bucketid: string
+          name: string
+          owner: string
+          metadata: Json
+        }
+        Returns: undefined
+      }
       extension: {
         Args: {
           name: string

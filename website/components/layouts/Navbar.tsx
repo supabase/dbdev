@@ -1,41 +1,41 @@
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
-import { SunIcon, MoonIcon } from "@heroicons/react/20/solid";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { toast } from "react-hot-toast";
-import Search from "~/components/search/Search";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/Avatar";
-import { useSignOutMutation } from "~/data/auth/sign-out-mutation";
-import { useUsersOrganizationsQuery } from "~/data/organizations/users-organizations-query";
-import { useUser } from "~/lib/auth";
-import { getAvatarUrl } from "~/lib/avatars";
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import { GitHubLogoIcon } from '@radix-ui/react-icons'
+import { SunIcon, MoonIcon } from '@heroicons/react/20/solid'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { toast } from 'react-hot-toast'
+import Search from '~/components/search/Search'
+import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/Avatar'
+import { useSignOutMutation } from '~/data/auth/sign-out-mutation'
+import { useUsersOrganizationsQuery } from '~/data/organizations/users-organizations-query'
+import { useUser } from '~/lib/auth'
+import { getAvatarUrl } from '~/lib/avatars'
 
 const Navbar = () => {
-  const router = useRouter();
-  const user = useUser();
-  const [theme, setTheme] = useState<string>();
+  const router = useRouter()
+  const user = useUser()
+  const [theme, setTheme] = useState<string>()
 
   useEffect(() => {
-    const theme = localStorage.dbdev_theme;
+    const theme = localStorage.dbdev_theme
     if (
-      theme === "dark" ||
-      (!("dbdev_theme" in localStorage) &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches)
+      theme === 'dark' ||
+      (!('dbdev_theme' in localStorage) &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches)
     ) {
-      if (theme === "dark") document.body.classList.replace("light", "dark");
+      if (theme === 'dark') document.body.classList.replace('light', 'dark')
     } else {
-      if (theme === "light") document.body.classList.replace("dark", "light");
+      if (theme === 'light') document.body.classList.replace('dark', 'light')
     }
-    setTheme(theme);
-  }, []);
+    setTheme(theme)
+  }, [])
 
   useEffect(() => {
-    if (theme) localStorage.setItem("dbdev_theme", theme);
-    if (theme === "dark") document.body.classList.replace("light", "dark");
-    if (theme === "light") document.body.classList.replace("dark", "light");
-  }, [theme]);
+    if (theme) localStorage.setItem('dbdev_theme', theme)
+    if (theme === 'dark') document.body.classList.replace('light', 'dark')
+    if (theme === 'light') document.body.classList.replace('dark', 'light')
+  }, [theme])
 
   const {
     data: organizations,
@@ -43,40 +43,40 @@ const Navbar = () => {
     isSuccess: isOrganizationsSuccess,
   } = useUsersOrganizationsQuery({
     userId: user?.id,
-  });
+  })
 
   const avatarUrl = useMemo(
     () =>
       user ? getAvatarUrl(user.user_metadata.avatar_path ?? null) : undefined,
     [user]
-  );
+  )
 
   const avatarName: string =
     user?.user_metadata.display_name ??
     user?.user_metadata.handle ??
-    "Current User";
+    'Current User'
 
   const avatarFallback = avatarName
-    .split(" ")
+    .split(' ')
     .map((n) => n[0])
-    .join(" ");
+    .join(' ')
 
-  const { mutate: signOut } = useSignOutMutation();
+  const { mutate: signOut } = useSignOutMutation()
   const handleSignOut = useCallback(() => {
     signOut(undefined, {
       onSuccess() {
-        toast.success("You have signed out successfully!");
-        router.push("/sign-in");
+        toast.success('You have signed out successfully!')
+        router.push('/sign-in')
       },
       onError(error) {
-        toast.error(error.message);
+        toast.error(error.message)
       },
-    });
-  }, [router, signOut]);
+    })
+  }, [router, signOut])
 
   const AvatarWrapper = () =>
     user?.user_metadata.avatar_path === undefined ? (
-      <div className="flex items-center justify-center w-6 h-6 rounded-full border-1 bg-gray-300 border-gray-400 text-gray-600 dark:border-slate-400 dark:bg-slate-500 dark:text-white">
+      <div className="flex items-center justify-center w-6 h-6 text-gray-600 bg-gray-300 border-gray-400 rounded-full border-1 dark:border-slate-400 dark:bg-slate-500 dark:text-white">
         {user?.user_metadata.display_name[0].toUpperCase()}
       </div>
     ) : (
@@ -84,18 +84,18 @@ const Navbar = () => {
         <AvatarImage src={avatarUrl} alt={avatarName} />
         <AvatarFallback>{avatarFallback}</AvatarFallback>
       </Avatar>
-    );
+    )
 
   return (
-    <header className="px-4 py-4 border-b border-gray-100 dark:border-slate-700 shadow-sm md:px-8">
+    <header className="px-4 py-4 border-b border-gray-100 shadow-sm dark:border-slate-700 md:px-8">
       <nav className="flex items-center justify-between gap-4 md:gap-6">
         <div>
           <Link href="/">
             <img
               src={
-                theme === "light"
-                  ? "/images/dbdev-lightmode.png"
-                  : "/images/dbdev-darkmode.png"
+                theme === 'light'
+                  ? '/images/dbdev-lightmode.png'
+                  : '/images/dbdev-darkmode.png'
               }
               alt="dbdev logo"
               className="h-10"
@@ -107,7 +107,7 @@ const Navbar = () => {
           <Search />
         </div>
 
-        <div className="flex items-center justify-center gap-6">
+        <div className="flex items-center justify-end gap-6 min-w-[160px]">
           <div className="flex items-center ml-4">
             {user ? (
               <DropdownMenu.Root>
@@ -119,7 +119,7 @@ const Navbar = () => {
                   <DropdownMenu.Content
                     align="end"
                     sideOffset={5}
-                    className="border bg-white dark:bg-slate-900 dark:border-slate-600 shadow py-2 rounded"
+                    className="py-2 bg-white border rounded shadow dark:bg-slate-900 dark:border-slate-600"
                   >
                     <DropdownMenu.Item
                       asChild
@@ -134,7 +134,7 @@ const Navbar = () => {
                         <span className="ml-2 text-sm">
                           {user?.user_metadata.display_name ??
                             user?.email ??
-                            "Account"}
+                            'Account'}
                         </span>
                       </Link>
                     </DropdownMenu.Item>
@@ -142,7 +142,7 @@ const Navbar = () => {
                     <DropdownMenu.Separator className="h-px my-2 bg-gray-20 dark:bg-slate-700" />
 
                     <DropdownMenu.Group className="flex flex-col">
-                      <DropdownMenu.Label className="text-xs text-gray-600 dark:text-gray-400 px-4 mb-1">
+                      <DropdownMenu.Label className="px-4 mb-1 text-xs text-gray-600 dark:text-gray-400">
                         Organizations
                       </DropdownMenu.Label>
 
@@ -159,7 +159,7 @@ const Navbar = () => {
                           </DropdownMenu.Item>
                         ))}
 
-                      <DropdownMenu.Item
+                      {/* <DropdownMenu.Item
                         asChild
                         className="px-4 py-1 hover:bg-gray-100 dark:hover:bg-slate-800"
                       >
@@ -169,7 +169,7 @@ const Navbar = () => {
                         >
                           New organization
                         </Link>
-                      </DropdownMenu.Item>
+                      </DropdownMenu.Item> */}
                     </DropdownMenu.Group>
 
                     <DropdownMenu.Separator className="h-px my-2 bg-gray-200 dark:bg-slate-700" />
@@ -191,24 +191,24 @@ const Navbar = () => {
               <div className="flex items-center gap-4">
                 <Link
                   href="/sign-up"
-                  className="transition text-sm rounded text-gray-600 hover:text-gray-800 dark:text-slate-400 border border-gray-300 hover:border-gray-500 dark:border-slate-700 py-2 px-4 dark:hover:bg-slate-800 hover:dark:text-white"
+                  className="px-4 py-2 text-sm text-gray-600 transition border border-gray-300 rounded hover:text-gray-800 dark:text-slate-400 hover:border-gray-500 dark:border-slate-700 dark:hover:bg-slate-800 hover:dark:text-white"
                 >
                   Sign Up
                 </Link>
                 <Link
                   href="/sign-in"
-                  className="transition text-sm text-gray-600 hover:text-gray-800 dark:text-slate-400 hover:dark:text-white"
+                  className="text-sm text-gray-600 transition hover:text-gray-800 dark:text-slate-400 hover:dark:text-white"
                 >
                   Sign In
                 </Link>
               </div>
             )}
           </div>
-          <div className="flex items-center space-x-6 border-l pl-8 py-3">
+          <div className="flex items-center py-3 pl-8 space-x-6 border-l">
             <DropdownMenu.Root>
               <DropdownMenu.Trigger>
                 <div className="dark:text-white">
-                  {theme === "dark" ? (
+                  {theme === 'dark' ? (
                     <MoonIcon className="w-4 h-4 text-gray-400" />
                   ) : (
                     <SunIcon className="w-4 h-4 text-gray-400" />
@@ -219,7 +219,7 @@ const Navbar = () => {
                 <DropdownMenu.Content
                   align="center"
                   sideOffset={5}
-                  className="w-28 border bg-white dark:bg-slate-900 dark:border-slate-600 shadow py-2 rounded"
+                  className="py-2 bg-white border rounded shadow w-28 dark:bg-slate-900 dark:border-slate-600"
                 >
                   <DropdownMenu.RadioGroup
                     value={theme}
@@ -227,7 +227,7 @@ const Navbar = () => {
                   >
                     <DropdownMenu.RadioItem
                       value="light"
-                      className="cursor-pointer pl-4 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center space-x-1 py-1"
+                      className="flex items-center py-1 pl-4 space-x-1 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-800"
                     >
                       <div className="dark:text-white">
                         <SunIcon className="w-4 h-4 text-gray-400" />
@@ -236,7 +236,7 @@ const Navbar = () => {
                     </DropdownMenu.RadioItem>
                     <DropdownMenu.RadioItem
                       value="dark"
-                      className="cursor-pointer pl-4 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center space-x-1 py-1"
+                      className="flex items-center py-1 pl-4 space-x-1 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-800"
                     >
                       <div className="dark:text-white">
                         <MoonIcon className="w-4 h-4 text-gray-400" />
@@ -249,7 +249,7 @@ const Navbar = () => {
             </DropdownMenu.Root>
             <Link
               href="https://github.com/supabase/dbdev"
-              className="opacity-60 hover:opacity-100 transition"
+              className="transition opacity-60 hover:opacity-100"
             >
               <div className="dark:text-white">
                 <GitHubLogoIcon />
@@ -259,7 +259,7 @@ const Navbar = () => {
         </div>
       </nav>
     </header>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar
