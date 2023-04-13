@@ -16,7 +16,7 @@ const Layout = ({
   return (
     <div
       className={cn(
-        "flex flex-col",
+        "flex flex-col min-h-full",
         !gradientBg
           ? "bg-white dark:bg-slate-900"
           : "bg-gradient-to-b from-gray-100 via-gray-100 to-white dark:from-slate-900 dark:to-slate-800"
@@ -33,7 +33,7 @@ const Layout = ({
         {children}
       </main>
 
-      <Footer />
+      <Footer gradientBg />
     </div>
   );
 };

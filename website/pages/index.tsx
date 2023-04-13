@@ -1,9 +1,10 @@
+import { ArrowTopRightOnSquareIcon } from "@heroicons/react/20/solid";
 import Head from "next/head";
 import Link from "next/link";
 import Layout from "~/components/layouts/Layout";
-import { NextPageWithLayout } from "~/lib/types";
-import { ArrowTopRightOnSquareIcon } from "@heroicons/react/20/solid";
 import Markdown from "~/components/ui/Markdown";
+import PackageCard from "~/components/ui/PackageCard";
+import { NextPageWithLayout } from "~/lib/types";
 
 const MOCK_DATA = [
   {
@@ -86,29 +87,7 @@ const IndexPage: NextPageWithLayout = () => {
           </p>
           <div className="grid grid-cols-12 gap-4">
             {MOCK_DATA.map((pkg) => (
-              <Link
-                key={pkg.name}
-                href={`/${pkg.handle}/${pkg.partial_name}`}
-                className="col-span-4 bg-gradient-to-br from-white via-white to-gray-100 dark:from-slate-600 dark:to-slate-800 rounded-lg px-6 py-5 transition duration-300 group hover:shadow-xl opacity-90 hover:opacity-100 border border-gray-200 dark:border-slate-800"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-1">
-                    <p className="font-medium dark:text-white">
-                      {pkg.partial_name}{" "}
-                    </p>
-                    <p className="text-gray-400 font-normal">•</p>
-                    <p className="text-gray-400 font-normal">{pkg.version}</p>
-                  </div>
-                  <ArrowTopRightOnSquareIcon
-                    className="w-4 h-4 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200 transition"
-                    aria-hidden="true"
-                  />
-                </div>
-                <p className="text-gray-400">{pkg.handle}</p>
-                <p className="text-gray-600 dark:text-gray-200 mt-2 text-sm">
-                  {pkg.control_description}
-                </p>
-              </Link>
+              <PackageCard key={pkg.name} pkg={pkg} />
             ))}
           </div>
         </div>
