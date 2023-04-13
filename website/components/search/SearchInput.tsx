@@ -1,10 +1,10 @@
-import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
-import { forwardRef } from "react";
+import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
+import { forwardRef } from 'react'
 
 export type SearchInputProps = {
-  value: string;
-  onChange: (value: string) => void;
-};
+  value: string
+  onChange: (value: string) => void
+}
 
 const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   function SearchInput({ value, onChange }, ref) {
@@ -32,8 +32,8 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           />
         </div>
       </>
-    );
+    )
   }
-);
+)
 
-export default SearchInput;
+export default SearchInput

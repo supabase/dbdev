@@ -20,7 +20,7 @@ const SELECTED_COLUMNS = [
 
 export type PopularPackagesResponse = Pick<
   Package,
-  typeof SELECTED_COLUMNS[number]
+  (typeof SELECTED_COLUMNS)[number]
 >[]
 
 export async function getPopularPackages(signal?: AbortSignal) {

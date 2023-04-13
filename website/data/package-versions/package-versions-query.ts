@@ -23,7 +23,7 @@ const SELECTED_COLUMNS = ['id', 'created_at', 'version'] as const
 
 export type PackageVersionsResponse = Pick<
   PackageVersion,
-  typeof SELECTED_COLUMNS[number]
+  (typeof SELECTED_COLUMNS)[number]
 >[]
 
 export async function getPackageVersions(

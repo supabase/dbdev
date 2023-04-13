@@ -1,26 +1,26 @@
-import { isAuthApiError } from "@supabase/supabase-js";
-import Head from "next/head";
-import { useRouter } from "next/router";
-import toast from "react-hot-toast";
-import Form, { FORM_ERROR } from "~/components/forms/Form";
-import FormButton from "~/components/forms/FormButton";
-import FormInput from "~/components/forms/FormInput";
-import Layout from "~/components/layouts/Layout";
-import H1 from "~/components/ui/typography/H1";
-import { useSignUpMutation } from "~/data/auth/sign-up-mutation";
-import { NextPageWithLayout } from "~/lib/types";
-import { SignUpSchema } from "~/lib/validations";
+import { isAuthApiError } from '@supabase/supabase-js'
+import Head from 'next/head'
+import { useRouter } from 'next/router'
+import toast from 'react-hot-toast'
+import Form, { FORM_ERROR } from '~/components/forms/Form'
+import FormButton from '~/components/forms/FormButton'
+import FormInput from '~/components/forms/FormInput'
+import Layout from '~/components/layouts/Layout'
+import H1 from '~/components/ui/typography/H1'
+import { useSignUpMutation } from '~/data/auth/sign-up-mutation'
+import { NextPageWithLayout } from '~/lib/types'
+import { SignUpSchema } from '~/lib/validations'
 
 const SignUpPage: NextPageWithLayout = () => {
-  const router = useRouter();
+  const router = useRouter()
   const { mutateAsync: signUp } = useSignUpMutation({
     onSuccess() {
       toast.success(
-        "You have signed up successfully! Please check your email to confirm your account."
-      );
-      router.push("/sign-in");
+        'You have signed up successfully! Please check your email to confirm your account.'
+      )
+      router.push('/sign-in')
     },
-  });
+  })
 
   return (
     <div className="flex items-center justify-center flex-1 px-4 py-12 sm:px-6 lg:px-8">
@@ -33,26 +33,26 @@ const SignUpPage: NextPageWithLayout = () => {
 
         <Form
           initialValues={{
-            displayName: "",
-            handle: "",
-            email: "",
-            password: "",
+            displayName: '',
+            handle: '',
+            email: '',
+            password: '',
           }}
           onSubmit={async ({ email, password, handle, displayName }) => {
             try {
-              await signUp({ email, password, handle, displayName });
+              await signUp({ email, password, handle, displayName })
             } catch (error: any) {
               if (isAuthApiError(error)) {
                 return {
                   [FORM_ERROR]: error.message,
-                };
+                }
               }
 
               return {
                 [FORM_ERROR]:
-                  "Sorry, we had an unexpected error. Please try again. - " +
+                  'Sorry, we had an unexpected error. Please try again. - ' +
                   error.toString(),
-              };
+              }
             }
           }}
           schema={SignUpSchema}
@@ -91,9 +91,9 @@ const SignUpPage: NextPageWithLayout = () => {
         </Form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-SignUpPage.getLayout = (page) => <Layout>{page}</Layout>;
+SignUpPage.getLayout = (page) => <Layout>{page}</Layout>
 
-export default SignUpPage;
+export default SignUpPage

@@ -1,17 +1,17 @@
-import Link from "next/link";
+import Link from 'next/link'
 
 export type SearchPackageRowProps = {
-  handle: string;
-  partialName: string;
-  createdAt: string;
-};
+  handle: string
+  partialName: string
+  createdAt: string
+}
 
 const SearchPackageRow = ({
   handle,
   partialName,
   createdAt,
 }: SearchPackageRowProps) => {
-  const name = `${handle}/${partialName}`;
+  const name = `${handle}/${partialName}`
 
   return (
     <Link
@@ -23,7 +23,7 @@ const SearchPackageRow = ({
         {createdAt}
       </span>
     </Link>
-  );
-};
+  )
+}
 
-export default SearchPackageRow;
+export default SearchPackageRow
