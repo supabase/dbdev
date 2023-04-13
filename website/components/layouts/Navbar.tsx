@@ -208,7 +208,7 @@ const Navbar = () => {
               </div>
             )}
           </div>
-          <div className="flex items-center py-3 pl-8 space-x-6 border-l">
+          <div className="flex items-center py-3 pl-8 space-x-6 border-l dark:border-slate-700">
             <DropdownMenu.Root>
               <DropdownMenu.Trigger>
                 <div className="dark:text-white">

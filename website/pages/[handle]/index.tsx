@@ -6,6 +6,7 @@ import Layout from '~/components/layouts/Layout'
 import PackageCard from '~/components/packages/PackageCard'
 import H1 from '~/components/ui/typography/H1'
 import H2 from '~/components/ui/typography/H2'
+import { useUsersOrganizationsQuery } from '~/data/organizations/users-organizations-query'
 import {
   prefetchPackages,
   usePackagesQuery,
@@ -13,17 +14,26 @@ import {
 import { prefetchProfile, useProfileQuery } from '~/data/profiles/profile-query'
 import { getAllProfiles } from '~/data/static-path-queries'
 import { NotFoundError } from '~/data/utils'
+import { useUser } from '~/lib/auth'
 import { DEFAULT_AVATAR_SRC_URL } from '~/lib/avatars'
 import { NextPageWithLayout } from '~/lib/types'
 import { firstStr, useParams } from '~/lib/utils'
 
 const AccountPage: NextPageWithLayout = () => {
   const router = useRouter()
+  const user = useUser()
   const { handle } = useParams()
   const { data: profile } = useProfileQuery({ handle })
   const { data: packages, isSuccess: isPackagesSuccess } = usePackagesQuery({
     handle,
   })
+  const { data: organizations } = useUsersOrganizationsQuery({
+    userId: user?.id,
+  })
+
+  const isUser = user?.id === profile?.id
+  const isMember =
+    organizations?.find((org) => org.handle === handle) !== undefined
 
   return (
     <div className="flex flex-col gap-8 mt-8 pb-16">
@@ -42,7 +52,7 @@ const AccountPage: NextPageWithLayout = () => {
             </p>
           </div>
         </div>
-        {profile?.handle === handle && (
+        {(isUser || isMember) && (
           <div>
             <button
               className="transition text-sm flex items-center space-x-2 border rounded-md px-4 py-2 bg-white dark:bg-transparent dark:border-slate-500 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:border-slate-400 text-gray-500 hover:text-gray-700 hover:border-gray-400"
@@ -56,6 +66,9 @@ const AccountPage: NextPageWithLayout = () => {
       {isPackagesSuccess && (
         <div className="mt-10 flex flex-col gap-2">
           <H2 className="!text-xl">Packages</H2>
+          {packages.length === 0 && (
+            <p className="text-sm text-gray-400 py-2">No published packages</p>
+          )}
           {packages.map((pkg) => (
             <PackageCard
               key={pkg.id}

@@ -1,25 +1,22 @@
-import { isAuthApiError } from '@supabase/supabase-js'
 import Head from 'next/head'
-import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { useEffect, useRef, useState } from 'react'
+import toast from 'react-hot-toast'
 import Form, { FORM_ERROR } from '~/components/forms/Form'
 import FormButton from '~/components/forms/FormButton'
 import FormInput from '~/components/forms/FormInput'
 import Layout from '~/components/layouts/Layout'
 import H1 from '~/components/ui/typography/H1'
 import { useProfileQuery } from '~/data/profiles/profile-query'
-import { useAuth, withAuth } from '~/lib/auth'
+import { useUpdateProfileMutation } from '~/data/profiles/update-profile-mutation'
+import { useAuth, useUser, withAuth } from '~/lib/auth'
 import supabase from '~/lib/supabase'
 import { NextPageWithLayout } from '~/lib/types'
 import { useParams } from '~/lib/utils'
 import { UpdateProfileSchema } from '~/lib/validations'
-import signIn from '../sign-in'
-import ShimmeringLoader from '~/components/ui/Loader'
-import { useRef, useState, useEffect } from 'react'
-import { useUpdateProfileMutation } from '~/data/profiles/update-profile-mutation'
-import toast from 'react-hot-toast'
-import { useRouter } from 'next/router'
 
 const EditAccountPage: NextPageWithLayout = () => {
+  const user = useUser()
   const router = useRouter()
   const { handle } = useParams()
   const uploadButtonRef = useRef<any>()
@@ -43,10 +40,15 @@ const EditAccountPage: NextPageWithLayout = () => {
     contactEmail: profile?.contact_email ?? '',
   }
 
-  console.log({ profile, initialValues })
-
   useEffect(() => {
-    if (profile) setPreviewImage(profile.avatar_url)
+    if (profile) {
+      if (profile.id !== user?.id) {
+        toast.error('Unable to edit profile')
+        router.push(`/${handle}`)
+      } else {
+        setPreviewImage(profile.avatar_url)
+      }
+    }
   }, [isLoading])
 
   const uploadAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -128,8 +130,10 @@ const EditAccountPage: NextPageWithLayout = () => {
                 accept="image/jpeg, image/png"
               />
               <button
+                type="button"
                 className="flex items-center px-4 py-2 space-x-2 text-sm text-gray-500 transition bg-white border rounded-md dark:bg-transparent dark:border-slate-500 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:border-slate-400 hover:text-gray-700 hover:border-gray-400"
                 onClick={() => uploadButtonRef?.current?.click()}
+                disabled={profile?.id !== user?.id}
               >
                 Upload an image
               </button>
@@ -151,7 +155,9 @@ const EditAccountPage: NextPageWithLayout = () => {
               />
             </div>
 
-            <FormButton>Save changes</FormButton>
+            <FormButton disabled={profile?.id !== user?.id}>
+              Save changes
+            </FormButton>
           </Form>
         </div>
       )}

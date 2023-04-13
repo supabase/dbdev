@@ -92,7 +92,7 @@ create extension "${pkg?.package_name ?? 'Loading...'}"
               </TabsContent>
             </div>
 
-            <div className="flex flex-col gap-3 mt-2 rounded-md border border-slate-200 p-6 min-h-[64px] order-first md:order-last md:col-span-2">
+            <div className="flex flex-col gap-3 mt-2 rounded-md border border-slate-200 dark:border-slate-700 p-6 min-h-[64px] order-first md:order-last md:col-span-2">
               <div className="flex items-center justify-between pb-1 border-b border-b-slate-200">
                 <H2 variant="borderless">Install</H2>
 
