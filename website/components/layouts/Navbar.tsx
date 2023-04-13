@@ -88,6 +88,7 @@ const Navbar = () => {
 
   return (
     <header className="px-4 py-4 border-b border-gray-100 shadow-sm dark:border-slate-700 md:px-8">
+      {/* sticky top-0 bg-gray-100 dark:bg-slate-900 */}
       <nav className="flex items-center justify-between gap-4 md:gap-6">
         <div>
           <Link href="/">

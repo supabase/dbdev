@@ -5,6 +5,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import Layout from '~/components/layouts/Layout'
 import PackageCard from '~/components/packages/PackageCard'
+import Search from '~/components/search/Search'
 import Markdown from '~/components/ui/Markdown'
 import {
   prefetchPopularPackages,
@@ -22,7 +23,7 @@ const IndexPage: NextPageWithLayout = () => {
       </Head>
 
       <div className="flex flex-col justify-center pb-20">
-        <div className="mt-48">
+        <div className="mt-44">
           <h1 className="text-2xl font-bold text-gray-900 -translate-y-10 dark:text-gray-100 sm:text-4xl md:text-7xl">
             The Database
             <br />
@@ -73,6 +74,13 @@ const IndexPage: NextPageWithLayout = () => {
               <PackageCard key={pkg.id} pkg={pkg} />
             ))}
           </div>
+        </div>
+
+        <div className="bg-gray-200 dark:bg-slate-700 mt-20 px-8 pb-6 pt-4 rounded-lg shadow-xl">
+          <p className="text-gray-600 dark:text-gray-400 mb-2">
+            Search for a package
+          </p>
+          <Search />
         </div>
 
         {/* First time here section */}

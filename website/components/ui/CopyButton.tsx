@@ -1,33 +1,33 @@
-"use client";
+'use client'
 
-import { CheckIcon, ClipboardDocumentIcon } from "@heroicons/react/24/outline";
-import { cva, VariantProps } from "class-variance-authority";
-import { HTMLAttributes, useEffect, useState } from "react";
-import { cn } from "~/lib/utils";
+import { CheckIcon, ClipboardDocumentIcon } from '@heroicons/react/24/outline'
+import { cva, VariantProps } from 'class-variance-authority'
+import { HTMLAttributes, useEffect, useState } from 'react'
+import { cn } from '~/lib/utils'
 
 export const copyButtonVariants = cva(
-  "relative z-20 inline-flex items-center justify-center rounded-md p-2 text-sm font-medium transition-all",
+  'inline-flex items-center justify-center rounded-md p-2 text-sm font-medium transition-all',
   {
     variants: {
       variant: {
-        light: "text-slate-900 border-slate-200 hover:bg-slate-100",
-        dark: "text-white border-slate-900 hover:bg-slate-900",
+        light: 'text-slate-900 border-slate-200 hover:bg-slate-100',
+        dark: 'text-white border-slate-900 hover:bg-slate-900',
       },
     },
     defaultVariants: {
-      variant: "light",
+      variant: 'light',
     },
   }
-);
+)
 
 interface CopyButtonProps
   extends HTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof copyButtonVariants> {
-  getValue: () => string;
+  getValue: () => string
 }
 
 async function copyToClipboardWithMeta(value: string) {
-  navigator.clipboard.writeText(value);
+  navigator.clipboard.writeText(value)
 }
 
 const CopyButton = ({
@@ -36,29 +36,29 @@ const CopyButton = ({
   variant,
   ...props
 }: CopyButtonProps) => {
-  const [hasCopied, setHasCopied] = useState(false);
+  const [hasCopied, setHasCopied] = useState(false)
 
   useEffect(() => {
-    let mounted = true;
+    let mounted = true
 
     const id = setTimeout(() => {
       if (mounted) {
-        setHasCopied(false);
+        setHasCopied(false)
       }
-    }, 2000);
+    }, 2000)
 
     return () => {
-      mounted = false;
-      clearTimeout(id);
-    };
-  }, [hasCopied]);
+      mounted = false
+      clearTimeout(id)
+    }
+  }, [hasCopied])
 
   return (
     <button
       className={cn(copyButtonVariants({ variant }), className)}
       onClick={() => {
-        copyToClipboardWithMeta(getValue());
-        setHasCopied(true);
+        copyToClipboardWithMeta(getValue())
+        setHasCopied(true)
       }}
       {...props}
     >
@@ -69,7 +69,7 @@ const CopyButton = ({
         <ClipboardDocumentIcon className="w-5 h-5 dark:text-white" />
       )}
     </button>
-  );
-};
+  )
+}
 
-export default CopyButton;
+export default CopyButton
