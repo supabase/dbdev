@@ -3,7 +3,7 @@ import { GetStaticPaths, GetStaticProps } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Layout from '~/components/layouts/Layout'
-import PackageCard from '~/components/ui/PackageCard'
+import PackageCard from '~/components/packages/PackageCard'
 import H1 from '~/components/ui/typography/H1'
 import H2 from '~/components/ui/typography/H2'
 import {

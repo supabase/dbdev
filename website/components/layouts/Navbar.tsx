@@ -76,7 +76,7 @@ const Navbar = () => {
 
   const AvatarWrapper = ({ size = 'sm' }: { size?: 'sm' | 'md' }) =>
     user?.user_metadata.avatar_path === undefined ? (
-      <div className="flex items-center justify-center w-6 h-6 rounded-full border-1 bg-gray-300 border-gray-400 text-gray-600 dark:border-slate-400 dark:bg-slate-500 dark:text-white">
+      <div className="flex items-center justify-center w-6 h-6 text-gray-600 bg-gray-300 border-gray-400 rounded-full border-1 dark:border-slate-400 dark:bg-slate-500 dark:text-white">
         {user?.user_metadata.display_name[0].toUpperCase()}
       </div>
     ) : (
@@ -87,7 +87,7 @@ const Navbar = () => {
     )
 
   return (
-    <header className="px-4 py-4 border-b border-gray-100 dark:border-slate-700 shadow-sm md:px-8">
+    <header className="px-4 py-4 border-b border-gray-100 shadow-sm dark:border-slate-700 md:px-8">
       <nav className="flex items-center justify-between gap-4 md:gap-6">
         <div>
           <Link href="/">
@@ -107,7 +107,7 @@ const Navbar = () => {
           <Search />
         </div>
 
-        <div className="flex items-center justify-center gap-6">
+        <div className="flex items-center justify-end gap-6 min-w-[160px]">
           <div className="flex items-center ml-4">
             {user ? (
               <DropdownMenu.Root>
@@ -119,7 +119,7 @@ const Navbar = () => {
                   <DropdownMenu.Content
                     align="end"
                     sideOffset={5}
-                    className="border bg-white dark:bg-slate-900 dark:border-slate-600 shadow py-2 rounded"
+                    className="py-2 bg-white border rounded shadow dark:bg-slate-900 dark:border-slate-600"
                   >
                     <DropdownMenu.Label className="text-xs text-gray-600 dark:text-gray-400 px-4 mb-1">
                       Logged in as
@@ -143,7 +143,7 @@ const Navbar = () => {
                     <DropdownMenu.Separator className="h-px my-2 bg-gray-200 dark:bg-slate-700" />
 
                     <DropdownMenu.Group className="flex flex-col">
-                      <DropdownMenu.Label className="text-xs text-gray-600 dark:text-gray-400 px-4 mb-1">
+                      <DropdownMenu.Label className="px-4 mb-1 text-xs text-gray-600 dark:text-gray-400">
                         Organizations
                       </DropdownMenu.Label>
 
@@ -160,7 +160,7 @@ const Navbar = () => {
                           </DropdownMenu.Item>
                         ))}
 
-                      <DropdownMenu.Item
+                      {/* <DropdownMenu.Item
                         asChild
                         className="px-4 py-1 hover:bg-gray-100 dark:hover:bg-slate-800"
                       >
@@ -170,7 +170,7 @@ const Navbar = () => {
                         >
                           New organization
                         </Link>
-                      </DropdownMenu.Item>
+                      </DropdownMenu.Item> */}
                     </DropdownMenu.Group>
 
                     <DropdownMenu.Separator className="h-px my-2 bg-gray-200 dark:bg-slate-700" />
@@ -195,20 +195,20 @@ const Navbar = () => {
               <div className="flex items-center gap-4">
                 <Link
                   href="/sign-up"
-                  className="transition text-sm rounded text-gray-600 hover:text-gray-800 dark:text-slate-400 border border-gray-300 hover:border-gray-500 dark:border-slate-700 py-2 px-4 dark:hover:bg-slate-800 hover:dark:text-white"
+                  className="px-4 py-2 text-sm text-gray-600 transition border border-gray-300 rounded hover:text-gray-800 dark:text-slate-400 hover:border-gray-500 dark:border-slate-700 dark:hover:bg-slate-800 hover:dark:text-white"
                 >
                   Sign Up
                 </Link>
                 <Link
                   href="/sign-in"
-                  className="transition text-sm text-gray-600 hover:text-gray-800 dark:text-slate-400 hover:dark:text-white"
+                  className="text-sm text-gray-600 transition hover:text-gray-800 dark:text-slate-400 hover:dark:text-white"
                 >
                   Sign In
                 </Link>
               </div>
             )}
           </div>
-          <div className="flex items-center space-x-6 border-l pl-8 py-3">
+          <div className="flex items-center py-3 pl-8 space-x-6 border-l">
             <DropdownMenu.Root>
               <DropdownMenu.Trigger>
                 <div className="dark:text-white">
@@ -223,7 +223,7 @@ const Navbar = () => {
                 <DropdownMenu.Content
                   align="center"
                   sideOffset={5}
-                  className="w-28 border bg-white dark:bg-slate-900 dark:border-slate-600 shadow py-2 rounded"
+                  className="py-2 bg-white border rounded shadow w-28 dark:bg-slate-900 dark:border-slate-600"
                 >
                   <DropdownMenu.RadioGroup
                     value={theme}
@@ -231,7 +231,7 @@ const Navbar = () => {
                   >
                     <DropdownMenu.RadioItem
                       value="light"
-                      className="cursor-pointer pl-4 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center space-x-1 py-1"
+                      className="flex items-center py-1 pl-4 space-x-1 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-800"
                     >
                       <div className="dark:text-white">
                         <SunIcon className="w-4 h-4 text-gray-400" />
@@ -240,7 +240,7 @@ const Navbar = () => {
                     </DropdownMenu.RadioItem>
                     <DropdownMenu.RadioItem
                       value="dark"
-                      className="cursor-pointer pl-4 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center space-x-1 py-1"
+                      className="flex items-center py-1 pl-4 space-x-1 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-800"
                     >
                       <div className="dark:text-white">
                         <MoonIcon className="w-4 h-4 text-gray-400" />
@@ -253,7 +253,7 @@ const Navbar = () => {
             </DropdownMenu.Root>
             <Link
               href="https://github.com/supabase/dbdev"
-              className="opacity-60 hover:opacity-100 transition"
+              className="transition opacity-60 hover:opacity-100"
             >
               <div className="dark:text-white">
                 <GitHubLogoIcon />

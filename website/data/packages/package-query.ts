@@ -16,9 +16,19 @@ export type PackageVariables = {
   partialName?: string
 }
 
-export type PackageResponse = NonNullableObject<
+export type Package = NonNullableObject<
   Database['public']['Views']['packages']['Row']
 >
+
+export type PackageResponse = Package & {
+  download_metrics: {
+    package_id: string
+    downloads_30_day: number
+    downloads_90_days: number
+    downloads_180_days: number
+    downloads_all_time: number
+  } | null
+}
 
 export async function getPackage(
   { handle, partialName }: PackageVariables,
