@@ -1,35 +1,35 @@
-import { ArrowTopRightOnSquareIcon } from "@heroicons/react/20/solid";
-import Head from "next/head";
-import Link from "next/link";
-import Layout from "~/components/layouts/Layout";
-import Markdown from "~/components/ui/Markdown";
-import PackageCard from "~/components/ui/PackageCard";
-import { NextPageWithLayout } from "~/lib/types";
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
+import Head from 'next/head'
+import Link from 'next/link'
+import Layout from '~/components/layouts/Layout'
+import Markdown from '~/components/ui/Markdown'
+import PackageCard from '~/components/ui/PackageCard'
+import { NextPageWithLayout } from '~/lib/types'
 
 const MOCK_DATA = [
   {
-    name: "supabase-dbdev",
-    handle: "supabase",
-    partial_name: "dbdev",
-    version: "0.1.0",
-    control_description: "Install packages from the dbdev package index",
+    name: 'supabase-dbdev',
+    handle: 'supabase',
+    partial_name: 'dbdev',
+    version: '0.1.0',
+    control_description: 'Install packages from the dbdev package index',
   },
   {
-    name: "olirice-index_advisor",
-    handle: "olirice",
-    partial_name: "index_advisor",
-    version: "1.0.2",
+    name: 'olirice-index_advisor',
+    handle: 'olirice',
+    partial_name: 'index_advisor',
+    version: '1.0.2',
     control_description:
-      "Recommend indexes to improve performance of a given query.",
+      'Recommend indexes to improve performance of a given query.',
   },
   {
-    name: "langchain-embedding_search",
-    handle: "langchain",
-    partial_name: "embedding_search",
-    version: "2.1.3",
-    control_description: "Search documents by embedding and full text",
+    name: 'langchain-embedding_search',
+    handle: 'langchain',
+    partial_name: 'embedding_search',
+    version: '2.1.3',
+    control_description: 'Search documents by embedding and full text',
   },
-];
+]
 
 const IndexPage: NextPageWithLayout = () => {
   return (
@@ -46,7 +46,7 @@ const IndexPage: NextPageWithLayout = () => {
             <span
               className="font-extrabold bg-center bg-no-repeat bg-cover bg-clip-text"
               style={{
-                color: "transparent",
+                color: 'transparent',
                 backgroundImage:
                   "url('https://i.giphy.com/media/2tNvsKkc0qFdNhJmKk/giphy.webp'",
               }}
@@ -55,7 +55,7 @@ const IndexPage: NextPageWithLayout = () => {
             </span>
           </h1>
           <p className="text-gray-600 dark:text-gray-400 text-xl -mt-4">
-            For PostgreSQL trusted language extensions{" "}
+            For PostgreSQL trusted language extensions{' '}
             <Link
               href="https://github.com/aws/pg_tle"
               className="border-b-2 border-gray-300 hover:border-gray-500 dark:border-slate-700 dark:hover:border-slate-500 transition"
@@ -92,17 +92,33 @@ const IndexPage: NextPageWithLayout = () => {
           </div>
         </div>
 
+        {/* First time here section */}
+        <div id="getting-started" className="mt-24 space-y-4">
+          <p className="text-gray-600 dark:text-gray-400 text-lg">
+            First time?
+          </p>
+          <div className="space-y-2">
+            <p className="dark:text-white">
+              Install the dbdev client in your PostgreSQL database by following
+              the guide{' '}
+              <Link href="/installer" className="border-b">
+                here
+              </Link>
+            </p>
+          </div>
+        </div>
+
         {/* Getting started section */}
-        <div className="mt-24 space-y-4">
+        <div id="getting-started" className="mt-24 space-y-4">
           <p className="text-gray-600 dark:text-gray-400 text-lg">
             Getting started
           </p>
           <div className="space-y-2">
             <p className="dark:text-white">
-              Simply install{" "}
+              Simply install{' '}
               <code className="text-sm bg-gray-200 dark:bg-slate-600 px-1 py-1 rounded">
                 pglets
-              </code>{" "}
+              </code>{' '}
               via a SQL command
             </p>
             <Markdown className="dark:border dark:border-slate-700 rounded">
@@ -112,22 +128,22 @@ select dbdev.install('olirice-index_advisor');
             </Markdown>
           </div>
           <p className="dark:text-white">
-            Where{" "}
+            Where{' '}
             <code className="text-sm bg-gray-200 dark:bg-slate-600 px-1 py-1 rounded">
               olirice
-            </code>{" "}
-            is the handle of the publisher and{" "}
+            </code>{' '}
+            is the handle of the publisher and{' '}
             <code className="text-sm bg-gray-200 dark:bg-slate-600 px-1 py-1 rounded">
               index_advisor
-            </code>{" "}
+            </code>{' '}
             is the name of the pglet.
           </p>
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-IndexPage.getLayout = (page) => <Layout gradientBg>{page}</Layout>;
+IndexPage.getLayout = (page) => <Layout gradientBg>{page}</Layout>
 
-export default IndexPage;
+export default IndexPage
