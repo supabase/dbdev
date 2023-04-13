@@ -227,14 +227,14 @@ $description$
 # pg_headerkit: PostgREST Header Kit
 A set of functions for adding special features to your application that use PostgREST API calls to your PostgreSQL database.  These functions can be used inside PostgreSQL functions that can give your application the following capabilities at the database level:
 
-- ⬜️ rate limiting
-- ⬜️ IP allowlisting
-- ⬜️ IP denylisting
-- ⬜️ request logging
-- ⬜️ request filtering
-- ⬜️ request routing
-- ⬜️ user allowlisting by uid or email (Supabase-specific)
-- ⬜️ user denylisting by uid or email (Supabase-specific)
+- [x] rate limiting
+- [x] IP allowlisting
+- [x] IP denylisting
+- [x] request logging
+- [x] request filtering
+- [x] request routing
+- [x] user allowlisting by uid or email (Supabase-specific)
+- [x] user denylisting by uid or email (Supabase-specific)
 
 ### Article
 See: [PostgREST Header Hacking](https://github.com/burggraf/postgrest-header-hacking)

@@ -3,8 +3,8 @@ create or replace function public.update_profile(
   display_name text default null,
   bio text default null
 )
-language plpgsql
 returns void
+language plpgsql
 as $$
   declare
     v_is_org boolean;

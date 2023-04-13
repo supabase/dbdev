@@ -108,32 +108,16 @@ comment on type scatter_state is e'internal';
 $asciiplot$,
 
 $description$
-## asciiplot
+# asciiplot
 
-asciiplot is a toy library for producing ASCII scatterplots for queries in PostgreSQL.
-
-### Installation
-
-```sql
--- Enable dbdev
-create extension dbdev;
-
--- Fetch the package from the package index
-dbdev.install('olirice-asciiplot');
-
--- Create the extension
-create schema plot;
-create extension "olirice-asciiplot"
-    schema 'plot'
-    version '0.0.2';
-```
+asciiplot is a toy library for producing ASCII scatterplots from PostgreSQL queries.
+Please note that it is not indended for serious use.
 
 ### Usage
 
 ```sql
-create extension asciiplot
 select
-  plot.scatter(
+  scatter(
     val::numeric, --x
     val::numeric, -- y
     'stonks!', -- title
@@ -142,6 +126,25 @@ select
   )
 from
   generate_series(1,10) vals(val)
+
+/*
+                   stonks!
+----------------------------------------------
+|                                       *
+|
+|                                  *
+|                              *
+|
+|                          *
+|
+|                     *
+|                 *
+|
+|            *
+|
+|        *
+|   *
+*/
 ```
 $description$
 

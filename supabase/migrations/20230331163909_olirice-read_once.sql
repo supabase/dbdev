@@ -79,6 +79,7 @@ $$
     delete from read_once.messages
     where read_once.messages.id = $1
     returning contents;
+$$
 $pkg$,
 
 $description_md$
@@ -91,21 +92,31 @@ Features:
 - messages can only be read one time
 - messages are not logged in PostgreSQL write-ahead-log (WAL)
 
-Note: to expose the `send_message` and `read_message` functions over HTTP, install the extension in a schema that is on the search path.
+## Installation
+
+`pg_cron` is a dependency of `read_once`.
+Dependency resolution is currently under development.
+In the near future it will not be necessary to manually create dependencies.
+
+To expose the `send_message` and `read_message` functions over HTTP, install the extension in a schema that is on the search_path.
+
 
 For example:
 ```sql
+select dbdev.install('olirice-read_once');
+create extension if not exists pg_cron;
 create extension "olirice-read_once"
-    schema 'public'
+    schema public
     version '0.3.1';
 ```
+
 
 ## HTTP API
 
 ### Create a Message
 
 ```sh
-curl -X POST https://<PROJECT_REF>/rest/v1/rpc/send_message \
+curl -X POST https://<PROJECT_REF>.supabase.co/rest/v1/rpc/send_message \
     -H 'apiKey: <API_KEY>' \
     -H 'Content-Type: application/json'
     --data-raw '{"contents": "hello, dbdev!"}
@@ -116,10 +127,10 @@ curl -X POST https://<PROJECT_REF>/rest/v1/rpc/send_message \
 ### Read a Message
 
 ```sh
-curl -X https://<PROJECT_REF>/rest/v1/rpc/read_message
+curl -X https://<PROJECT_REF>.supabase.co/rest/v1/rpc/read_message
     -H 'apiKey: <API_KEY>' \
     -H 'Content-Type: application/json' \
-  --data-raw '{"id": "2989156b-2356-4543-9d1b-19dfb8ec3268"}
+    --data-raw '{"id": "2989156b-2356-4543-9d1b-19dfb8ec3268"}
 
 # Returns: "hello, dbdev!"
 ```
@@ -141,7 +152,7 @@ create or replace function send_message(
 
 ```sql
 -- Read a message by its id
-create or replace function send_message(
+create or replace function read_message(
     id uuid
 )
     returns text
