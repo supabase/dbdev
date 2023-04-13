@@ -6,7 +6,7 @@ export interface CodeProps extends ComponentPropsWithoutRef<'code'> {}
 const Code = forwardRef<HTMLHeadingElement, CodeProps>(
   ({ className, children, ...props }, ref) => (
     <code
-      className={cn('relative tracking-tight dark:text-white', className)}
+      className={cn('tracking-tight dark:text-white', className)}
       {...props}
       ref={ref}
     >

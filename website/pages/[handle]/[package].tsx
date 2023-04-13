@@ -101,7 +101,7 @@ create extension "${pkg?.package_name ?? 'Loading...'}"
 
               <ol role="list" className="list-decimal list-inside">
                 <li className="dark:text-white">
-                  <Link href="/installer">
+                  <Link href="/installer" className="dark:text-blue-400">
                     Install the <code>dbdev</code> package manager
                   </Link>
                 </li>

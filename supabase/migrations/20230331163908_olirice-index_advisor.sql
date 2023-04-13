@@ -8,7 +8,7 @@ insert into app.packages(
 values (
     'olirice',
     'index_advisor',
-    'PostgreSQL functions that read PostgREST headers for adding functionality to your database',
+    'Recommend indexes for a given SQL query',
     true,
     '{hypopg}'
 );
