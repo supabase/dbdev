@@ -81,7 +81,7 @@ const EditAccountPage: NextPageWithLayout = () => {
         }
       }
       await refreshSession()
-      await updateProfile({ id: profile?.id, displayName, bio })
+      await updateProfile({ handle: profile?.handle, displayName, bio })
     } catch (error: any) {
       return {
         [FORM_ERROR]:
@@ -113,9 +113,9 @@ const EditAccountPage: NextPageWithLayout = () => {
             <p className="text-sm font-medium dark:text-white">
               Profile picture
             </p>
-            <div className="flex items-center space-x-8 mb-4">
+            <div className="flex items-center mb-4 space-x-8">
               <div
-                className="w-24 h-24 rounded-full border bg-center bg-no-repeat bg-cover dark:border-slate-700"
+                className="w-24 h-24 bg-center bg-no-repeat bg-cover border rounded-full dark:border-slate-700"
                 style={{
                   backgroundImage: `url('${previewImage}')`,
                 }}
@@ -128,7 +128,7 @@ const EditAccountPage: NextPageWithLayout = () => {
                 accept="image/jpeg, image/png"
               />
               <button
-                className="transition text-sm flex items-center space-x-2 border rounded-md px-4 py-2 bg-white dark:bg-transparent dark:border-slate-500 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:border-slate-400 text-gray-500 hover:text-gray-700 hover:border-gray-400"
+                className="flex items-center px-4 py-2 space-x-2 text-sm text-gray-500 transition bg-white border rounded-md dark:bg-transparent dark:border-slate-500 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:border-slate-400 hover:text-gray-700 hover:border-gray-400"
                 onClick={() => uploadButtonRef?.current?.click()}
               >
                 Upload an image

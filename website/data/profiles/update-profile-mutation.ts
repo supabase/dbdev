@@ -5,18 +5,22 @@ import {
 } from '@tanstack/react-query'
 import supabase from '~/lib/supabase'
 
-type UpdateProfileVariables = { id: string; displayName: string; bio: string }
+type UpdateProfileVariables = {
+  handle: string
+  displayName?: string | null
+  bio?: string | null
+}
 
 export async function updateProfile({
-  id,
+  handle,
   displayName,
   bio,
 }: UpdateProfileVariables) {
-  const { data, error } = await supabase
-    .from('accounts')
-    // @ts-ignore
-    .update({ bio, display_name: displayName })
-    .eq('id', id)
+  const { data, error } = await supabase.rpc('update_profile', {
+    handle,
+    display_name: displayName ?? undefined,
+    bio: bio ?? undefined,
+  })
 
   if (error) throw error
   return data
@@ -42,13 +46,17 @@ export const useUpdateProfileMutation = ({
     UpdateProfileData,
     UpdateProfileError,
     UpdateProfileVariables
-  >(({ id, displayName, bio }) => updateProfile({ id, displayName, bio }), {
-    async onSuccess(data, variables, context) {
-      await Promise.all([
-        queryClient.resetQueries(),
-        await onSuccess?.(data, variables, context),
-      ])
-    },
-    ...options,
-  })
+  >(
+    ({ handle, displayName, bio }) =>
+      updateProfile({ handle, displayName, bio }),
+    {
+      async onSuccess(data, variables, context) {
+        await Promise.all([
+          queryClient.resetQueries(),
+          await onSuccess?.(data, variables, context),
+        ])
+      },
+      ...options,
+    }
+  )
 }

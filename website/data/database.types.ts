@@ -161,6 +161,14 @@ export interface Database {
           partial_name: string | null
         }[]
       }
+      update_profile: {
+        Args: {
+          handle: unknown
+          display_name?: string
+          bio?: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
