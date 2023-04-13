@@ -23,7 +23,6 @@ For example:
 ```sql
 -- Enable the extension
 create extension "olirice-index_advisor"
-    schema 'public'
     version '0.1.0';
 ```
 
