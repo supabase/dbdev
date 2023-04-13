@@ -1,6 +1,6 @@
 import { dehydrate, QueryClient } from '@tanstack/react-query'
 import { GetStaticPaths, GetStaticProps } from 'next'
-import Link from 'next/link'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import Layout from '~/components/layouts/Layout'
 import PackageCard from '~/components/packages/PackageCard'
@@ -36,49 +36,60 @@ const AccountPage: NextPageWithLayout = () => {
     organizations?.find((org) => org.handle === handle) !== undefined
 
   return (
-    <div className="flex flex-col gap-8 mt-8 pb-16">
-      <div className="flex justify-between">
-        <div className="flex items-start space-x-6">
-          <img
-            src={profile?.avatar_url ?? DEFAULT_AVATAR_SRC_URL}
-            alt={`${profile?.display_name || handle}'s avatar`}
-            className="rounded-full w-12 h-12"
-          />
-          <div>
-            <H1 className="!text-3xl">{profile?.display_name ?? handle}</H1>
-            <p className="text-gray-600 dark:text-gray-400">{profile?.bio}</p>
-            <p className="text-gray-600 dark:text-gray-400 mt-2 text-sm">
-              Joined since {profile?.created_at}
-            </p>
+    <>
+      <Head>
+        <title>
+          {profile?.display_name ?? profile?.handle ?? handle} | The Database
+          Package Manager
+        </title>
+      </Head>
+
+      <div className="flex flex-col gap-8 pb-16 mt-8">
+        <div className="flex justify-between">
+          <div className="flex items-start space-x-6">
+            <img
+              src={profile?.avatar_url ?? DEFAULT_AVATAR_SRC_URL}
+              alt={`${profile?.display_name || handle}'s avatar`}
+              className="w-12 h-12 rounded-full"
+            />
+            <div>
+              <H1 className="!text-3xl">{profile?.display_name ?? handle}</H1>
+              <p className="text-gray-600 dark:text-gray-400">{profile?.bio}</p>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                Joined since {profile?.created_at}
+              </p>
+            </div>
           </div>
+          {(isUser || isMember) && (
+            <div>
+              <button
+                className="flex items-center px-4 py-2 space-x-2 text-sm text-gray-500 transition bg-white border rounded-md dark:bg-transparent dark:border-slate-500 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:border-slate-400 hover:text-gray-700 hover:border-gray-400"
+                onClick={() => router.push(`/${handle}/edit`)}
+              >
+                Edit profile
+              </button>
+            </div>
+          )}
         </div>
-        {(isUser || isMember) && (
-          <div>
-            <button
-              className="transition text-sm flex items-center space-x-2 border rounded-md px-4 py-2 bg-white dark:bg-transparent dark:border-slate-500 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:border-slate-400 text-gray-500 hover:text-gray-700 hover:border-gray-400"
-              onClick={() => router.push(`/${handle}/edit`)}
-            >
-              Edit profile
-            </button>
+        {isPackagesSuccess && (
+          <div className="flex flex-col gap-2 mt-10">
+            <H2 className="!text-xl">Packages</H2>
+            {packages.length === 0 && (
+              <p className="py-2 text-sm text-gray-400">
+                No published packages
+              </p>
+            )}
+            {packages.map((pkg) => (
+              <PackageCard
+                key={pkg.id}
+                pkg={pkg}
+                className="!group hover:shadow-md"
+              />
+            ))}
           </div>
         )}
       </div>
-      {isPackagesSuccess && (
-        <div className="mt-10 flex flex-col gap-2">
-          <H2 className="!text-xl">Packages</H2>
-          {packages.length === 0 && (
-            <p className="text-sm text-gray-400 py-2">No published packages</p>
-          )}
-          {packages.map((pkg) => (
-            <PackageCard
-              key={pkg.id}
-              pkg={pkg}
-              className="!group hover:shadow-md"
-            />
-          ))}
-        </div>
-      )}
-    </div>
+    </>
   )
 }
 

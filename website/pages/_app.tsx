@@ -1,11 +1,12 @@
 import { Inter } from '@next/font/google'
 import { Hydrate, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import clsx from 'clsx'
 import { Toaster } from 'react-hot-toast'
+import { ThemeContextProvider } from '~/components/themes/ThemeContext'
 import { useRootQueryClient } from '~/data/query-client'
 import { AuthProvider } from '~/lib/auth'
 import { AppPropsWithLayout } from '~/lib/types'
+import { cn } from '~/lib/utils'
 import '~/styles/globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -19,10 +20,13 @@ const CustomApp = ({ Component, pageProps }: AppPropsWithLayout) => {
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
         <AuthProvider>
-          <div className={clsx(inter.className, 'h-full')}>
-            {getLayout(<Component {...pageProps} />)}
-          </div>
+          <ThemeContextProvider>
+            <div className={cn(inter.className, 'h-full')}>
+              {getLayout(<Component {...pageProps} />)}
+            </div>
+          </ThemeContextProvider>
         </AuthProvider>
+
         <Toaster position="bottom-left" />
         <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
       </Hydrate>
