@@ -1,5 +1,6 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { GitHubLogoIcon, MoonIcon, SunIcon } from "@radix-ui/react-icons";
+import { GitHubLogoIcon } from "@radix-ui/react-icons";
+import { SunIcon, MoonIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -181,7 +182,11 @@ const Navbar = () => {
             <DropdownMenu.Root>
               <DropdownMenu.Trigger>
                 <div className="dark:text-white">
-                  {theme === "dark" ? <MoonIcon /> : <SunIcon />}
+                  {theme === "dark" ? (
+                    <MoonIcon className="w-4 h-4 text-gray-400" />
+                  ) : (
+                    <SunIcon className="w-4 h-4 text-gray-400" />
+                  )}
                 </div>
               </DropdownMenu.Trigger>
               <DropdownMenu.Content className="w-28 border bg-white dark:bg-slate-900 dark:border-slate-600 shadow py-2 rounded">
@@ -191,7 +196,7 @@ const Navbar = () => {
                     className="cursor-pointer pl-4 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center space-x-1 py-1"
                   >
                     <div className="dark:text-white">
-                      <SunIcon />
+                      <SunIcon className="w-4 h-4 text-gray-400" />
                     </div>
                     <p className="pl-2 text-sm dark:text-white">Light</p>
                   </DropdownMenu.RadioItem>
@@ -200,7 +205,7 @@ const Navbar = () => {
                     className="cursor-pointer pl-4 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center space-x-1 py-1"
                   >
                     <div className="dark:text-white">
-                      <MoonIcon />
+                      <MoonIcon className="w-4 h-4 text-gray-400" />
                     </div>
                     <p className="pl-2 text-sm dark:text-white">Dark</p>
                   </DropdownMenu.RadioItem>
