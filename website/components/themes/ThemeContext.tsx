@@ -1,3 +1,4 @@
+import Head from 'next/head'
 import {
   createContext,
   PropsWithChildren,
@@ -70,5 +71,16 @@ export const ThemeContextProvider = ({
     [theme, onSetTheme]
   )
 
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+  return (
+    <>
+      <Head>
+        <meta
+          name="theme-color"
+          content={theme === 'light' ? '#f3f4f6' : '#0f172a'}
+        />
+      </Head>
+
+      <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+    </>
+  )
 }
