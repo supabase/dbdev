@@ -6,10 +6,15 @@ import {
 } from '@tanstack/react-query'
 import supabase from '~/lib/supabase'
 
-type ForgotPasswordVariables = { email: string }
+type ForgotPasswordVariables = { email: string; redirectTo?: string }
 
-export async function forgotPassword({ email }: ForgotPasswordVariables) {
-  const { error } = await supabase.auth.resetPasswordForEmail(email)
+export async function forgotPassword({
+  email,
+  redirectTo,
+}: ForgotPasswordVariables) {
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo,
+  })
 
   if (error) {
     throw error
@@ -36,7 +41,7 @@ export const useForgotPasswordMutation = ({
     ForgotPasswordData,
     ForgotPasswordError,
     ForgotPasswordVariables
-  >(({ email }) => forgotPassword({ email }), {
+  >(({ email, redirectTo }) => forgotPassword({ email, redirectTo }), {
     async onSuccess(data, variables, context) {
       await Promise.all([
         queryClient.resetQueries(),

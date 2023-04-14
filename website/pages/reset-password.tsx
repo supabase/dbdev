@@ -1,6 +1,5 @@
 import { isAuthApiError } from '@supabase/supabase-js'
 import Head from 'next/head'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import toast from 'react-hot-toast'
 import Form, { FORM_ERROR } from '~/components/forms/Form'
@@ -8,36 +7,38 @@ import FormButton from '~/components/forms/FormButton'
 import FormInput from '~/components/forms/FormInput'
 import Layout from '~/components/layouts/Layout'
 import H1 from '~/components/ui/typography/H1'
-import { useSignInMutation } from '~/data/auth/sign-in-mutation'
+import { useUpdatePasswordMutation } from '~/data/auth/password-update-mutation'
 import { NextPageWithLayout } from '~/lib/types'
-import { SignInSchema } from '~/lib/validations'
+import { ResetPasswordSchema } from '~/lib/validations'
 
-const SignInPage: NextPageWithLayout = () => {
+const ResetPasswordPage: NextPageWithLayout = () => {
   const router = useRouter()
-  const { mutateAsync: signIn } = useSignInMutation({
+  const { mutateAsync: updatePassword } = useUpdatePasswordMutation({
     onSuccess() {
-      toast.success('You have signed in successfully!')
-      router.replace('/')
+      toast.success('Password updated successfully!')
+      router.push('/')
     },
   })
 
   return (
     <div className="flex items-center justify-center flex-1 px-4 py-12 sm:px-6 lg:px-8">
       <Head>
-        <title>Sign In | The Database Package Manager</title>
+        <title>Reset Password | The Database Package Manager</title>
       </Head>
 
       <div className="w-full h-full max-w-lg px-10 py-12 space-y-8 border border-gray-200 rounded-md dark:border-slate-700">
-        <H1>Sign In</H1>
+        <H1>Reset Password</H1>
 
         <Form
           initialValues={{
-            email: '',
             password: '',
+            passwordConfirmation: '',
           }}
-          onSubmit={async ({ email, password }) => {
+          onSubmit={async ({ password }) => {
             try {
-              await signIn({ email, password })
+              await updatePassword({
+                newPassword: password,
+              })
             } catch (error: any) {
               if (isAuthApiError(error)) {
                 return {
@@ -52,41 +53,31 @@ const SignInPage: NextPageWithLayout = () => {
               }
             }
           }}
-          schema={SignInSchema}
+          schema={ResetPasswordSchema}
         >
           <div className="space-y-4">
             <FormInput
-              name="email"
-              label="Email address"
-              type="email"
-              autoComplete="email"
+              name="password"
+              label="Password"
+              type="password"
+              autoComplete="new-password"
             />
 
-            <div>
-              <FormInput
-                name="password"
-                label="Password"
-                type="password"
-                autoComplete="current-password"
-              />
-              <div className="flex items-center justify-end mt-2 text-sm">
-                <Link
-                  href="/forgot-password"
-                  className="font-medium text-indigo-600 hover:text-indigo-500"
-                >
-                  Forgot your password?
-                </Link>
-              </div>
-            </div>
+            <FormInput
+              name="passwordConfirmation"
+              label="Password Confirmation"
+              type="password"
+              autoComplete="new-password"
+            />
           </div>
 
-          <FormButton>Sign In</FormButton>
+          <FormButton>Save Password</FormButton>
         </Form>
       </div>
     </div>
   )
 }
 
-SignInPage.getLayout = (page) => <Layout>{page}</Layout>
+ResetPasswordPage.getLayout = (page) => <Layout>{page}</Layout>
 
-export default SignInPage
+export default ResetPasswordPage
