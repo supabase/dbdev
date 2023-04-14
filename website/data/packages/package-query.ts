@@ -7,6 +7,8 @@ import {
 } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import supabase from '~/lib/supabase'
+import { NonNullableObject } from '~/lib/types'
+import { Database } from '../database.types'
 import { NotFoundError } from '../utils'
 
 export type PackageVariables = {
@@ -14,12 +16,18 @@ export type PackageVariables = {
   partialName?: string
 }
 
-export type PackageResponse = {
-  id: string
-  handle: string
-  created_at: string
-  package_name: string
-  partial_name: string
+export type Package = NonNullableObject<
+  Database['public']['Views']['packages']['Row']
+>
+
+export type PackageResponse = Package & {
+  download_metrics: {
+    package_id: string
+    downloads_30_day: number
+    downloads_90_days: number
+    downloads_180_days: number
+    downloads_all_time: number
+  } | null
 }
 
 export async function getPackage(
@@ -35,7 +43,7 @@ export async function getPackage(
 
   let query = supabase
     .from('packages')
-    .select('*')
+    .select('*,download_metrics(*)')
     .eq('handle', handle)
     .eq('partial_name', partialName)
 

@@ -18,6 +18,13 @@ export const SignUpSchema = z.object({
   password,
 })
 
+export const UpdateProfileSchema = z.object({
+  displayName,
+  handle,
+  contactEmail: email.or(z.literal('')),
+  bio: z.string().max(255),
+})
+
 export const SignInSchema = z.object({
   email,
   password: z.string().min(1),

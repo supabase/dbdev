@@ -53,7 +53,7 @@ const Search = () => {
       <Dialog.Root modal={false} open={isOpen} onOpenChange={setIsOpen}>
         <Dialog.Portal container={containerRef.current}>
           <Dialog.Content
-            className="absolute z-10 w-full mt-2 left-0 max-h-[85vh] border shadow-lg border-gray-300 rounded-md bg-white focus:outline-none"
+            className="absolute z-10 w-full mt-2 left-0 max-h-[85vh] border shadow-lg border-gray-300 rounded-md bg-white focus:outline-none dark:bg-slate-800 dark:border-slate-600"
             onOpenAutoFocus={(e) => {
               e.preventDefault()
             }}

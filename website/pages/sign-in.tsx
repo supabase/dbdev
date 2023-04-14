@@ -1,4 +1,3 @@
-import { LockClosedIcon } from '@heroicons/react/24/solid'
 import { isAuthApiError } from '@supabase/supabase-js'
 import Head from 'next/head'
 import Link from 'next/link'
@@ -7,7 +6,7 @@ import toast from 'react-hot-toast'
 import Form, { FORM_ERROR } from '~/components/forms/Form'
 import FormButton from '~/components/forms/FormButton'
 import FormInput from '~/components/forms/FormInput'
-import UnauthenticatedLayout from '~/components/layouts/UnauthenticatedLayout'
+import Layout from '~/components/layouts/Layout'
 import H1 from '~/components/ui/typography/H1'
 import { useSignInMutation } from '~/data/auth/sign-in-mutation'
 import { NextPageWithLayout } from '~/lib/types'
@@ -23,12 +22,12 @@ const SignInPage: NextPageWithLayout = () => {
   })
 
   return (
-    <div className="flex items-center justify-center min-h-full px-4 py-12 sm:px-6 lg:px-8">
+    <div className="flex items-center justify-center flex-1 px-4 py-12 sm:px-6 lg:px-8">
       <Head>
-        <title>Sign In | dbdev</title>
+        <title>Sign In | The Database Package Manager</title>
       </Head>
 
-      <div className="w-full max-w-md space-y-8">
+      <div className="w-full h-full max-w-lg px-10 py-12 space-y-8 border border-gray-200 rounded-md dark:border-slate-700">
         <H1>Sign In</H1>
 
         <Form
@@ -55,27 +54,30 @@ const SignInPage: NextPageWithLayout = () => {
           }}
           schema={SignInSchema}
         >
-          <FormInput
-            name="email"
-            label="Email address"
-            type="email"
-            autoComplete="email"
-          />
+          <div className="space-y-4">
+            <FormInput
+              name="email"
+              label="Email address"
+              type="email"
+              autoComplete="email"
+            />
 
-          <FormInput
-            name="password"
-            label="Password"
-            type="password"
-            autoComplete="current-password"
-          />
-
-          <div className="flex items-center justify-end mt-2 text-sm">
-            <Link
-              href="/forgot-password"
-              className="font-medium text-indigo-600 hover:text-indigo-500"
-            >
-              Forgot your password?
-            </Link>
+            <div>
+              <FormInput
+                name="password"
+                label="Password"
+                type="password"
+                autoComplete="current-password"
+              />
+              <div className="flex items-center justify-end mt-2 text-sm">
+                <Link
+                  href="/forgot-password"
+                  className="font-medium text-indigo-600 hover:text-indigo-500"
+                >
+                  Forgot your password?
+                </Link>
+              </div>
+            </div>
           </div>
 
           <FormButton>Sign In</FormButton>
@@ -85,8 +87,6 @@ const SignInPage: NextPageWithLayout = () => {
   )
 }
 
-SignInPage.getLayout = (page) => (
-  <UnauthenticatedLayout>{page}</UnauthenticatedLayout>
-)
+SignInPage.getLayout = (page) => <Layout>{page}</Layout>
 
 export default SignInPage

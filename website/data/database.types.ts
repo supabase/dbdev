@@ -53,19 +53,19 @@ export interface Database {
           account_id: string | null
           created_at: string | null
           organization_id: string | null
-          role: "maintainer" | null
+          role: 'maintainer' | null
         }
         Insert: {
           account_id?: string | null
           created_at?: string | null
           organization_id?: string | null
-          role?: "maintainer" | null
+          role?: 'maintainer' | null
         }
         Update: {
           account_id?: string | null
           created_at?: string | null
           organization_id?: string | null
-          role?: "maintainer" | null
+          role?: 'maintainer' | null
         }
       }
       organizations: {
@@ -79,68 +79,70 @@ export interface Database {
           id: string | null
         }
       }
-      package_versions: {
+      package_upgrades: {
         Row: {
           created_at: string | null
+          from_version: string | null
           id: string | null
-          object_id: string | null
-          object_key: string | null
           package_id: string | null
           package_name: string | null
-          upload_metadata: Json | null
+          sql: string | null
+          to_version: string | null
+        }
+      }
+      package_versions: {
+        Row: {
+          control_description: string | null
+          control_requires: string[] | null
+          created_at: string | null
+          description_md: string | null
+          id: string | null
+          package_id: string | null
+          package_name: string | null
+          sql: string | null
           version: string | null
         }
       }
       packages: {
         Row: {
+          control_description: string | null
+          control_requires: string[] | null
           created_at: string | null
+          description_md: string | null
           handle: string | null
           id: string | null
+          latest_version: string | null
           package_name: string | null
           partial_name: string | null
         }
       }
     }
     Functions: {
-      create_organization: {
+      download_metrics: {
         Args: {
-          handle: unknown
-          display_name?: string
-          bio?: string
-          contact_email?: string
-          avatar_id?: string
+          '': unknown
         }
+        Returns: unknown[]
+      }
+      popular_packages: {
+        Args: Record<PropertyKey, never>
         Returns: {
-          avatar_path: string | null
-          bio: string | null
-          contact_email: string | null
+          control_description: string | null
+          control_requires: string[] | null
           created_at: string | null
-          display_name: string | null
+          description_md: string | null
           handle: string | null
           id: string | null
-        }
-      }
-      is_handle_available: {
-        Args: {
-          handle: unknown
-        }
-        Returns: boolean
-      }
-      publish_package_version: {
-        Args: {
-          body: Json
-          object_name: string
-        }
-        Returns: {
-          created_at: string | null
-          id: string | null
-          object_id: string | null
-          object_key: string | null
-          package_id: string | null
+          latest_version: string | null
           package_name: string | null
-          upload_metadata: Json | null
-          version: string | null
+          partial_name: string | null
+        }[]
+      }
+      register_download: {
+        Args: {
+          package_name: string
         }
+        Returns: undefined
       }
       search_packages: {
         Args: {
@@ -148,12 +150,24 @@ export interface Database {
           partial_name?: unknown
         }
         Returns: {
+          control_description: string | null
+          control_requires: string[] | null
           created_at: string | null
+          description_md: string | null
           handle: string | null
           id: string | null
+          latest_version: string | null
           package_name: string | null
           partial_name: string | null
         }[]
+      }
+      update_profile: {
+        Args: {
+          handle: unknown
+          display_name?: string
+          bio?: string
+        }
+        Returns: undefined
       }
     }
     Enums: {
@@ -231,6 +245,7 @@ export interface Database {
           owner: string | null
           path_tokens: string[] | null
           updated_at: string | null
+          version: string | null
         }
         Insert: {
           bucket_id?: string | null
@@ -242,6 +257,7 @@ export interface Database {
           owner?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
+          version?: string | null
         }
         Update: {
           bucket_id?: string | null
@@ -253,6 +269,7 @@ export interface Database {
           owner?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
+          version?: string | null
         }
       }
     }
@@ -260,6 +277,15 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
+      can_insert_object: {
+        Args: {
+          bucketid: string
+          name: string
+          owner: string
+          metadata: Json
+        }
+        Returns: undefined
+      }
       extension: {
         Args: {
           name: string

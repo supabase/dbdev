@@ -35,7 +35,7 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
       : error || submitError
 
     return (
-      <div {...outerProps}>
+      <div {...outerProps} className="space-y-1">
         <Label htmlFor={name} {...labelProps}>
           {label}
         </Label>

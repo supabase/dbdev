@@ -12,7 +12,10 @@ const FormButton = forwardRef<HTMLButtonElement, FormButtonProps>(
     return (
       <Button
         disabled={submitting}
-        className={cn('mt-4', className)}
+        className={cn(
+          'mt-4 bg-gray-100 hover:bg-gray-200 text-gray-800 transition dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-white',
+          className
+        )}
         {...props}
         ref={ref}
       >

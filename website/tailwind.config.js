@@ -1,12 +1,15 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: ['class', '[data-theme="dark"]'],
+  darkMode: ['class'],
   content: [
     './pages/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
+      boxShadow: {
+        underline: 'inset 0 -1px 0 0 currentColor, 0 1px 0 0 currentColor',
+      },
       keyframes: {
         'accordion-down': {
           from: { height: 0 },
@@ -23,5 +26,9 @@ module.exports = {
       },
     },
   },
-  plugins: [require('@tailwindcss/forms'), require('tailwindcss-animate')],
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography'),
+    require('tailwindcss-animate'),
+  ],
 }

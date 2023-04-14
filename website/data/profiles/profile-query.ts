@@ -8,21 +8,17 @@ import {
 import { useCallback } from 'react'
 import { getAvatarUrl } from '~/lib/avatars'
 import supabase from '~/lib/supabase'
+import { NonNullableObject } from '~/lib/types'
+import { Database } from '../database.types'
 import { NotFoundError } from '../utils'
 
 export type ProfileVariables = {
   handle?: string
 }
 
-export type ProfileResponse = {
-  id: string
-  handle: string
-  display_name: string | null
-  contact_email: string | null
-  avatar_path: string | null
-  bio: string | null
-  created_at: string
-}
+export type ProfileResponse =
+  | NonNullableObject<Database['public']['Views']['accounts']['Row']>
+  | NonNullableObject<Database['public']['Views']['organizations']['Row']>
 
 export async function getProfile(
   { handle }: ProfileVariables,
