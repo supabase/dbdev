@@ -89,7 +89,7 @@ create extension "${pkg?.package_name ?? 'Loading...'}"
             <TabsTrigger value="versions">Versions</TabsTrigger>
           </TabsList>
 
-          <div className="grid gap-x-2 md:grid-cols-6">
+          <div className="grid grid-cols-1 gap-x-2 md:grid-cols-6">
             <div className="md:col-span-4">
               <TabsContent value="description">
                 {isPkgSuccess && <Markdown>{pkg.description_md}</Markdown>}

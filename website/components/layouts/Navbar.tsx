@@ -90,12 +90,12 @@ const Navbar = () => {
           </Link>
         </div>
 
-        <div className="flex-1 max-w-3xl">
+        <div className="flex-1 max-w-3xl hidden sm:block">
           <Search />
         </div>
 
-        <div className="flex items-center justify-end gap-6 min-w-[160px]">
-          <div className="flex items-center ml-4">
+        <div className="flex items-center justify-end gap-2 sm:gap-6 sm:min-w-[160px]">
+          <div className="flex items-center ml-1 sm:ml-4">
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger>
@@ -143,23 +143,23 @@ const Navbar = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
                 <Link
                   href="/sign-up"
-                  className="px-4 py-2 text-sm text-gray-600 transition border border-gray-300 rounded hover:text-gray-800 dark:text-slate-400 hover:border-gray-500 dark:border-slate-700 dark:hover:bg-slate-800 hover:dark:text-white"
+                  className="px-1 sm:px-4 py-1 sm:py-2  transition border border-gray-300 rounded hover:text-gray-800 dark:text-slate-400 hover:border-gray-500 dark:border-slate-700 dark:hover:bg-slate-800 hover:dark:text-white"
                 >
                   Sign Up
                 </Link>
                 <Link
                   href="/sign-in"
-                  className="text-sm text-gray-600 transition hover:text-gray-800 dark:text-slate-400 hover:dark:text-white"
+                  className="text-sm transition hover:text-gray-800 dark:text-slate-400 hover:dark:text-white"
                 >
                   Sign In
                 </Link>
               </div>
             )}
           </div>
-          <div className="flex items-center gap-4 pl-4 border-l dark:border-slate-700">
+          <div className="flex items-center gap-2 sm:gap-4 pl-4 border-l dark:border-slate-700">
             <ThemeSwitcher />
 
             <Link
