@@ -14,7 +14,7 @@ values
     ),
     (
         '00000000-0000-0000-0000-000000000000', gen_random_uuid(), 'authenticated', 'authenticated', 'michel@supabase.io', 'TBD', now(),
-        '{"provider": "email", "providers": ["email"]}', '{"handle": "michelp", "display_name": "Michele", "bio": "Supabase Staff"}', false
+        '{"provider": "email", "providers": ["email"]}', '{"handle": "michelp", "display_name": "Michel", "bio": "Supabase Staff"}', false
     ),
     (
         '00000000-0000-0000-0000-000000000000', gen_random_uuid(), 'authenticated', 'authenticated', 'mark@supabase.io', 'TBD', now(),
