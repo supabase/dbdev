@@ -9,14 +9,14 @@ as $$
   declare
     v_is_org boolean;
   begin
-    update app.accounts
-      set display_name = coalesce($2, display_name),
-          bio = coalesce($3, bio)
-    where handle = $1;
+    update app.accounts a
+      set display_name = coalesce($2, a.display_name),
+          bio = coalesce($3, a.bio)
+    where a.handle = $1;
 
-    update app.organizations
-      set display_name = coalesce($2, display_name),
-          bio = coalesce($3, bio)
-    where handle = $1;
+    update app.organizations o
+      set display_name = coalesce($2, o.display_name),
+          bio = coalesce($3, o.bio)
+    where o.handle = $1;
   end;
 $$;
