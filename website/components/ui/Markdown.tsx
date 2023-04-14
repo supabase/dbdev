@@ -32,32 +32,36 @@ function childrenToText(children: any): string {
 }
 
 const DEFAULT_COMPONENTS: MarkdownProps['components'] = {
+  pre({ node, children, className, ...props }) {
+    return (
+      <pre {...props} className={cn('relative', className)}>
+        {children}
+      </pre>
+    )
+  },
   code({ node, inline, className, children, ...props }) {
     return (
-      <code
-        {...props}
-        className={cn('relative', inline && 'dark:text-white', className)}
-      >
+      <code {...props} className={cn(inline && 'dark:text-white', className)}>
         {children}
       </code>
     )
   },
-  a({ children, ...props }) {
+  a({ node, children, ...props }) {
     return <A {...props}>{children}</A>
   },
-  p({ children, ...props }) {
+  p({ node, children, ...props }) {
     return <P {...props}>{children}</P>
   },
-  li({ children, ...props }) {
+  li({ node, children, ...props }) {
     return <Li {...props}>{children}</Li>
   },
-  strong({ children, ...props }) {
+  strong({ node, children, ...props }) {
     return <Strong {...props}>{children}</Strong>
   },
-  h1({ children, ...props }) {
+  h1({ node, children, ...props }) {
     return <H1 {...props}>{children}</H1>
   },
-  h2({ children, ...props }) {
+  h2({ node, children, ...props }) {
     return <H2 {...props}>{children}</H2>
   },
 }
@@ -65,14 +69,11 @@ const DEFAULT_COMPONENTS: MarkdownProps['components'] = {
 const COPYABLE_CODE_COMPONENTS: MarkdownProps['components'] = {
   code({ node, inline, className, children, ...props }) {
     return (
-      <code
-        {...props}
-        className={cn('relative', inline && 'dark:text-white', className)}
-      >
+      <code {...props} className={cn(inline && 'dark:text-white', className)}>
         {!inline && (
           <CopyButton
             getValue={() => childrenToText(children)}
-            className="absolute top-0 right-0"
+            className="absolute top-2 right-2"
             variant="dark"
           />
         )}
