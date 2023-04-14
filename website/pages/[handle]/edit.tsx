@@ -143,7 +143,7 @@ const EditAccountPage: NextPageWithLayout = () => {
                 onClick={() => uploadButtonRef?.current?.click()}
                 disabled={preventUpdating}
               >
-                Upload an image
+                Select an image
               </button>
             </div>
             <div className="space-y-4">
