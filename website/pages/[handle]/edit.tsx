@@ -140,12 +140,14 @@ const EditAccountPage: NextPageWithLayout = () => {
             </div>
             <div className="space-y-4">
               <FormInput disabled name="handle" label="Handle" type="text" />
-              <FormInput
-                disabled
-                name="contactEmail"
-                label="Email"
-                type="text"
-              />
+              {initialValues.contactEmail && (
+                <FormInput
+                  disabled
+                  name="contactEmail"
+                  label="Email"
+                  type="text"
+                />
+              )}
               <FormInput name="displayName" label="Display name" type="text" />
               <FormInput
                 name="bio"

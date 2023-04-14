@@ -37,7 +37,41 @@ function childrenToText(children: any): string {
 const DEFAULT_COMPONENTS: MarkdownProps['components'] = {
   code({ node, inline, className, children, ...props }) {
     return (
-      <code {...props} className={cn('relative', className)}>
+      <code
+        {...props}
+        className={cn('relative', inline && 'dark:text-white', className)}
+      >
+        {children}
+      </code>
+    )
+  },
+  a({ children, ...props }) {
+    return <A {...props}>{children}</A>
+  },
+  p({ children, ...props }) {
+    return <P {...props}>{children}</P>
+  },
+  li({ children, ...props }) {
+    return <Li {...props}>{children}</Li>
+  },
+  strong({ children, ...props }) {
+    return <Strong {...props}>{children}</Strong>
+  },
+  h1({ children, ...props }) {
+    return <H1 {...props}>{children}</H1>
+  },
+  h2({ children, ...props }) {
+    return <H2 {...props}>{children}</H2>
+  },
+}
+
+const COPYABLE_CODE_COMPONENTS: MarkdownProps['components'] = {
+  code({ node, inline, className, children, ...props }) {
+    return (
+      <code
+        {...props}
+        className={cn('relative', inline && 'dark:text-white', className)}
+      >
         {!inline && (
           <CopyButton
             getValue={() => childrenToText(children)}
@@ -68,32 +102,9 @@ const Markdown = ({
     linkTarget={linkTarget}
     className={cn('prose max-w-none', className)}
     components={{
-      ...(copyableCode ? DEFAULT_COMPONENTS : undefined),
+      ...DEFAULT_COMPONENTS,
+      ...(copyableCode ? COPYABLE_CODE_COMPONENTS : undefined),
       ...components,
-      a({ children }) {
-        return <A>{children}</A>
-      },
-      p({ children }) {
-        return <P>{children}</P>
-      },
-      li({ children }) {
-        return <Li>{children}</Li>
-      },
-      code({ children }) {
-        return <Code>{children}</Code>
-      },
-      span({ children }) {
-        return <Span>{children}</Span>
-      },
-      strong({ children }) {
-        return <Strong>{children}</Strong>
-      },
-      h1({ children }) {
-        return <H1>{children}</H1>
-      },
-      h2({ children }) {
-        return <H2>{children}</H2>
-      },
     }}
     {...props}
   >

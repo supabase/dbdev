@@ -38,7 +38,7 @@ const IndexPage: NextPageWithLayout = () => {
               Package Manager
             </span>
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 text-xl -mt-4">
+          <p className="-mt-4 text-xl text-gray-600 dark:text-gray-400">
             For PostgreSQL trusted language extensions{' '}
             <Link
               href="https://github.com/aws/pg_tle"
@@ -49,7 +49,7 @@ const IndexPage: NextPageWithLayout = () => {
           </p>
           <div className="flex items-center mt-6 space-x-4">
             <Link
-              href="/"
+              href="/installer"
               className="px-4 py-2 font-bold text-white rounded-md bg-gradient-to-br from-cyan-400 to-indigo-300 dark:from-cyan-400 dark:to-indigo-300"
             >
               Getting started
@@ -76,8 +76,8 @@ const IndexPage: NextPageWithLayout = () => {
           </div>
         </div>
 
-        <div className="bg-gray-200 dark:bg-slate-700 mt-20 px-8 pb-6 pt-4 rounded-lg shadow-xl">
-          <p className="text-gray-600 dark:text-gray-400 mb-2">
+        <div className="px-8 pt-4 pb-6 mt-20 bg-gray-200 rounded-lg shadow-xl dark:bg-slate-700">
+          <p className="mb-2 text-gray-600 dark:text-gray-400">
             Search for a package
           </p>
           <Search />
@@ -85,7 +85,7 @@ const IndexPage: NextPageWithLayout = () => {
 
         {/* First time here section */}
         <div id="getting-started" className="mt-24 space-y-4">
-          <p className="text-gray-600 dark:text-gray-400 text-lg">
+          <p className="text-lg text-gray-600 dark:text-gray-400">
             First time?
           </p>
           <div className="space-y-2">
@@ -101,13 +101,13 @@ const IndexPage: NextPageWithLayout = () => {
 
         {/* Getting started section */}
         <div id="getting-started" className="mt-24 space-y-4">
-          <p className="text-gray-600 dark:text-gray-400 text-lg">
+          <p className="text-lg text-gray-600 dark:text-gray-400">
             Getting started
           </p>
           <div className="space-y-2">
             <p className="dark:text-white">
               Simply install{' '}
-              <code className="text-sm bg-gray-200 dark:bg-slate-600 px-1 py-1 rounded">
+              <code className="px-1 py-1 text-sm bg-gray-200 rounded dark:bg-slate-600">
                 pglets
               </code>{' '}
               via a SQL command
@@ -120,11 +120,11 @@ select dbdev.install('olirice-index_advisor');
           </div>
           <p className="dark:text-white">
             Where{' '}
-            <code className="text-sm bg-gray-200 dark:bg-slate-600 px-1 py-1 rounded">
+            <code className="px-1 py-1 text-sm bg-gray-200 rounded dark:bg-slate-600">
               olirice
             </code>{' '}
             is the handle of the publisher and{' '}
-            <code className="text-sm bg-gray-200 dark:bg-slate-600 px-1 py-1 rounded">
+            <code className="px-1 py-1 text-sm bg-gray-200 rounded dark:bg-slate-600">
               index_advisor
             </code>{' '}
             is the name of the pglet.

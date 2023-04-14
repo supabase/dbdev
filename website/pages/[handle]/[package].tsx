@@ -1,3 +1,4 @@
+import { ArrowDownTrayIcon } from '@heroicons/react/24/outline'
 import { dehydrate, QueryClient } from '@tanstack/react-query'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import Head from 'next/head'
@@ -92,9 +93,11 @@ create extension "${pkg?.package_name ?? 'Loading...'}"
               </TabsContent>
             </div>
 
-            <div className="flex flex-col gap-3 mt-2 rounded-md border border-slate-200 dark:border-slate-700 p-6 min-h-[64px] order-first md:order-last md:col-span-2">
+            <div className="flex h-min flex-col gap-3 mt-2 rounded-md border border-slate-200 dark:border-slate-700 p-6 min-h-[64px] order-first md:order-last md:col-span-2">
               <div className="flex items-center justify-between pb-1 border-b border-b-slate-200">
-                <H2 variant="borderless">Install</H2>
+                <H2 variant="borderless" className="flex items-center gap-2">
+                  <ArrowDownTrayIcon className="w-5 h-5" /> Install
+                </H2>
 
                 {pkg && <CopyButton getValue={() => installCode} />}
               </div>

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import dayjs from '~/lib/dayjs'
 
 export type SearchPackageRowProps = {
   handle: string
@@ -20,7 +21,7 @@ const SearchPackageRow = ({
     >
       <span className="dark:text-white">{name}</span>
       <span className="text-xs text-gray-500 dark:text-gray-400">
-        {createdAt}
+        {dayjs(createdAt).format('YYYY-MM-DD HH:mm:ss')}
       </span>
     </Link>
   )

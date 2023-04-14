@@ -16,6 +16,7 @@ import { getAllProfiles } from '~/data/static-path-queries'
 import { NotFoundError } from '~/data/utils'
 import { useUser } from '~/lib/auth'
 import { DEFAULT_AVATAR_SRC_URL } from '~/lib/avatars'
+import dayjs from '~/lib/dayjs'
 import { NextPageWithLayout } from '~/lib/types'
 import { firstStr, useParams } from '~/lib/utils'
 
@@ -54,9 +55,9 @@ const AccountPage: NextPageWithLayout = () => {
             />
             <div>
               <H1 className="!text-3xl">{profile?.display_name ?? handle}</H1>
-              <p className="text-gray-600 dark:text-gray-400">{profile?.bio}</p>
+              <p className="text-gray-700 dark:text-gray-400">{profile?.bio}</p>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Joined since {profile?.created_at}
+                Joined {dayjs(profile?.created_at).format('YYYY-MM-DD')}
               </p>
             </div>
           </div>
