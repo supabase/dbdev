@@ -22,8 +22,8 @@ const EditAccountPage: NextPageWithLayout = () => {
   const { handle } = useParams()
   const uploadButtonRef = useRef<any>()
   const { refreshSession } = useAuth()
-  const { data: profile, isLoading } = useProfileQuery({ handle })
-  const { data: organizations } = useUsersOrganizationsQuery({ userId: user?.id })
+  const { data: profile, isLoading, isSuccess: isProfileSuccess } = useProfileQuery({ handle })
+  const { data: organizations, isSuccess: isOrgsSuccess } = useUsersOrganizationsQuery({ userId: user?.id })
 
   const [uploadedFile, setUploadedFile] = useState<File>()
   const [previewImage, setPreviewImage] = useState<any>('')
@@ -38,24 +38,26 @@ const EditAccountPage: NextPageWithLayout = () => {
   const isUser = user?.id === profile?.id
   const isMember =
     organizations?.find((org) => org.handle === handle) !== undefined
+  const preventUpdating = !isUser && !isMember
 
   const initialValues = {
     bio: profile?.bio ?? '',
     handle: profile?.handle ?? '',
     displayName: profile?.display_name ?? '',
-    contactEmail: profile?.contact_email ?? '',
+    contactEmail: profile?.contact_email ??
+     '',
   }
 
   useEffect(() => {
-    if (!isLoading && profile) {
-      if (!isUser && !isMember) {
+    if (isProfileSuccess && isOrgsSuccess) {
+      if (preventUpdating) {
         toast.error('Unable to edit profile')
         router.push(`/${handle}`)
       } else {
         setPreviewImage(profile.avatar_url)
       }
     }
-  }, [isLoading, isUser, isMember])
+  }, [isProfileSuccess, isOrgsSuccess, preventUpdating])
 
   const uploadAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -81,7 +83,7 @@ const EditAccountPage: NextPageWithLayout = () => {
         const extension = uploadedFile.name.split('.').pop()
         const nowStr = new Date().getTime().toString()
         const path = `${handle}/avatar-${nowStr}.${extension}`
-        const { data, error } = await supabase.storage
+        const { error } = await supabase.storage
           .from('avatars')
           .upload(path, uploadedFile, { cacheControl: `${60 * 60 * 24 * 365}` })
         if (error) {
@@ -137,11 +139,11 @@ const EditAccountPage: NextPageWithLayout = () => {
               />
               <button
                 type="button"
-                className="flex items-center px-4 py-2 space-x-2 text-sm text-gray-500 transition bg-white border rounded-md dark:bg-transparent dark:border-slate-500 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:border-slate-400 hover:text-gray-700 hover:border-gray-400"
+                className="flex items-center px-4 py-2 space-x-2 text-sm text-gray-600 border-gray-300 transition bg-white border rounded-md dark:bg-transparent dark:border-slate-500 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:border-slate-400 hover:text-gray-800 hover:border-gray-400"
                 onClick={() => uploadButtonRef?.current?.click()}
-                disabled={profile?.id !== user?.id}
+                disabled={preventUpdating}
               >
-                Upload an image
+                Select an image
               </button>
             </div>
             <div className="space-y-4">
@@ -163,7 +165,7 @@ const EditAccountPage: NextPageWithLayout = () => {
               />
             </div>
 
-            <FormButton disabled={profile?.id !== user?.id}>
+            <FormButton disabled={preventUpdating}>
               Save changes
             </FormButton>
           </Form>

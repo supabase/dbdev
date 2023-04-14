@@ -76,6 +76,10 @@ create extension "${pkg?.package_name ?? 'Loading...'}"
             <span>
               Created {pkg ? dayjs(pkg.created_at).fromNow() : 'Loading...'}
             </span>
+            <span>&bull;</span>
+            <span>
+              By <Link href={`/${pkg?.handle ?? ''}`}>{pkg?.handle ?? ''}</Link>
+            </span>
           </div>
         </div>
 
