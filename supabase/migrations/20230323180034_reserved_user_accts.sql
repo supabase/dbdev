@@ -49,11 +49,7 @@ values
     ('info', false),
     ('webmaster', false),
     ('security', false),
-    ('installer', false),
-    ('forgot-password', false),
-    ('reset-password', false),
-    ('sign-in', false),
-    ('sign-up', false);
+    ('installer', false);
 
 begin;
     -- Required for trigger on handle registry
