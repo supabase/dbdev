@@ -1,4 +1,4 @@
-import { ArrowDownTrayIcon } from '@heroicons/react/24/outline'
+import { ArrowDownTrayIcon, BookOpenIcon } from '@heroicons/react/24/outline'
 import { dehydrate, QueryClient } from '@tanstack/react-query'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import Head from 'next/head'
@@ -18,7 +18,7 @@ import { getAllPackages } from '~/data/static-path-queries'
 import { NotFoundError } from '~/data/utils'
 import dayjs from '~/lib/dayjs'
 import { NextPageWithLayout } from '~/lib/types'
-import { firstStr, useParams } from '~/lib/utils'
+import { firstStr, pluralize, useParams } from '~/lib/utils'
 import FourOhFourPage from '../404'
 
 const PackagePage: NextPageWithLayout = () => {
@@ -28,7 +28,6 @@ const PackagePage: NextPageWithLayout = () => {
     isSuccess: isPkgSuccess,
     isError,
     error,
-    isFetched,
   } = usePackageQuery({
     handle,
     partialName: partialPackageName,
@@ -44,6 +43,11 @@ const PackagePage: NextPageWithLayout = () => {
   }');
 create extension "${pkg?.package_name ?? 'Loading...'}"
     version '${pkg?.latest_version ?? '0.0.0'}';`
+
+  const downloads30Days = pkg?.download_metrics?.downloads_30_day ?? 0
+  const downloads90Days = pkg?.download_metrics?.downloads_90_days ?? 0
+  const downloads180Days = pkg?.download_metrics?.downloads_180_days ?? 0
+  const downloadsAllTime = pkg?.download_metrics?.downloads_all_time ?? 0
 
   if (isError) {
     if (error instanceof NotFoundError) {
@@ -106,29 +110,59 @@ create extension "${pkg?.package_name ?? 'Loading...'}"
               </TabsContent>
             </div>
 
-            <div className="flex h-min flex-col gap-3 mt-2 rounded-md border border-slate-200 dark:border-slate-700 p-6 min-h-[64px] order-first md:order-last md:col-span-2">
-              <div className="flex items-center justify-between pb-1 border-b border-b-slate-200">
-                <H2 variant="borderless" className="flex items-center gap-2">
-                  <ArrowDownTrayIcon className="w-5 h-5" /> Install
-                </H2>
+            <div className="flex h-min flex-col gap-8 mt-2 rounded-md border border-slate-200 dark:border-slate-700 p-6 min-h-[64px] order-first md:order-last md:col-span-2">
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between pb-1 border-b border-b-slate-200">
+                  <H2 variant="borderless" className="flex items-center gap-2">
+                    <ArrowDownTrayIcon className="w-5 h-5" /> Install
+                  </H2>
 
-                {pkg && <CopyButton getValue={() => installCode} />}
-              </div>
+                  {pkg && <CopyButton getValue={() => installCode} />}
+                </div>
 
-              <ol role="list" className="list-decimal list-inside">
-                <li className="dark:text-white">
-                  <Link href="/installer" className="dark:text-blue-400">
-                    Install the <code>dbdev</code> package manager
-                  </Link>
-                </li>
-                <li className="dark:text-white">Install the package:</li>
-              </ol>
+                <ol role="list" className="list-decimal list-inside">
+                  <li className="dark:text-white">
+                    <Link href="/installer" className="dark:text-blue-400">
+                      Install the <code>dbdev</code> package manager
+                    </Link>
+                  </li>
+                  <li className="dark:text-white">Install the package:</li>
+                </ol>
 
-              <Markdown copyableCode={false}>
-                {`\`\`\`sql
+                <Markdown copyableCode={false}>
+                  {`\`\`\`sql
 ${installCode}
 \`\`\``}
-              </Markdown>
+                </Markdown>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <H2 className="flex items-center gap-2">
+                  <BookOpenIcon className="w-5 h-5" /> Downloads
+                </H2>
+
+                <ul className="flex flex-col gap-1 text-sm">
+                  <li>
+                    {downloadsAllTime ?? 0} all time{' '}
+                    {pluralize(downloadsAllTime, 'download')}
+                  </li>
+                  <li>
+                    {downloads30Days ?? 0}{' '}
+                    {pluralize(downloads30Days, 'download')} in the last 30{' '}
+                    {pluralize(downloads30Days, 'day')}
+                  </li>
+                  <li>
+                    {downloads90Days ?? 0}{' '}
+                    {pluralize(downloads90Days, 'download')} in the last 90{' '}
+                    {pluralize(downloads90Days, 'day')}
+                  </li>
+                  <li>
+                    {downloads180Days ?? 0}{' '}
+                    {pluralize(downloads180Days, 'download')} in the last 180{' '}
+                    {pluralize(downloads180Days, 'day')}
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </Tabs>

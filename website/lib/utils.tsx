@@ -50,3 +50,7 @@ export function useDebounce<T>(value: T, delay: number = 500): T {
 
   return debouncedValue
 }
+
+export function pluralize(count: number, singular: string, plural?: string) {
+  return count === 1 ? singular : plural || singular + 's'
+}
