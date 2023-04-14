@@ -7,6 +7,7 @@ import FormButton from '~/components/forms/FormButton'
 import FormInput from '~/components/forms/FormInput'
 import Layout from '~/components/layouts/Layout'
 import H1 from '~/components/ui/typography/H1'
+import { useUsersOrganizationsQuery } from '~/data/organizations/users-organizations-query'
 import { useProfileQuery } from '~/data/profiles/profile-query'
 import { useUpdateProfileMutation } from '~/data/profiles/update-profile-mutation'
 import { useAuth, useUser, withAuth } from '~/lib/auth'
@@ -22,6 +23,7 @@ const EditAccountPage: NextPageWithLayout = () => {
   const uploadButtonRef = useRef<any>()
   const { refreshSession } = useAuth()
   const { data: profile, isLoading } = useProfileQuery({ handle })
+  const { data: organizations } = useUsersOrganizationsQuery({ userId: user?.id })
 
   const [uploadedFile, setUploadedFile] = useState<File>()
   const [previewImage, setPreviewImage] = useState<any>('')
@@ -33,6 +35,10 @@ const EditAccountPage: NextPageWithLayout = () => {
     },
   })
 
+  const isUser = user?.id === profile?.id
+  const isMember =
+    organizations?.find((org) => org.handle === handle) !== undefined
+
   const initialValues = {
     bio: profile?.bio ?? '',
     handle: profile?.handle ?? '',
@@ -41,8 +47,8 @@ const EditAccountPage: NextPageWithLayout = () => {
   }
 
   useEffect(() => {
-    if (profile) {
-      if (profile.id !== user?.id) {
+    if (!isLoading && profile) {
+      if (!isUser && !isMember) {
         toast.error('Unable to edit profile')
         router.push(`/${handle}`)
       } else {
