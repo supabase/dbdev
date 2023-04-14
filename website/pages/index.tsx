@@ -23,7 +23,7 @@ const IndexPage: NextPageWithLayout = () => {
       </Head>
 
       <div className="flex flex-col justify-center pb-20">
-        <div className="mt-44">
+        <div className="mt-12 md:mt-44">
           <h1 className="text-2xl font-bold text-gray-900 -translate-y-10 dark:text-gray-100 sm:text-4xl md:text-7xl">
             The Database
             <br />
@@ -47,7 +47,7 @@ const IndexPage: NextPageWithLayout = () => {
               (TLEs)
             </Link>
           </p>
-          <div className="flex items-center mt-6 space-x-4">
+          <div className="flex flex-col sm:flex-row md:items-center mt-6 gap-4">
             <Link
               href="/installer"
               className="px-4 py-2 font-bold text-white rounded-md bg-gradient-to-br from-cyan-400 to-indigo-300 dark:from-cyan-400 dark:to-indigo-300"
@@ -58,25 +58,25 @@ const IndexPage: NextPageWithLayout = () => {
               href="https://supabase.com/blog/dbdev-package-manager"
               className="flex items-center px-4 py-2 space-x-2 text-gray-500 transition bg-white border rounded-md group dark:bg-transparent dark:border-slate-500 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:border-slate-400 hover:text-gray-700 hover:border-gray-400"
             >
-              <p>Read the blog post</p>
+              <span>Read the blog post</span>
               <ArrowTopRightOnSquareIcon className="w-4 h-4 text-gray-400 transition group-hover:text-gray-600 dark:group-hover:text-gray-200" />
             </Link>
           </div>
         </div>
 
         {/* Popular packages section */}
-        <div className="mt-24 space-y-4">
+        <div className="mt-8 md:mt-24 space-y-4">
           <p className="text-lg text-gray-600 dark:text-gray-400">
             Popular packages
           </p>
-          <div className="grid grid-cols-12 gap-4">
+          <div className="grid sm:grid-cols-8 md:grid-cols-12 gap-4">
             {data?.map((pkg: any) => (
               <PackageCard key={pkg.id} pkg={pkg} />
             ))}
           </div>
         </div>
 
-        <div className="px-8 pt-4 pb-6 mt-20 bg-gray-200 rounded-lg shadow-xl dark:bg-slate-700">
+        <div className="px-8 pt-4 pb-6 mt-4 md:mt-20 bg-gray-200 rounded-lg shadow-xl dark:bg-slate-700">
           <p className="mb-2 text-gray-600 dark:text-gray-400">
             Search for a package
           </p>
@@ -84,7 +84,7 @@ const IndexPage: NextPageWithLayout = () => {
         </div>
 
         {/* First time here section */}
-        <div id="getting-started" className="mt-24 space-y-4">
+        <div id="getting-started" className="mt-12 md:mt-24 space-y-4">
           <p className="text-lg text-gray-600 dark:text-gray-400">
             First time?
           </p>
