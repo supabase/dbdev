@@ -1,3 +1,5 @@
+![dbdev](/assets/github-dbdev.jpg)
+
 # dbdev
 
 dbdev is a package manager for PostgreSQL [trusted language extensions](https://github.com/aws/pg_tle). At this time the registry is limited to a handful of pre-loaded pglets (short for Postgres applets, pronounced "piglet"). In the coming weeks we'll enable third party contributions.
