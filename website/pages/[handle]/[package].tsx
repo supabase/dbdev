@@ -145,7 +145,7 @@ ${installCode}
                   <BookOpenIcon className="w-5 h-5" /> Downloads
                 </H2>
 
-                <ul className="flex flex-col gap-1 text-sm">
+                <ul className="flex flex-col gap-1 text-sm dark:text-white">
                   <li>
                     {downloadsAllTime ?? 0} all time{' '}
                     {pluralize(downloadsAllTime, 'download')}
