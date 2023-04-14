@@ -4,15 +4,12 @@ import rehypeHighlight from 'rehype-highlight'
 import remarkGfm from 'remark-gfm'
 import { cn } from '~/lib/utils'
 import CopyButton from './CopyButton'
-
 import A from './typography/A'
-import P from './typography/P'
-import Li from './typography/Li'
-import Code from './typography/Code'
-import Span from './typography/Span'
-import Strong from './typography/Strong'
 import H1 from './typography/H1'
 import H2 from './typography/H2'
+import Li from './typography/Li'
+import P from './typography/P'
+import Strong from './typography/Strong'
 
 type MarkdownProps = ComponentPropsWithoutRef<typeof ReactMarkdown> & {
   copyableCode?: boolean

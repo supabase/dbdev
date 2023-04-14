@@ -19,10 +19,17 @@ import { NotFoundError } from '~/data/utils'
 import dayjs from '~/lib/dayjs'
 import { NextPageWithLayout } from '~/lib/types'
 import { firstStr, useParams } from '~/lib/utils'
+import FourOhFourPage from '../404'
 
 const PackagePage: NextPageWithLayout = () => {
   const { handle, package: partialPackageName } = useParams()
-  const { data: pkg, isSuccess: isPkgSuccess } = usePackageQuery({
+  const {
+    data: pkg,
+    isSuccess: isPkgSuccess,
+    isError,
+    error,
+    isFetched,
+  } = usePackageQuery({
     handle,
     partialName: partialPackageName,
   })
@@ -37,6 +44,12 @@ const PackagePage: NextPageWithLayout = () => {
   }');
 create extension "${pkg?.package_name ?? 'Loading...'}"
     version '${pkg?.latest_version ?? '0.0.0'}';`
+
+  if (isError) {
+    if (error instanceof NotFoundError) {
+      return <FourOhFourPage title="Package not found" />
+    }
+  }
 
   return (
     <>
