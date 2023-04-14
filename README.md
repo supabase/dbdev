@@ -1,4 +1,4 @@
-![dbdev](/assets/github-dbdev.jpg)
+![dbdev](/assets/dbdev-banner.jpg)
 
 # dbdev
 
