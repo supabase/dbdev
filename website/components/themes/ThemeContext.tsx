@@ -1,11 +1,12 @@
 import {
   createContext,
   PropsWithChildren,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
+  useState,
 } from 'react'
-import { useLocalStorage } from '~/lib/local-storage'
 
 export const LOCAL_STORAGE_KEY = 'dbdev_theme'
 export const DEFAULT_THEME =
@@ -15,6 +16,9 @@ export const DEFAULT_THEME =
     : 'light'
 
 export type Theme = 'light' | 'dark'
+export function isValidTheme(theme: string): theme is Theme {
+  return theme === 'light' || theme === 'dark'
+}
 
 type ThemeContextType = {
   theme: Theme
@@ -37,22 +41,33 @@ type ThemeContextProviderProps = {}
 export const ThemeContextProvider = ({
   children,
 }: PropsWithChildren<ThemeContextProviderProps>) => {
-  const [theme, setTheme] = useLocalStorage<Theme>(
-    LOCAL_STORAGE_KEY,
-    DEFAULT_THEME
-  )
+  const [theme, setTheme] = useState<Theme>('light')
+
+  useEffect(() => {
+    const item = window.localStorage.getItem(LOCAL_STORAGE_KEY)
+    if (item && isValidTheme(item)) {
+      setTheme(item)
+    } else {
+      setTheme(DEFAULT_THEME)
+    }
+  }, [])
 
   useEffect(() => {
     if (theme === 'dark') document.body.classList.replace('light', 'dark')
     if (theme === 'light') document.body.classList.replace('dark', 'light')
   }, [theme])
 
+  const onSetTheme = useCallback((theme: Theme) => {
+    setTheme(theme)
+    window.localStorage.setItem(LOCAL_STORAGE_KEY, theme)
+  }, [])
+
   const value = useMemo<ThemeContextType>(
     () => ({
       theme,
-      setTheme,
+      setTheme: onSetTheme,
     }),
-    [theme, setTheme]
+    [theme, onSetTheme]
   )
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
