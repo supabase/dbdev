@@ -64,6 +64,9 @@ const DEFAULT_COMPONENTS: MarkdownProps['components'] = {
   h2({ node, children, ...props }) {
     return <H2 {...props}>{children}</H2>
   },
+  table({ node, className, children, ...props }) {
+    return <table className={cn('dark:text-white', className)} {...props}>{children}</table>
+  }
 }
 
 const COPYABLE_CODE_COMPONENTS: MarkdownProps['components'] = {
