@@ -54,7 +54,7 @@ begin
     metadata,
     1 - (documents.embedding <=> query_embedding) as similarity
   from documents
-  where @> filter
+  where metadata @> filter
   order by documents.embedding <=> query_embedding
   limit match_count;
 end;
