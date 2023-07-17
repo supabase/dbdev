@@ -70,7 +70,7 @@ impl APIClient {
             }))
             .send()
             .await
-            .context("failed to create user")?;
+            .context("failed to get access token")?;
 
         if response.status() != 200 {
             return Err(anyhow::anyhow!(response.text().await?));
