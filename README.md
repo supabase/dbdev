@@ -117,6 +117,8 @@ supabase local development setup is running.
 service_role key: KEY
 ```
 
+The *API URL* and *anon key* values will be used in the next section to setup environment variables.
+
 
 ### Website (database.dev)
 
@@ -125,6 +127,20 @@ The website/ directory contains a Next.js project, which serves as the visual in
 Requires:
 - [node 14+](https://nodejs.org/en)
 
+Copy `.env.example` file to `.env.local`:
+
+```
+cp .env.example .env.local
+```
+
+Edit the `.env.local` file with your favourite text editor to set the environment variables `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`:
+
+```
+NEXT_PUBLIC_SUPABASE_URL="<Value of API URL>"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="<Value of anon key>"
+```
+
+Start the development environment:
 
 ```
 cd website
