@@ -42,6 +42,9 @@ const Navbar = () => {
     user?.user_metadata.handle ??
     'Current User'
 
+  const displayName: string =
+    user?.user_metadata.display_name ?? user?.email ?? 'Account'
+
   const avatarFallback = avatarName
     .split(' ')
     .map((n) => n[0])
@@ -60,13 +63,10 @@ const Navbar = () => {
     })
   }, [router, signOut])
 
-  const AvatarWrapper = ({ size = 'sm' }: { size?: 'sm' | 'md' }) => {
-    const display_name = user?.user_metadata.display_name
-      ? user?.user_metadata.display_name
-      : user?.email
-    return user?.user_metadata.avatar_path === undefined ? (
+  const AvatarWrapper = ({ size = 'sm' }: { size?: 'sm' | 'md' }) =>
+    user?.user_metadata.avatar_path === undefined ? (
       <div className="flex items-center justify-center w-6 h-6 text-gray-600 bg-gray-300 border-gray-400 rounded-full border-1 dark:border-slate-400 dark:bg-slate-500 dark:text-white">
-        {display_name[0].toUpperCase()}
+        {displayName[0].toUpperCase()}
       </div>
     ) : (
       <Avatar size={size} className="border dark:border-slate-700">
@@ -74,7 +74,6 @@ const Navbar = () => {
         <AvatarFallback>{avatarFallback}</AvatarFallback>
       </Avatar>
     )
-  }
 
   return (
     <header className="px-4 py-4 border-b border-gray-100 shadow-sm dark:border-slate-700 md:px-8">
@@ -113,9 +112,7 @@ const Navbar = () => {
                       href={`/${user?.user_metadata.handle}`}
                       className="flex items-center cursor-pointer"
                     >
-                      {user?.user_metadata.display_name ??
-                        user?.email ??
-                        'Account'}
+                      {displayName}
                     </Link>
                   </DropdownMenuItem>
 
