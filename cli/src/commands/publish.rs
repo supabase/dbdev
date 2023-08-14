@@ -10,7 +10,7 @@ pub async fn publish(
 ) -> anyhow::Result<()> {
     let token = client.get_access_token(email, password).await?;
 
-    client.upload_package(&handle, &payload, &token).await?;
+    client.upload_package(handle, payload, &token).await?;
 
     Ok(())
 }

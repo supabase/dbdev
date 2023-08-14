@@ -1,8 +1,6 @@
-use anyhow;
 use clap::{Parser, Subcommand};
 
 use std::path::PathBuf;
-use tokio;
 
 mod client;
 mod commands;
@@ -110,7 +108,7 @@ async fn main() -> anyhow::Result<()> {
             connection,
             package,
         } => {
-            let conn = util::get_connection(&connection).await?;
+            let conn = util::get_connection(connection).await?;
             commands::uninstall::uninstall(package, conn).await?;
             Ok(())
         }
@@ -122,17 +120,15 @@ async fn main() -> anyhow::Result<()> {
         } => {
             if let Some(rel_or_abs_path) = path {
                 let payload = models::Payload::from_pathbuf(rel_or_abs_path)?;
-                let conn = util::get_connection(&connection).await?;
+                let conn = util::get_connection(connection).await?;
                 commands::install::install(&payload, conn).await?;
                 Ok(())
+            } else if let Some(package) = package {
+                Err(anyhow::anyhow!(
+                    "Remote package {package} installing not yet supported"
+                ))
             } else {
-                if let Some(package) = package {
-                    Err(anyhow::anyhow!(
-                        "Remote package {package} installing not yet supported"
-                    ))
-                } else {
-                    Err(anyhow::anyhow!("Not implemented"))
-                }
+                Err(anyhow::anyhow!("Not implemented"))
             }
         }
     }
