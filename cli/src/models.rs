@@ -218,12 +218,8 @@ impl ControlFileRef {
         for line in self.contents.lines() {
             if line.starts_with("requires") {
                 let value = self.read_control_line_value(line)?;
-                let required_packages: Vec<String> = value
-                    .split(',')
-                    .collect::<Vec<&str>>()
-                    .iter()
-                    .map(|x| x.trim().to_string())
-                    .collect();
+                let required_packages: Vec<String> =
+                    value.split(',').map(|x| x.trim().to_string()).collect();
                 return Ok(Some(required_packages));
             }
         }
