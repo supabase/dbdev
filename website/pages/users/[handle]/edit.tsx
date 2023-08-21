@@ -31,7 +31,7 @@ const EditAccountPage: NextPageWithLayout = () => {
   const { mutateAsync: updateProfile } = useUpdateProfileMutation({
     onSuccess() {
       toast.success('Successfully updated profile!')
-      router.replace(`/${handle}`)
+      router.replace(`/users/${handle}`)
     },
   })
 
@@ -52,7 +52,7 @@ const EditAccountPage: NextPageWithLayout = () => {
     if (isProfileSuccess && isOrgsSuccess) {
       if (preventUpdating) {
         toast.error('Unable to edit profile')
-        router.push(`/${handle}`)
+        router.push(`/users/${handle}`)
       } else {
         setPreviewImage(profile.avatar_url)
       }

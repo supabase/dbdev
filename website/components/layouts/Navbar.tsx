@@ -109,7 +109,7 @@ const Navbar = () => {
                   <DropdownMenuLabel>Logged in as</DropdownMenuLabel>
                   <DropdownMenuItem asChild>
                     <Link
-                      href={`/${user?.user_metadata.handle}`}
+                      href={`/users/${user?.user_metadata.handle}`}
                       className="flex items-center cursor-pointer"
                     >
                       {displayName}

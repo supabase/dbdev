@@ -17,7 +17,7 @@ const PackageCard = ({ pkg, className }: PackageCardProps) => {
   return (
     <Link
       key={pkg.package_name}
-      href={`/${pkg.handle}/${pkg.partial_name}`}
+      href={`/packages/${pkg.handle}/${pkg.partial_name}`}
       className={cn(
         'col-span-4 bg-gradient-to-br from-white via-white to-gray-100 rounded-lg px-6 py-5 transition duration-300 group hover:shadow-xl opacity-90 hover:opacity-100 border border-gray-200',
         'dark:from-slate-600 dark:to-slate-800 dark:border-slate-800',

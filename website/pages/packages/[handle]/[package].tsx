@@ -19,7 +19,7 @@ import { NotFoundError } from '~/data/utils'
 import dayjs from '~/lib/dayjs'
 import { NextPageWithLayout } from '~/lib/types'
 import { firstStr, pluralize, useParams } from '~/lib/utils'
-import FourOhFourPage from '../404'
+import FourOhFourPage from '../../404'
 
 const PackagePage: NextPageWithLayout = () => {
   const { handle, package: partialPackageName } = useParams()
