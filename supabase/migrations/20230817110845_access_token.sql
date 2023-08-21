@@ -57,7 +57,7 @@ begin
     insert into app.access_tokens(id, token_hash, token_name)
         values (account.id, token_hash, token_name);
 
-    return replace(user_id::text, '-', '') || token_text;    
+    return replace(user_id::text, '-', '') || token_text;
 end;
 $$;
 
