@@ -5,6 +5,7 @@ use std::path::PathBuf;
 mod client;
 mod commands;
 mod models;
+mod secret;
 mod util;
 
 #[derive(Parser)]
@@ -74,6 +75,9 @@ enum Commands {
         #[arg(long)]
         path: PathBuf,
     },
+
+    /// Login to a dbdev account
+    Login,
 }
 
 #[tokio::main]
@@ -130,6 +134,10 @@ async fn main() -> anyhow::Result<()> {
             } else {
                 Err(anyhow::anyhow!("Not implemented"))
             }
+        }
+        Commands::Login => {
+            commands::login::login().await?;
+            Ok(())
         }
     }
 }
