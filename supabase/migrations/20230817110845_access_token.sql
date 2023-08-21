@@ -70,28 +70,53 @@ create or replace function public.redeem_access_token(
     strict
 as $$
 declare
-    user_id_text text = substring(access_token from 1 for 32);
-    user_id uuid = substring(user_id_text from 1 for 8) || '-' ||
+    user_id_text text;
+    user_id uuid;
+    token_text text;
+    token bytea;
+    token_hash bytea;
+    token_valid boolean;
+    now timestamp;
+    one_hour_from_now timestamp;
+    issued_at int;
+    expiry_at int;
+    jwt_secret text;
+begin
+    -- validate access token
+    if length(access_token) != 64 then
+        raise exception 'Invalid token';
+    end if;
+
+    user_id_text := substring(access_token from 1 for 32);
+    user_id := substring(user_id_text from 1 for 8) || '-' ||
                    substring(user_id_text from 9 for 4) || '-' ||
                    substring(user_id_text from 13 for 4) || '-' ||
                    substring(user_id_text from 17 for 4) || '-' ||
                    substring(user_id_text from 21 for 12);
-    token_text text = substring(access_token from 33 for 32);
-    token bytea not null = decode(token_text, 'hex');
-    token_hash bytea = token_hash from app.access_tokens where id = user_id;
-    token_valid boolean = pgsodium.crypto_pwhash_str_verify(token_hash, token);
-    now timestamp = current_timestamp;
-    one_hour_from_now timestamp not null = now + interval '1 hour';
-    issued_at int not null = date_part('epoch', now);
-    expiry_at int not null = date_part('epoch', one_hour_from_now);
-    jwt_secret text not null = coalesce(
-        current_setting('app.settings.jwt_secret', true),
-        'super-secret-jwt-token-with-at-least-32-characters-long'
-    );
-begin
+    token_text := substring(access_token from 33 for 32);
+    token := decode(token_text, 'hex');
+    token_hash := t.token_hash from app.access_tokens t where id = user_id;
+
+    if token_hash is null then
+        raise exception 'Invalid token';
+    end if;
+
+    token_valid := pgsodium.crypto_pwhash_str_verify(token_hash, token);
+
     if not token_valid then
         raise exception 'Invalid token';
     end if;
+
+    -- Generate JWT token
+    now := current_timestamp;
+    one_hour_from_now := now + interval '1 hour';
+    issued_at := date_part('epoch', now);
+    expiry_at := date_part('epoch', one_hour_from_now);
+    jwt_secret := coalesce(
+        current_setting('app.settings.jwt_secret', true),
+        'super-secret-jwt-token-with-at-least-32-characters-long'
+    );
+
     return sign(json_build_object(
         'aud', 'authenticated',
         'role', 'authenticated',
