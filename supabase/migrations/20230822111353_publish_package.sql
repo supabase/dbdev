@@ -24,6 +24,9 @@ declare
     user_id uuid = auth.uid();
     account app.accounts = account from app.accounts account where id = user_id;
 begin
+    if account.handle is null then
+        raise exception 'user not logged in';
+    end if;
     -- Upsert package
     insert into app.packages(handle, partial_name, control_description)
     values (account.handle, package_name, package_description)

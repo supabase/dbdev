@@ -63,9 +63,6 @@ enum Commands {
 
     /// Publish a package
     Publish {
-        #[arg(long)]
-        handle: String,
-
         /// From local directory
         #[arg(long)]
         path: PathBuf,
@@ -93,9 +90,9 @@ async fn main() -> anyhow::Result<()> {
             Ok(())
         }
 
-        Commands::Publish { handle, path } => {
+        Commands::Publish { path } => {
             let payload = models::Payload::from_pathbuf(path)?;
-            commands::publish::publish(&client, &payload, handle).await?;
+            commands::publish::publish(&client, &payload).await?;
             Ok(())
         }
         Commands::Uninstall {

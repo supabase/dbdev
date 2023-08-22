@@ -1,8 +1,6 @@
 use anyhow::Context;
 //use postgrest::Postgrest;
 use serde::{Deserialize, Serialize};
-use tokio::fs::File;
-use tokio::io::AsyncReadExt;
 
 use crate::secret::Secret;
 
@@ -57,17 +55,14 @@ impl APIClient {
     }
 
     /// Redeems the access token for a shorter lived jwt token
-    pub async fn redeem_access_token(
-        &self,
-        access_token: Secret<String>,
-    ) -> anyhow::Result<Secret<String>> {
+    pub async fn redeem_access_token(&self, jwt: Secret<String>) -> anyhow::Result<Secret<String>> {
         let url = format!("{}/rest/v1/rpc/redeem_access_token", self.base_url);
         let response = self
             .http_client
             .post(&url)
             .header("apiKey", &self.api_key)
             .json(&serde_json::json!( {
-                "access_token": access_token.expose(),
+                "access_token": jwt.expose(),
             }))
             .send()
             .await
@@ -81,87 +76,25 @@ impl APIClient {
         Ok(resp)
     }
 
-    pub async fn upload_package(
+    pub async fn publish_package(
         &self,
-        handle: &str,
-        payload: &crate::models::Payload,
         jwt: &Secret<String>,
+        request: &PublishPackageRequest<'_>,
     ) -> anyhow::Result<()> {
-        let mut files = vec![];
+        let url = format!("{}/rest/v1/rpc/publish_package", self.base_url);
+        let response = self
+            .http_client
+            .post(&url)
+            .header("apiKey", &self.api_key)
+            .header("Authorization", format!("Bearer {}", jwt.expose()))
+            .json(&request)
+            .send()
+            .await
+            .context("failed to call publish package endpoint")?;
 
-        let dirpath = payload
-            .abs_path
-            .clone()
-            .context("Expected payload file path")?;
-        for install_file in &payload.install_files {
-            let filepath = dirpath.join(&install_file.filename);
-            let mut file = File::open(filepath).await?;
-            let mut file_buffer = Vec::new();
-            file.read_to_end(&mut file_buffer).await?;
-
-            let url = format!(
-                "{}/storage/v1/object/package_versions/{}-{}",
-                self.base_url, &handle, &install_file.filename
-            );
-
-            println!("{}", url);
-
-            let response = self
-                .http_client
-                .post(&url)
-                .header("ContentType", "text/plain")
-                .header("Authorization", &format!("Bearer {}", jwt.expose()))
-                .header("apiKey", &self.api_key)
-                .body(file_buffer)
-                .send()
-                .await
-                .context("failed to upload artifact")?;
-
-            if response.status() != 200 {
-                return Err(anyhow::anyhow!(response.text().await?));
-            }
-
-            println!(
-                "{:?}",
-                response.json::<serde_json::Value>().await?.to_string()
-            );
-
-            files.push(file);
+        if !response.status().is_success() {
+            return Err(anyhow::anyhow!(response.text().await?));
         }
-
-        for upgrade_file in &payload.upgrade_files {
-            let filepath = dirpath.join(&upgrade_file.filename);
-            let mut file = File::open(filepath).await?;
-            let mut file_buffer = Vec::new();
-            file.read_to_end(&mut file_buffer).await?;
-
-            let url = format!(
-                "{}/storage/v1/object/package_upgrades/{}-{}",
-                self.base_url, &handle, &upgrade_file.filename
-            );
-
-            println!("{}", url);
-
-            let response = self
-                .http_client
-                .post(&url)
-                .header("ContentType", "text/plain")
-                .header("Authorization", &format!("Bearer {}", jwt.expose()))
-                .header("apiKey", &self.api_key)
-                .body(file_buffer)
-                .send()
-                .await
-                .context("failed to upload artifact")?;
-
-            if response.status() != 200 {
-                return Err(anyhow::anyhow!(response.text().await?));
-            }
-
-            files.push(file);
-        }
-
-        // TODO: add upgrade pathes
-        // TODO: call the SQL RPC to finialize the package
 
         Ok(())
     }
@@ -197,4 +130,10 @@ pub struct SignupResponseUser {
 pub enum TokenType {
     #[serde(alias = "bearer")]
     Bearer,
+}
+
+#[derive(Serialize)]
+pub struct PublishPackageRequest<'a> {
+    pub package_name: &'a str,
+    pub package_description: &'a Option<String>,
 }
