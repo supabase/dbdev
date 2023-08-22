@@ -4,6 +4,8 @@ use serde::{Deserialize, Serialize};
 use tokio::fs::File;
 use tokio::io::AsyncReadExt;
 
+use crate::secret::Secret;
+
 pub struct APIClient {
     base_url: String,
     api_key: String,
@@ -54,19 +56,18 @@ impl APIClient {
         Ok(resp)
     }
 
-    pub async fn get_access_token(
+    /// Redeems the access token for a shorter lived jwt token
+    pub async fn redeem_access_token(
         &self,
-        email: &str,
-        password: &str,
-    ) -> anyhow::Result<AccessToken> {
-        let url = format!("{}/auth/v1/token?grant_type=password", self.base_url);
+        access_token: Secret<String>,
+    ) -> anyhow::Result<Secret<String>> {
+        let url = format!("{}/rest/v1/rpc/redeem_access_token", self.base_url);
         let response = self
             .http_client
             .post(&url)
             .header("apiKey", &self.api_key)
             .json(&serde_json::json!( {
-                "email": email,
-                "password": password,
+                "access_token": access_token.expose(),
             }))
             .send()
             .await
@@ -76,7 +77,7 @@ impl APIClient {
             return Err(anyhow::anyhow!(response.text().await?));
         }
 
-        let resp = response.json::<AccessToken>().await?;
+        let resp = response.json::<Secret<String>>().await?;
         Ok(resp)
     }
 
@@ -84,7 +85,7 @@ impl APIClient {
         &self,
         handle: &str,
         payload: &crate::models::Payload,
-        access_token: &AccessToken,
+        jwt: &Secret<String>,
     ) -> anyhow::Result<()> {
         let mut files = vec![];
 
@@ -109,10 +110,7 @@ impl APIClient {
                 .http_client
                 .post(&url)
                 .header("ContentType", "text/plain")
-                .header(
-                    "Authorization",
-                    &format!("Bearer {}", access_token.access_token),
-                )
+                .header("Authorization", &format!("Bearer {}", jwt.expose()))
                 .header("apiKey", &self.api_key)
                 .body(file_buffer)
                 .send()
@@ -148,10 +146,7 @@ impl APIClient {
                 .http_client
                 .post(&url)
                 .header("ContentType", "text/plain")
-                .header(
-                    "Authorization",
-                    &format!("Bearer {}", access_token.access_token),
-                )
+                .header("Authorization", &format!("Bearer {}", jwt.expose()))
                 .header("apiKey", &self.api_key)
                 .body(file_buffer)
                 .send()
@@ -202,12 +197,4 @@ pub struct SignupResponseUser {
 pub enum TokenType {
     #[serde(alias = "bearer")]
     Bearer,
-}
-
-#[derive(Deserialize, Debug)]
-pub struct AccessToken {
-    pub access_token: String,
-    pub refresh_token: String,
-    pub expires_in: i32,
-    pub token_type: TokenType,
 }

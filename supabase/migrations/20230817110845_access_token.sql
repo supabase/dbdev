@@ -74,6 +74,7 @@ declare
     user_id uuid;
     token_text text;
     token bytea;
+    access_token_record record;
     token_hash bytea;
     token_valid boolean;
     now timestamp;
@@ -95,13 +96,13 @@ begin
                    substring(user_id_text from 21 for 12);
     token_text := substring(access_token from 33 for 32);
     token := decode(token_text, 'hex');
-    token_hash := t.token_hash from app.access_tokens t where id = user_id;
 
-    if token_hash is null then
-        raise exception 'Invalid token';
-    end if;
-
-    token_valid := pgsodium.crypto_pwhash_str_verify(token_hash, token);
+    for token_hash in
+        select t.token_hash from app.access_tokens t where t.id = user_id
+    loop
+        token_valid := pgsodium.crypto_pwhash_str_verify(token_hash, token);
+        exit when token_valid;
+    end loop;
 
     if not token_valid then
         raise exception 'Invalid token';

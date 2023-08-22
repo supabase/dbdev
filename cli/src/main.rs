@@ -4,6 +4,7 @@ use std::path::PathBuf;
 
 mod client;
 mod commands;
+mod credentil_store;
 mod models;
 mod secret;
 mod util;
@@ -65,12 +66,6 @@ enum Commands {
         #[arg(long)]
         handle: String,
 
-        #[arg(long)]
-        email: String,
-
-        #[arg(long)]
-        password: String,
-
         /// From local directory
         #[arg(long)]
         path: PathBuf,
@@ -98,14 +93,9 @@ async fn main() -> anyhow::Result<()> {
             Ok(())
         }
 
-        Commands::Publish {
-            handle,
-            email,
-            password,
-            path,
-        } => {
+        Commands::Publish { handle, path } => {
             let payload = models::Payload::from_pathbuf(path)?;
-            commands::publish::publish(&client, &payload, email, password, handle).await?;
+            commands::publish::publish(&client, &payload, handle).await?;
             Ok(())
         }
         Commands::Uninstall {
