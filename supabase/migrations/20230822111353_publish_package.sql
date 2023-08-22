@@ -15,36 +15,45 @@ create policy packages_update_policy
 
 create or replace function public.publish_package(
     package_name app.valid_name,
-    description varchar(1000),
-    source text,
-    description_md text,
+    package_description varchar(1000)
+)
+    returns void
+    language plpgsql
+as $$
+declare
+    user_id uuid = auth.uid();
+    account app.accounts = account from app.accounts account where id = user_id;
+begin
+    -- Upsert package
+    insert into app.packages(handle, partial_name, control_description)
+    values (account.handle, package_name, package_description)
+    on conflict on constraint packages_handle_partial_name_key
+    do update
+    set control_description = excluded.control_description;
+end;
+$$;
+
+create or replace function public.publish_package_version(
+    package_name app.valid_name,
+    version_source text,
+    version_description text,
     version text
 )
-    returns public.package_versions
+    returns void
     language plpgsql
 as $$
 declare
     user_id uuid = auth.uid();
     account app.accounts = account from app.accounts account where id = user_id;
     package_id uuid;
-    package_version_id uuid;
 begin
-    -- Upsert package
-    insert into app.packages(handle, partial_name, control_description)
-    values (account.handle, package_name, description)
-    on conflict on constraint packages_handle_partial_name_key
-    do update
-    set control_description = excluded.control_description
-    returning id
+    select ap.id
+    from app.packages ap
+    where ap.handle = account.handle and ap.partial_name = publish_package_version.package_name
     into package_id;
 
     -- Insert package_version
     insert into app.package_versions(package_id, version_struct, sql, description_md)
-    values (package_id, app.text_to_semver(version), source, description_md)
-    returning id
-    into package_version_id;
-
-    -- Return the package version
-    return pv from public.package_versions pv where pv.id = package_version_id;
+    values (package_id, app.text_to_semver(version), version_source, version_description);
 end;
 $$;
