@@ -27,7 +27,6 @@ begin
     if account.handle is null then
         raise exception 'user not logged in';
     end if;
-    -- Upsert package
     insert into app.packages(handle, partial_name, control_description)
     values (account.handle, package_name, package_description)
     on conflict on constraint packages_handle_partial_name_key
@@ -56,9 +55,36 @@ begin
     into package_id;
 
     begin
-        -- Insert package_version
         insert into app.package_versions(package_id, version_struct, sql, description_md)
         values (package_id, app.text_to_semver(version), version_source, version_description);
+    exception when unique_violation then
+        return;
+    end;
+end;
+$$;
+
+create or replace function public.publish_package_upgrade(
+    package_name app.valid_name,
+    upgrade_source text,
+    from_version text,
+    to_version text
+)
+    returns void
+    language plpgsql
+as $$
+declare
+    user_id uuid = auth.uid();
+    account app.accounts = account from app.accounts account where id = user_id;
+    package_id uuid;
+begin
+    select ap.id
+    from app.packages ap
+    where ap.handle = account.handle and ap.partial_name = publish_package_upgrade.package_name
+    into package_id;
+
+    begin
+        insert into app.package_upgrades(package_id, from_version_struct, to_version_struct, sql)
+        values (package_id, app.text_to_semver(from_version), app.text_to_semver(to_version), upgrade_source);
     exception when unique_violation then
         return;
     end;

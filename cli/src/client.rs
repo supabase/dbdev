@@ -121,6 +121,29 @@ impl APIClient {
 
         Ok(())
     }
+
+    pub async fn publish_package_upgrade(
+        &self,
+        jwt: &Secret<String>,
+        request: &PublishPackageUpgradeRequest<'_>,
+    ) -> anyhow::Result<()> {
+        let url = format!("{}/rest/v1/rpc/publish_package_upgrade", self.base_url);
+        let response = self
+            .http_client
+            .post(&url)
+            .header("apiKey", &self.api_key)
+            .header("Authorization", format!("Bearer {}", jwt.expose()))
+            .json(&request)
+            .send()
+            .await
+            .context("failed to call publish package upgrade endpoint")?;
+
+        if !response.status().is_success() {
+            return Err(anyhow::anyhow!(response.text().await?));
+        }
+
+        Ok(())
+    }
 }
 
 #[derive(Serialize, Debug)]
@@ -167,4 +190,12 @@ pub struct PublishPackageVersionRequest<'a> {
     pub version: &'a str,
     pub version_source: &'a str,
     pub version_description: &'a str,
+}
+
+#[derive(Serialize)]
+pub struct PublishPackageUpgradeRequest<'a> {
+    pub package_name: &'a str,
+    pub from_version: &'a str,
+    pub to_version: &'a str,
+    pub upgrade_source: &'a str,
 }

@@ -1,8 +1,10 @@
 use std::path::Path;
 
-use crate::client::{self, PublishPackageRequest, PublishPackageVersionRequest};
+use crate::client::{
+    self, PublishPackageRequest, PublishPackageUpgradeRequest, PublishPackageVersionRequest,
+};
 use crate::credentil_store::read_access_token;
-use crate::models::{self, InstallFile, Payload, ReadmeFile};
+use crate::models::{self, InstallFile, Payload, ReadmeFile, UpgradeFile};
 
 pub async fn publish(client: &client::APIClient, path: &Path) -> anyhow::Result<()> {
     let payload = models::Payload::from_path(path)?;
@@ -23,6 +25,12 @@ pub async fn publish(client: &client::APIClient, path: &Path) -> anyhow::Result<
             readme_file,
         );
         client.publish_package_version(&jwt, &request).await?;
+    }
+
+    for upgrade_file in &payload.upgrade_files {
+        let request =
+            create_publich_package_upgrade_request(&payload.metadata.extension_name, upgrade_file);
+        client.publish_package_upgrade(&jwt, &request).await?;
     }
 
     Ok(())
@@ -48,86 +56,14 @@ fn create_publich_package_version_request<'a>(
     }
 }
 
-// async fn publish_package(
-//     handle: &str,
-//     payload: &crate::models::Payload,
-//     jwt: &Secret<String>,
-// ) -> anyhow::Result<()> {
-//     let mut files = vec![];
-
-//     let dirpath = payload
-//         .abs_path
-//         .clone()
-//         .context("Expected payload file path")?;
-//     for install_file in &payload.install_files {
-//         let filepath = dirpath.join(&install_file.filename);
-//         let mut file = File::open(filepath).await?;
-//         let mut file_buffer = Vec::new();
-//         file.read_to_end(&mut file_buffer).await?;
-
-//         let url = format!(
-//             "{}/storage/v1/object/package_versions/{}-{}",
-//             self.base_url, &handle, &install_file.filename
-//         );
-
-//         println!("{}", url);
-
-//         let response = self
-//             .http_client
-//             .post(&url)
-//             .header("ContentType", "text/plain")
-//             .header("Authorization", &format!("Bearer {}", jwt.expose()))
-//             .header("apiKey", &self.api_key)
-//             .body(file_buffer)
-//             .send()
-//             .await
-//             .context("failed to upload artifact")?;
-
-//         if response.status() != 200 {
-//             return Err(anyhow::anyhow!(response.text().await?));
-//         }
-
-//         println!(
-//             "{:?}",
-//             response.json::<serde_json::Value>().await?.to_string()
-//         );
-
-//         files.push(file);
-//     }
-
-//     for upgrade_file in &payload.upgrade_files {
-//         let filepath = dirpath.join(&upgrade_file.filename);
-//         let mut file = File::open(filepath).await?;
-//         let mut file_buffer = Vec::new();
-//         file.read_to_end(&mut file_buffer).await?;
-
-//         let url = format!(
-//             "{}/storage/v1/object/package_upgrades/{}-{}",
-//             self.base_url, &handle, &upgrade_file.filename
-//         );
-
-//         println!("{}", url);
-
-//         let response = self
-//             .http_client
-//             .post(&url)
-//             .header("ContentType", "text/plain")
-//             .header("Authorization", &format!("Bearer {}", jwt.expose()))
-//             .header("apiKey", &self.api_key)
-//             .body(file_buffer)
-//             .send()
-//             .await
-//             .context("failed to upload artifact")?;
-
-//         if response.status() != 200 {
-//             return Err(anyhow::anyhow!(response.text().await?));
-//         }
-
-//         files.push(file);
-//     }
-
-//     // TODO: add upgrade pathes
-//     // TODO: call the SQL RPC to finialize the package
-
-//     Ok(())
-// }
+fn create_publich_package_upgrade_request<'a>(
+    package_name: &'a str,
+    upgrade_file: &'a UpgradeFile,
+) -> PublishPackageUpgradeRequest<'a> {
+    PublishPackageUpgradeRequest {
+        package_name,
+        from_version: &upgrade_file.from_version,
+        to_version: &upgrade_file.to_version,
+        upgrade_source: &upgrade_file.body,
+    }
+}
