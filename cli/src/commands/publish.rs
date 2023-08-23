@@ -1,13 +1,29 @@
-use crate::client::{self, PublishPackageRequest};
-use crate::credentil_store::read_access_token;
-use crate::models::Payload;
+use std::path::Path;
 
-pub async fn publish(client: &client::APIClient, payload: &Payload) -> anyhow::Result<()> {
+use crate::client::{self, PublishPackageRequest, PublishPackageVersionRequest};
+use crate::credentil_store::read_access_token;
+use crate::models::{self, InstallFile, Payload, ReadmeFile};
+
+pub async fn publish(client: &client::APIClient, path: &Path) -> anyhow::Result<()> {
+    let payload = models::Payload::from_path(path)?;
     let access_token = read_access_token().await?;
     let jwt = client.redeem_access_token(access_token).await?;
 
+    let Some(ref readme_file) = payload.readme_file else {
+        return Err(anyhow::anyhow!("No `README.md` file found"));
+    };
+
     let request = create_publish_package_request(&payload);
     client.publish_package(&jwt, &request).await?;
+
+    for install_file in &payload.install_files {
+        let request = create_publich_package_version_request(
+            &payload.metadata.extension_name,
+            install_file,
+            readme_file,
+        );
+        client.publish_package_version(&jwt, &request).await?;
+    }
 
     Ok(())
 }
@@ -16,6 +32,19 @@ fn create_publish_package_request(payload: &Payload) -> PublishPackageRequest {
     PublishPackageRequest {
         package_name: &payload.metadata.extension_name,
         package_description: &payload.metadata.comment,
+    }
+}
+
+fn create_publich_package_version_request<'a>(
+    package_name: &'a str,
+    install_file: &'a InstallFile,
+    readme_file: &'a ReadmeFile,
+) -> PublishPackageVersionRequest<'a> {
+    PublishPackageVersionRequest {
+        package_name,
+        version: &install_file.version,
+        version_source: &install_file.body,
+        version_description: readme_file.body(),
     }
 }
 

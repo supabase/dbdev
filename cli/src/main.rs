@@ -91,8 +91,7 @@ async fn main() -> anyhow::Result<()> {
         }
 
         Commands::Publish { path } => {
-            let payload = models::Payload::from_pathbuf(path)?;
-            commands::publish::publish(&client, &payload).await?;
+            commands::publish::publish(&client, path).await?;
             Ok(())
         }
         Commands::Uninstall {
@@ -110,7 +109,7 @@ async fn main() -> anyhow::Result<()> {
             path,
         } => {
             if let Some(rel_or_abs_path) = path {
-                let payload = models::Payload::from_pathbuf(rel_or_abs_path)?;
+                let payload = models::Payload::from_path(rel_or_abs_path)?;
                 let conn = util::get_connection(connection).await?;
                 commands::install::install(&payload, conn).await?;
                 Ok(())

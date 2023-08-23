@@ -98,6 +98,29 @@ impl APIClient {
 
         Ok(())
     }
+
+    pub async fn publish_package_version(
+        &self,
+        jwt: &Secret<String>,
+        request: &PublishPackageVersionRequest<'_>,
+    ) -> anyhow::Result<()> {
+        let url = format!("{}/rest/v1/rpc/publish_package_version", self.base_url);
+        let response = self
+            .http_client
+            .post(&url)
+            .header("apiKey", &self.api_key)
+            .header("Authorization", format!("Bearer {}", jwt.expose()))
+            .json(&request)
+            .send()
+            .await
+            .context("failed to call publish package version endpoint")?;
+
+        if !response.status().is_success() {
+            return Err(anyhow::anyhow!(response.text().await?));
+        }
+
+        Ok(())
+    }
 }
 
 #[derive(Serialize, Debug)]
@@ -136,4 +159,12 @@ pub enum TokenType {
 pub struct PublishPackageRequest<'a> {
     pub package_name: &'a str,
     pub package_description: &'a Option<String>,
+}
+
+#[derive(Serialize)]
+pub struct PublishPackageVersionRequest<'a> {
+    pub package_name: &'a str,
+    pub version: &'a str,
+    pub version_source: &'a str,
+    pub version_description: &'a str,
 }
