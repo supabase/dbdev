@@ -55,8 +55,12 @@ begin
     where ap.handle = account.handle and ap.partial_name = publish_package_version.package_name
     into package_id;
 
-    -- Insert package_version
-    insert into app.package_versions(package_id, version_struct, sql, description_md)
-    values (package_id, app.text_to_semver(version), version_source, version_description);
+    begin
+        -- Insert package_version
+        insert into app.package_versions(package_id, version_struct, sql, description_md)
+        values (package_id, app.text_to_semver(version), version_source, version_description);
+    exception when unique_violation then
+        return;
+    end;
 end;
 $$;
