@@ -2,6 +2,7 @@ import { ComponentPropsWithoutRef, forwardRef, PropsWithoutRef } from 'react'
 import { useField, UseFieldConfig } from 'react-final-form'
 import Input from '../ui/Input'
 import Label from '../ui/Label'
+import { cn } from '~/lib/utils'
 
 export interface FormInputProps
   extends PropsWithoutRef<JSX.IntrinsicElements['input']> {
@@ -17,7 +18,7 @@ export interface FormInputProps
 }
 
 const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
-  ({ name, label, outerProps, fieldProps, labelProps, ...props }, ref) => {
+  ({ name, label, className, outerProps, fieldProps, labelProps, ...props }, ref) => {
     const {
       input,
       meta: { touched, error, submitError, submitting },
@@ -35,7 +36,7 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
       : error || submitError
 
     return (
-      <div {...outerProps} className="space-y-1">
+      <div {...outerProps} className={cn("space-y-1", className)}>
         <Label htmlFor={name} {...labelProps}>
           {label}
         </Label>

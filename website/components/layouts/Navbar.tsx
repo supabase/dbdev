@@ -115,8 +115,16 @@ const Navbar = () => {
                       {displayName}
                     </Link>
                   </DropdownMenuItem>
-
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href={`/${user?.user_metadata.handle}/_/access-tokens`}
+                      className="flex items-center cursor-pointer"
+                    >
+                      Access Tokens
+                    </Link>
+                  </DropdownMenuItem>
+
 
                   {isOrganizationsSuccess && organizations.length > 0 && (
                     <DropdownMenuLabel>Organizations</DropdownMenuLabel>
