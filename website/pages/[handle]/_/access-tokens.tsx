@@ -108,8 +108,8 @@ const ApiTokensPage: NextPageWithLayout = () => {
             key={accessToken.id}
             tokenId={accessToken.id}
             tokenName={accessToken.token_name}
-            created_at={accessToken.created_at}
-            onRevoke={revokeToken}
+            createdAt={accessToken.created_at}
+            onRevokeButtonClick={revokeToken}
           ></AccessTokenCard>
         ))
       ) : (
