@@ -36,15 +36,6 @@ create policy access_tokens_delete_policy
     to authenticated
     using ( auth.uid() = user_id );
 
-create view public.access_tokens
-    as
-    select
-        act.id,
-        act.token_name,
-        act.created_at
-    from
-        app.access_tokens act;
-
 create or replace function public.new_access_token(
     token_name text
 )
@@ -67,6 +58,31 @@ begin
     end;
 
     return replace(user_id::text, '-', '') || token_text;
+end;
+$$;
+
+create type app.access_token_struct as (
+    id uuid,
+    token_name text,
+    created_at timestamptz
+);
+
+create or replace function public.get_access_tokens()
+    returns setof app.access_token_struct 
+    language plpgsql
+    strict
+as $$
+declare
+    user_id uuid = auth.uid();
+    account app.accounts = account from app.accounts account where id = user_id;
+    token bytea = gen_random_bytes(16);
+    token_hash bytea = pgsodium.crypto_pwhash_str(token);
+    token_text text = encode(token, 'hex');
+begin
+    return query
+    select id, token_name, created_at
+    from app.access_tokens at
+    where at.user_id = account.id;
 end;
 $$;
 

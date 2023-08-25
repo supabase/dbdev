@@ -7,12 +7,12 @@ import {
 } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import supabase from '~/lib/supabase'
-import { NonNullableObject } from '~/lib/types'
-import { Database } from '../database.types'
 
-export type AccessToken = NonNullableObject<
-  Database['public']['Views']['access_tokens']['Row']
->
+export type AccessToken = {
+    id: string,
+    token_name: string,
+    created_at: string
+};
 
 const SELECTED_COLUMNS = ['id', 'token_name', 'created_at'] as const
 
@@ -21,26 +21,15 @@ export type AccessTokensResponse = Pick<
   (typeof SELECTED_COLUMNS)[number]
 >[]
 
-export async function getAccessTokens(
-  signal?: AbortSignal
-) {
+export async function getAccessTokens() {
 
-  let query = supabase
-    .from('access_tokens')
-    .select(SELECTED_COLUMNS.join(','))
-    .order('created_at', { ascending: false })
-
-  if (signal) {
-    query = query.abortSignal(signal)
-  }
-
-  const { data, error } = await query.returns<AccessTokensResponse>()
+  const { data, error } = await supabase.rpc('get_access_tokens', {})
 
   if (error) {
     throw error
   }
 
-  return data ?? []
+  return data as AccessTokensResponse ?? []
 }
 
 export type AccessTokensData = Awaited<ReturnType<typeof getAccessTokens>>
@@ -54,7 +43,7 @@ export const useAccessTokensQuery = <TData = AccessTokensData>(
 ) =>
   useQuery<AccessTokensData, AccessTokensError, TData>(
     ['access-tokens'],
-    ({ signal }) => getAccessTokens(signal),
+    ({}) => getAccessTokens(),
     {
       enabled:
         enabled,
@@ -67,7 +56,7 @@ export const prefetchAccessTokens = (
 ) => {
   return client.prefetchQuery(
     ['access-tokens'],
-    ({ signal }) => getAccessTokens(signal)
+    ({}) => getAccessTokens()
   )
 }
 

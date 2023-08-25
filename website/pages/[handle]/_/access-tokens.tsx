@@ -100,7 +100,7 @@ const ApiTokensPage: NextPageWithLayout = () => {
         </Button>
       </div>
       {isLoading ? (
-        <p>Loading</p>
+        <p>Loading...</p>
       ) : isSuccess ? (
         accessTokens &&
         accessTokens.map((accessToken) => (

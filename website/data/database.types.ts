@@ -37,24 +37,6 @@ export interface Database {
       [_ in never]: never
     }
     Views: {
-      access_tokens: {
-        Row: {
-          created_at: string | null
-          id: string | null
-          token_name: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string | null
-          token_name?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string | null
-          token_name?: string | null
-        }
-        Relationships: []
-      }
       accounts: {
         Row: {
           avatar_path: string | null
@@ -234,6 +216,10 @@ export interface Database {
         Args: {
           "": unknown
         }
+        Returns: unknown[]
+      }
+      get_access_tokens: {
+        Args: Record<PropertyKey, never>
         Returns: unknown[]
       }
       new_access_token: {
