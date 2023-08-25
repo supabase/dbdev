@@ -9,12 +9,9 @@ type DeleteAccessTokenVariables = {
 export async function deleteAccessToken({
   tokenId,
 }: DeleteAccessTokenVariables) {
-  let mutation = supabase
-    .from('access_tokens')
-    .delete()
-    .eq("id", tokenId)
-
-  const { data, error } = await mutation.returns<Response>()
+  const { data, error } = await supabase.rpc('delete_access_token', {
+    token_id: tokenId,
+  })
 
   if (error) throw error
   return data

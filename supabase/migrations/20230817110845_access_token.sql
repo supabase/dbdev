@@ -13,6 +13,10 @@ grant insert
     on app.access_tokens
     to authenticated;
 
+grant delete
+    on app.access_tokens
+    to authenticated;
+
 alter table app.access_tokens enable row level security;
 
 create policy access_tokens_select_policy
@@ -83,6 +87,22 @@ begin
     select id, token_name, created_at
     from app.access_tokens at
     where at.user_id = account.id;
+end;
+$$;
+
+create or replace function public.delete_access_token(
+    token_id uuid
+)
+    returns void
+    language plpgsql
+    strict
+as $$
+declare
+    user_id uuid = auth.uid();
+    account app.accounts = account from app.accounts account where id = user_id;
+begin
+    delete from app.access_tokens at
+    where at.user_id = account.id and at.id = token_id;
 end;
 $$;
 

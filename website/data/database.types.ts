@@ -212,6 +212,12 @@ export interface Database {
       }
     }
     Functions: {
+      delete_access_token: {
+        Args: {
+          token_id: string
+        }
+        Returns: undefined
+      }
       download_metrics: {
         Args: {
           "": unknown
