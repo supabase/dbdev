@@ -30,7 +30,7 @@ const ApiTokensPage: NextPageWithLayout = () => {
   const [showNewTokenForm, setShowNewTokenForm] = useState(false)
   const [newToken, setNewToken] = useState('')
 
-  const { mutateAsync: createNewAccessToken } = useNewAccessTokenMutation({
+  const { mutateAsync: createNewAccessToken, isLoading: creatingNewAccessToken } = useNewAccessTokenMutation({
     onSuccess() {
       toast.success('Successfully created token!')
     },
@@ -171,11 +171,13 @@ const ApiTokensPage: NextPageWithLayout = () => {
         }
       | undefined
     >
+    disabled: boolean
   }
 
   const NewTokenForm = ({
     onCancelButtonClick,
     onCreateTokenButtonClick,
+    disabled,
   }: NewTokenFormProps) => (
     <div className="w-full max-w-lg mx-auto space-y-8">
       <H1 className="!text-3xl">New Token</H1>
@@ -185,16 +187,21 @@ const ApiTokensPage: NextPageWithLayout = () => {
           label="Token name"
           type="text"
           placeholder="Enter a new token name"
+          disabled={disabled}
         />
         <div className="flex flex-row justify-end space-x-4">
           <Button
             onClick={onCancelButtonClick}
             variant="subtle"
             className="mt-4"
+            disabled={disabled}
           >
             Cancel
           </Button>
-          <FormButton className="bg-slate-700 text-white hover:bg-slate-500 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-500">
+          <FormButton
+            disabled={disabled}
+            className="bg-slate-700 text-white hover:bg-slate-500 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-500"
+          >
             Create Token
           </FormButton>
         </div>
@@ -220,6 +227,7 @@ const ApiTokensPage: NextPageWithLayout = () => {
           <NewTokenForm
             onCancelButtonClick={() => setShowNewTokenForm(false)}
             onCreateTokenButtonClick={createNewToken}
+            disabled={creatingNewAccessToken}
           ></NewTokenForm>
         ) : (
           <AccessTokensPage
