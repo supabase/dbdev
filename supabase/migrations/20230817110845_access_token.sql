@@ -72,7 +72,7 @@ create type app.access_token_struct as (
 );
 
 create or replace function public.get_access_tokens()
-    returns setof app.access_token_struct 
+    returns setof app.access_token_struct
     language plpgsql
     strict
 as $$

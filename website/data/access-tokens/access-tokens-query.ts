@@ -67,4 +67,3 @@ export const useAccessTokensPrefetch = () => {
       prefetchAccessTokens(client)
   }, [client])
 }
-
