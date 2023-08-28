@@ -221,7 +221,7 @@ const ApiTokensPage: NextPageWithLayout = () => {
         <title>Access Tokens | The Database Package Manager</title>
       </Head>
       <div className="flex flex-col gap-4 pb-16 mt-8">
-        {newToken ? (
+        {newToken && (
           <NewTokenPage
             newToken={newToken}
             onCloseButtonClick={() => {
@@ -229,13 +229,15 @@ const ApiTokensPage: NextPageWithLayout = () => {
               setShowNewTokenForm(false)
             }}
           ></NewTokenPage>
-        ) : showNewTokenForm ? (
+        )}
+        {!newToken && showNewTokenForm && (
           <NewTokenForm
             onCancelButtonClick={() => setShowNewTokenForm(false)}
             onCreateTokenButtonClick={createNewToken}
             disabled={creatingNewAccessToken}
           ></NewTokenForm>
-        ) : (
+        )}
+        {!newToken && !showNewTokenForm && (
           <AccessTokensPage
             onClickNewToken={() => setShowNewTokenForm(true)}
             isLoading={accessTokensLoading}
