@@ -111,6 +111,7 @@ create or replace function public.redeem_access_token(
     security definer
     strict
 as $$
+<<fn>>
 declare
     user_id_text text;
     user_id uuid;
@@ -131,16 +132,12 @@ begin
     end if;
 
     user_id_text := substring(access_token from 1 for 32);
-    user_id := substring(user_id_text from 1 for 8) || '-' ||
-                   substring(user_id_text from 9 for 4) || '-' ||
-                   substring(user_id_text from 13 for 4) || '-' ||
-                   substring(user_id_text from 17 for 4) || '-' ||
-                   substring(user_id_text from 21 for 12);
+    user_id := user_id_text;
     token_text := substring(access_token from 33 for 32);
     token := decode(token_text, 'hex');
 
     for token_hash in
-        select t.token_hash from app.access_tokens t where t.user_id = user_id
+        select t.token_hash from app.access_tokens t where t.user_id = fn.user_id
     loop
         token_valid := pgsodium.crypto_pwhash_str_verify(token_hash, token);
         exit when token_valid;
@@ -163,7 +160,7 @@ begin
     return sign(json_build_object(
         'aud', 'authenticated',
         'role', 'authenticated',
-        'sub', user_id,
+        'sub', fn.user_id,
         'iat', issued_at,
         'exp', expiry_at
     ), jwt_secret);
