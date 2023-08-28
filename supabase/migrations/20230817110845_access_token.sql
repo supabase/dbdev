@@ -160,6 +160,7 @@ begin
     return sign(json_build_object(
         'aud', 'authenticated',
         'role', 'authenticated',
+        'iss', 'database.dev',
         'sub', fn.user_id,
         'iat', issued_at,
         'exp', expiry_at
