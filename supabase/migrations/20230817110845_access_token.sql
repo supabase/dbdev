@@ -69,15 +69,22 @@ as $$
 <<fn>>
 declare
     account app.accounts = account from app.accounts account where id = auth.uid();
+    -- Why 21 random bytes? We are shooting for 128 bit (16 bytes) entropy. But we
+    -- also show three bytes as plaintext. That takes us to a total 19 bytes.
+    -- We add two bytes to make sure that the base64 encoded bytes don't have any
+    -- padding, which makes it a little bit nicer to look at. That makes 21.
     token bytea = gen_random_bytes(21);
     token_hash bytea = sha256(token);
+    -- Total length of the base64 encoded token is 21 * 8 / 6 = 28
     token_text text = app.base64url_encode(token);
     token_id uuid;
+    -- Last 4 base64 encoded character are shown in the suffix
     plaintext_suffix text = substring(token_text from 25);
 begin
     insert into app.access_tokens(user_id, token_hash, token_name, plaintext_suffix)
     values (account.id, token_hash, token_name, fn.plaintext_suffix) returning id into token_id;
 
+    -- String returned has a length 64
     return 'dbd_' || replace(token_id::text, '-', '') || token_text;
 end;
 $$;
