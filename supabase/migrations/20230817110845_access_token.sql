@@ -1,6 +1,6 @@
 create table app.access_tokens(
     id uuid primary key default gen_random_uuid(),
-    user_id uuid not null references auth.users(id),
+    user_id uuid not null references auth.users(id) on delete cascade,
     token_hash bytea not null,
     token_name text not null check (length(token_name) <= 64),
     created_at timestamptz not null default now(),
