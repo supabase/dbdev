@@ -145,10 +145,10 @@ const ApiTokensPage: NextPageWithLayout = () => {
           <textarea
             disabled
             value={`${newToken}`}
-            className="w-full h-10 mt-1 rounded-md border-none text-sm resize-none bg-transparent text-slate-400"
+            className="w-full h-15 mt-1 rounded-md border-none text-sm resize-none bg-transparent text-slate-400"
           ></textarea>
           <CopyButton
-            className="w-10 rounded-none rounded-r-md"
+            className="w-14 rounded-none rounded-r-md"
             getValue={() => newToken}
           />
         </div>
