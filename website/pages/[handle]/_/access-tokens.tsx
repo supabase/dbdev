@@ -141,24 +141,22 @@ const ApiTokensPage: NextPageWithLayout = () => {
         command in a terminal and paste the copied token.
       </H3>
       <Form onSubmit={() => {}} initialValues={{ token: `${newToken}` }}>
-        <div className="flex flex-row w-full">
+        <div className="flex flex-row w-full rounded-md border border-slate-300">
           <textarea
             disabled
             value={`${newToken}`}
-            className="flex h-16 w-full rounded-md border border-slate-300 bg-transparent
-                      py-2 px-3 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2
-                      focus:ring-slate-400 focus:ring-offset-2 disabled:cursor-not-allowed
-                      disabled:opacity-50 dark:border-slate-700 dark:text-slate-50 dark:focus:ring-slate-400
-                      dark:focus:ring-offset-slate-900 resize-none"
+            className="w-full h-10 mt-1 rounded-md border-none text-sm resize-none bg-transparent text-slate-400"
           ></textarea>
-          <CopyButton getValue={() => newToken} />
+          <CopyButton
+            className="w-10 rounded-none rounded-r-md"
+            getValue={() => newToken}
+          />
         </div>
       </Form>
       <div className="flex flex-row-reverse">
         <Button
           onClick={onCloseButtonClick}
           variant="subtle"
-          className="mt-4 self-end"
         >
           Close
         </Button>
