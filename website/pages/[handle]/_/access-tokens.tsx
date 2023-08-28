@@ -21,7 +21,6 @@ import { NewTokenSchema } from '~/lib/validations'
 import H3 from '~/components/ui/typography/H3'
 import CopyButton from '~/components/ui/CopyButton'
 import { useDeleteAccessTokenMutation } from '~/data/access-tokens/delete-access-token'
-import { isError } from '@tanstack/react-query'
 
 const ApiTokensPage: NextPageWithLayout = () => {
   const router = useRouter()
