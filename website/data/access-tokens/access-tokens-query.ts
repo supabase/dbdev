@@ -11,10 +11,11 @@ import supabase from '~/lib/supabase'
 export type AccessToken = {
     id: string,
     token_name: string,
+    masked_token: string,
     created_at: string
 };
 
-const SELECTED_COLUMNS = ['id', 'token_name', 'created_at'] as const
+const SELECTED_COLUMNS = ['id', 'token_name', 'masked_token', 'created_at'] as const
 
 export type AccessTokensResponse = Pick<
   AccessToken,

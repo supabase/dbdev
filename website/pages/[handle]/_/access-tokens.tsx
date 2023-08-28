@@ -113,6 +113,7 @@ const ApiTokensPage: NextPageWithLayout = () => {
             key={accessToken.id}
             tokenId={accessToken.id}
             tokenName={accessToken.token_name}
+            maskedToken={accessToken.masked_token}
             createdAt={accessToken.created_at}
             onRevokeButtonClick={revokeToken}
           ></AccessTokenCard>
@@ -154,10 +155,7 @@ const ApiTokensPage: NextPageWithLayout = () => {
         </div>
       </Form>
       <div className="flex flex-row-reverse">
-        <Button
-          onClick={onCloseButtonClick}
-          variant="subtle"
-        >
+        <Button onClick={onCloseButtonClick} variant="subtle">
           Close
         </Button>
       </div>
