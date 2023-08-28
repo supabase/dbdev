@@ -50,17 +50,18 @@ as $$
 declare
     account app.accounts = account from app.accounts account where id = auth.uid();
     token bytea = gen_random_bytes(16);
-    token_hash bytea = pgsodium.crypto_pwhash_str(token);
-    token_text text = encode(token, 'hex');
+    token_hash bytea = sha256(token);
+    token_text text = encode(token, 'base64');--TODO: encode with base64-url
+    token_id uuid;
 begin
     begin
         insert into app.access_tokens(user_id, token_hash, token_name)
-        values (account.id, token_hash, token_name);
+        values (account.id, token_hash, token_name) returning id into token_id;
     exception when unique_violation then
         raise exception 'Token with name `%s` already exists', token_name;
     end;
 
-    return replace(auth.uid()::text, '-', '') || token_text;
+    return replace(token_id::text, '-', '') || token_text;
 end;
 $$;
 
@@ -77,9 +78,6 @@ create or replace function public.get_access_tokens()
 as $$
 declare
     account app.accounts = account from app.accounts account where id = auth.uid();
-    token bytea = gen_random_bytes(16);
-    token_hash bytea = pgsodium.crypto_pwhash_str(token);
-    token_text text = encode(token, 'hex');
 begin
     return query
     select id, token_name, created_at
@@ -103,6 +101,11 @@ begin
 end;
 $$;
 
+create type app.user_id_and_token_hash as (
+    user_id uuid,
+    token_hash bytea
+);
+
 create or replace function public.redeem_access_token(
     access_token text
 )
@@ -111,14 +114,10 @@ create or replace function public.redeem_access_token(
     security definer
     strict
 as $$
-<<fn>>
 declare
-    user_id_text text;
-    user_id uuid;
-    token_text text;
+    token_id uuid;
     token bytea;
-    access_token_record record;
-    token_hash bytea;
+    tokens_row app.user_id_and_token_hash;
     token_valid boolean;
     now timestamp;
     one_hour_from_now timestamp;
@@ -127,23 +126,21 @@ declare
     jwt_secret text;
 begin
     -- validate access token
-    if length(access_token) != 64 then
+    if length(access_token) != 56 then
         raise exception 'Invalid token';
     end if;
 
-    user_id_text := substring(access_token from 1 for 32);
-    user_id := user_id_text;
-    token_text := substring(access_token from 33 for 32);
-    token := decode(token_text, 'hex');
+    token_id := substring(access_token from 1 for 32)::uuid;
+    token := decode(substring(access_token from 33), 'base64');--TODO: encode with base64-url
 
-    for token_hash in
-        select t.token_hash from app.access_tokens t where t.user_id = fn.user_id
-    loop
-        token_valid := pgsodium.crypto_pwhash_str_verify(token_hash, token);
-        exit when token_valid;
-    end loop;
+    select t.user_id, t.token_hash
+    into tokens_row
+    from app.access_tokens t
+    where t.id = token_id;
 
-    if not token_valid then
+    raise notice 'after select';
+    -- TODO: do a constant time comparison
+    if tokens_row.token_hash != sha256(token) then
         raise exception 'Invalid token';
     end if;
 
@@ -161,7 +158,7 @@ begin
         'aud', 'authenticated',
         'role', 'authenticated',
         'iss', 'database.dev',
-        'sub', fn.user_id,
+        'sub', tokens_row.user_id,
         'iat', issued_at,
         'exp', expiry_at
     ), jwt_secret);
