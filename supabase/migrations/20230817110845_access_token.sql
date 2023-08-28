@@ -3,13 +3,12 @@ create table app.access_tokens(
     user_id uuid not null references auth.users(id) on delete cascade,
     token_hash bytea not null,
     token_name text not null check (length(token_name) <= 64),
-    created_at timestamptz not null default now(),
-
-    unique (user_id, token_name)
+    plaintext_suffix text not null check (length(plaintext_suffix) = 4),
+    created_at timestamptz not null default now()
 );
 
 grant insert
-    (id, user_id, token_hash, token_name)
+    (id, user_id, token_hash, token_name, plaintext_suffix)
     on app.access_tokens
     to authenticated;
 
@@ -67,19 +66,17 @@ create or replace function public.new_access_token(
     language plpgsql
     strict
 as $$
+<<fn>>
 declare
     account app.accounts = account from app.accounts account where id = auth.uid();
     token bytea = gen_random_bytes(21);
     token_hash bytea = sha256(token);
     token_text text = app.base64url_encode(token);
     token_id uuid;
+    plaintext_suffix text = substring(token_text from 25);
 begin
-    begin
-        insert into app.access_tokens(user_id, token_hash, token_name)
-        values (account.id, token_hash, token_name) returning id into token_id;
-    exception when unique_violation then
-        raise exception 'Token with name `%s` already exists', token_name;
-    end;
+    insert into app.access_tokens(user_id, token_hash, token_name, plaintext_suffix)
+    values (account.id, token_hash, token_name, fn.plaintext_suffix) returning id into token_id;
 
     return 'dbd_' || replace(token_id::text, '-', '') || token_text;
 end;
@@ -88,6 +85,7 @@ $$;
 create type app.access_token_struct as (
     id uuid,
     token_name text,
+    masked_token text,
     created_at timestamptz
 );
 
@@ -100,7 +98,12 @@ declare
     account app.accounts = account from app.accounts account where id = auth.uid();
 begin
     return query
-    select id, token_name, created_at
+    select id, token_name,
+            'dbd_' ||
+            substring(at.id::text from 1 for 4) ||
+            repeat('•', 52) ||
+            at.plaintext_suffix as masked_token,
+        created_at
     from app.access_tokens at
     where at.user_id = account.id;
 end;
