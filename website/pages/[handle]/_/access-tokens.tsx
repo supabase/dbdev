@@ -21,6 +21,7 @@ import { NewTokenSchema } from '~/lib/validations'
 import H3 from '~/components/ui/typography/H3'
 import CopyButton from '~/components/ui/CopyButton'
 import { useDeleteAccessTokenMutation } from '~/data/access-tokens/delete-access-token'
+import { isError } from '@tanstack/react-query'
 
 const ApiTokensPage: NextPageWithLayout = () => {
   const router = useRouter()
@@ -30,7 +31,10 @@ const ApiTokensPage: NextPageWithLayout = () => {
   const [showNewTokenForm, setShowNewTokenForm] = useState(false)
   const [newToken, setNewToken] = useState('')
 
-  const { mutateAsync: createNewAccessToken, isLoading: creatingNewAccessToken } = useNewAccessTokenMutation({
+  const {
+    mutateAsync: createNewAccessToken,
+    isLoading: creatingNewAccessToken,
+  } = useNewAccessTokenMutation({
     onSuccess() {
       toast.success('Successfully created token!')
     },
@@ -40,6 +44,7 @@ const ApiTokensPage: NextPageWithLayout = () => {
     data: accessTokens,
     isLoading: accessTokensLoading,
     isSuccess: isAccessTokensSuccess,
+    isError: isAccessTokensError,
   } = useAccessTokensQuery()
 
   const createNewToken = async ({ tokenName }: { tokenName: string }) => {
@@ -79,6 +84,7 @@ const ApiTokensPage: NextPageWithLayout = () => {
   type AccessTokensPageProps = {
     onClickNewToken: MouseEventHandler<HTMLButtonElement>
     isSuccess: boolean
+    isError: boolean
     isLoading: boolean
     accessTokens: AccessTokensResponse | undefined
   }
@@ -86,6 +92,7 @@ const ApiTokensPage: NextPageWithLayout = () => {
   const AccessTokensPage = ({
     onClickNewToken,
     isSuccess,
+    isError,
     isLoading,
     accessTokens,
   }: AccessTokensPageProps) => (
@@ -99,9 +106,8 @@ const ApiTokensPage: NextPageWithLayout = () => {
           New Token
         </Button>
       </div>
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : isSuccess ? (
+      {isLoading && <p>Loading...</p>}
+      {isSuccess &&
         accessTokens &&
         accessTokens.map((accessToken) => (
           <AccessTokenCard
@@ -111,10 +117,8 @@ const ApiTokensPage: NextPageWithLayout = () => {
             createdAt={accessToken.created_at}
             onRevokeButtonClick={revokeToken}
           ></AccessTokenCard>
-        ))
-      ) : (
-        <p className="text-red-500">Error loading access tokens</p>
-      )}
+        ))}
+      {isError && <p className="text-red-500">Error loading access tokens</p>}
     </>
   )
 
@@ -234,6 +238,7 @@ const ApiTokensPage: NextPageWithLayout = () => {
             onClickNewToken={() => setShowNewTokenForm(true)}
             isLoading={accessTokensLoading}
             isSuccess={isAccessTokensSuccess}
+            isError={isAccessTokensError}
             accessTokens={accessTokens}
           ></AccessTokensPage>
         )}
