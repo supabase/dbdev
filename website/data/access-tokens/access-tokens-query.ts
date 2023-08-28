@@ -32,6 +32,8 @@ export async function getAccessTokens() {
   return data as AccessTokensResponse ?? []
 }
 
+export const accessTokensQueryKey = 'access-tokens'
+
 export type AccessTokensData = Awaited<ReturnType<typeof getAccessTokens>>
 export type AccessTokensError = PostgrestError
 
@@ -42,7 +44,7 @@ export const useAccessTokensQuery = <TData = AccessTokensData>(
   }: UseQueryOptions<AccessTokensData, AccessTokensError, TData> = {}
 ) =>
   useQuery<AccessTokensData, AccessTokensError, TData>(
-    ['access-tokens'],
+    [accessTokensQueryKey],
     ({}) => getAccessTokens(),
     {
       enabled:
@@ -55,7 +57,7 @@ export const prefetchAccessTokens = (
   client: QueryClient
 ) => {
   return client.prefetchQuery(
-    ['access-tokens'],
+    [accessTokensQueryKey],
     ({}) => getAccessTokens()
   )
 }

@@ -1,6 +1,7 @@
 import { PostgrestError } from "@supabase/supabase-js"
 import { useMutation, UseMutationOptions, useQueryClient } from "@tanstack/react-query"
 import supabase from "~/lib/supabase"
+import { accessTokensQueryKey } from "./access-tokens-query"
 
 type DeleteAccessTokenVariables = {
     tokenId: string
@@ -43,7 +44,7 @@ export const useDeleteAccessTokenMutation = ({
     {
       async onSuccess(data, variables, context) {
         await Promise.all([
-          queryClient.resetQueries(),
+          queryClient.invalidateQueries([accessTokensQueryKey]),
           await onSuccess?.(data, variables, context),
         ])
       },
