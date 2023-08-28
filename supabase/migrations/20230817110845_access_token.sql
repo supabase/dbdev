@@ -48,8 +48,7 @@ create or replace function public.new_access_token(
     strict
 as $$
 declare
-    user_id uuid = auth.uid();
-    account app.accounts = account from app.accounts account where id = user_id;
+    account app.accounts = account from app.accounts account where id = auth.uid();
     token bytea = gen_random_bytes(16);
     token_hash bytea = pgsodium.crypto_pwhash_str(token);
     token_text text = encode(token, 'hex');
@@ -61,7 +60,7 @@ begin
         raise exception 'Token with name `%s` already exists', token_name;
     end;
 
-    return replace(user_id::text, '-', '') || token_text;
+    return replace(auth.uid()::text, '-', '') || token_text;
 end;
 $$;
 
@@ -77,8 +76,7 @@ create or replace function public.get_access_tokens()
     strict
 as $$
 declare
-    user_id uuid = auth.uid();
-    account app.accounts = account from app.accounts account where id = user_id;
+    account app.accounts = account from app.accounts account where id = auth.uid();
     token bytea = gen_random_bytes(16);
     token_hash bytea = pgsodium.crypto_pwhash_str(token);
     token_text text = encode(token, 'hex');
@@ -98,8 +96,7 @@ create or replace function public.delete_access_token(
     strict
 as $$
 declare
-    user_id uuid = auth.uid();
-    account app.accounts = account from app.accounts account where id = user_id;
+    account app.accounts = account from app.accounts account where id = auth.uid();
 begin
     delete from app.access_tokens at
     where at.user_id = account.id and at.id = token_id;
