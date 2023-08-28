@@ -40,6 +40,26 @@ create policy access_tokens_delete_policy
     to authenticated
     using ( auth.uid() = user_id );
 
+create or replace function app.base64url_encode(input bytea)
+    returns text
+    language plpgsql
+    strict
+as $$
+begin
+    return substring(replace(replace(encode(input, 'base64'), '/', '_'), '+', '-') from 1 for 22);
+end;
+$$;
+
+create or replace function app.base64url_decode(input text)
+    returns text
+    language plpgsql
+    strict
+as $$
+begin
+    return decode(replace(replace(input || '==', '-', '+'), '_', '/'), 'base64');
+end;
+$$;
+
 create or replace function public.new_access_token(
     token_name text
 )
@@ -51,7 +71,7 @@ declare
     account app.accounts = account from app.accounts account where id = auth.uid();
     token bytea = gen_random_bytes(16);
     token_hash bytea = sha256(token);
-    token_text text = encode(token, 'base64');--TODO: encode with base64-url
+    token_text text = app.base64url_encode(token);
     token_id uuid;
 begin
     begin
@@ -126,12 +146,12 @@ declare
     jwt_secret text;
 begin
     -- validate access token
-    if length(access_token) != 56 then
+    if length(access_token) != 54 then
         raise exception 'Invalid token';
     end if;
 
     token_id := substring(access_token from 1 for 32)::uuid;
-    token := decode(substring(access_token from 33), 'base64');--TODO: encode with base64-url
+    token := app.base64url_decode(substring(access_token from 33));
 
     select t.user_id, t.token_hash
     into tokens_row
