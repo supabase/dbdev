@@ -46,7 +46,7 @@ create or replace function app.base64url_encode(input bytea)
     strict
 as $$
 begin
-    return substring(replace(replace(encode(input, 'base64'), '/', '_'), '+', '-') from 1 for 22);
+    return replace(replace(encode(input, 'base64'), '/', '_'), '+', '-');
 end;
 $$;
 
@@ -56,7 +56,7 @@ create or replace function app.base64url_decode(input text)
     strict
 as $$
 begin
-    return decode(replace(replace(input || '==', '-', '+'), '_', '/'), 'base64');
+    return decode(replace(replace(input, '-', '+'), '_', '/'), 'base64');
 end;
 $$;
 
@@ -69,7 +69,7 @@ create or replace function public.new_access_token(
 as $$
 declare
     account app.accounts = account from app.accounts account where id = auth.uid();
-    token bytea = gen_random_bytes(16);
+    token bytea = gen_random_bytes(21);
     token_hash bytea = sha256(token);
     token_text text = app.base64url_encode(token);
     token_id uuid;
@@ -81,7 +81,7 @@ begin
         raise exception 'Token with name `%s` already exists', token_name;
     end;
 
-    return replace(token_id::text, '-', '') || token_text;
+    return 'dbd_' || replace(token_id::text, '-', '') || token_text;
 end;
 $$;
 
@@ -146,19 +146,22 @@ declare
     jwt_secret text;
 begin
     -- validate access token
-    if length(access_token) != 54 then
+    if length(access_token) != 64 then
         raise exception 'Invalid token';
     end if;
 
-    token_id := substring(access_token from 1 for 32)::uuid;
-    token := app.base64url_decode(substring(access_token from 33));
+    if substring(access_token from 1 for 4) != 'dbd_' then
+        raise exception 'Invalid token';
+    end if;
+
+    token_id := substring(access_token from 5 for 32)::uuid;
+    token := app.base64url_decode(substring(access_token from 37));
 
     select t.user_id, t.token_hash
     into tokens_row
     from app.access_tokens t
     where t.id = token_id;
 
-    raise notice 'after select';
     -- TODO: do a constant time comparison
     if tokens_row.token_hash != sha256(token) then
         raise exception 'Invalid token';
