@@ -195,6 +195,7 @@ const ApiTokensPage: NextPageWithLayout = () => {
         />
         <div className="flex flex-row justify-end space-x-4">
           <Button
+            type="button"
             onClick={onCancelButtonClick}
             variant="subtle"
             className="mt-4"
@@ -203,6 +204,7 @@ const ApiTokensPage: NextPageWithLayout = () => {
             Cancel
           </Button>
           <FormButton
+            type="submit"
             disabled={disabled}
             className="bg-slate-700 text-white hover:bg-slate-500 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-500"
           >
