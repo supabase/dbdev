@@ -26,7 +26,9 @@ const PackageCard = ({ pkg, className }: PackageCardProps) => {
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-1">
-          <p className="font-medium dark:text-white overflow-hidden truncate w-36">{pkg.partial_name} </p>
+          <p className="font-medium dark:text-white overflow-hidden truncate w-36">
+            {pkg.partial_name}{' '}
+          </p>
 
           <p className="font-normal text-gray-400">•</p>
           <p className="font-normal text-gray-400">{pkg.latest_version}</p>
