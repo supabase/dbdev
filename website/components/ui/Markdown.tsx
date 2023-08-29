@@ -69,11 +69,19 @@ const DEFAULT_COMPONENTS: MarkdownProps['components'] = {
     return <H3 {...props}>{children}</H3>
   },
   th({ node, className, children, ...props }) {
-    return <th className={cn('font-semibold dark:text-white', className)} {...props}>{children}</th>
+    return (
+      <th className={cn('font-semibold dark:text-white', className)} {...props}>
+        {children}
+      </th>
+    )
   },
   td({ node, className, children, ...props }) {
-    return <td className={cn('dark:text-white', className)} {...props}>{children}</td>
-  }
+    return (
+      <td className={cn('dark:text-white', className)} {...props}>
+        {children}
+      </td>
+    )
+  },
 }
 
 const COPYABLE_CODE_COMPONENTS: MarkdownProps['components'] = {
