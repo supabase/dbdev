@@ -1,5 +1,6 @@
 use anyhow::anyhow;
 use dirs::home_dir;
+use std::io::Write;
 use tokio::fs::create_dir;
 
 use crate::secret::Secret;
@@ -15,14 +16,34 @@ pub(crate) async fn save_access_token(access_token: &Secret<String>) -> anyhow::
         if !dbdev_dir.exists() {
             create_dir(&dbdev_dir).await?;
         }
-        let credentials_file = dbdev_dir.join("credentials.toml");
+        let credentials_file_path = dbdev_dir.join("credentials.toml");
         let json = serde_json::to_string(access_token)?;
-        tokio::fs::write(&credentials_file, json).await?;
+        let mut credentials_file = create_file(&credentials_file_path)?;
+        credentials_file.write_all(json.as_bytes())?;
     } else {
         return Err(anyhow!("Failed to find home directory"));
     }
 
     Ok(())
+}
+
+use std::fs::{File, OpenOptions};
+#[cfg(target_family = "unix")]
+use std::path::Path;
+
+#[cfg(target_family = "unix")]
+fn create_file(path: &Path) -> anyhow::Result<File> {
+    use std::os::unix::fs::OpenOptionsExt;
+
+    let mut options = OpenOptions::new();
+    // read/write permissions for owner, none for other
+    options.create(true).write(true).mode(0o600);
+    Ok(options.open(path)?)
+}
+
+#[cfg(not(target_family = "unix"))]
+fn create_file(path: &Path) -> anyhow::Result<File> {
+    unimplemented!("Not yet implemented on this platform.")
 }
 
 pub(crate) async fn read_access_token() -> anyhow::Result<Secret<String>> {
