@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
       - name: Run Prettier
         uses: creyD/prettier_action@v4.3
         with:
