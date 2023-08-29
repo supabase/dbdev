@@ -16,4 +16,4 @@ jobs:
         with:
           # Prettier CLI arguments
           prettier_options: --check .
-          working_directory: ./website
+          working_directory: website
