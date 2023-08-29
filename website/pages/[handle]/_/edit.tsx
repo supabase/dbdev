@@ -22,8 +22,13 @@ const EditAccountPage: NextPageWithLayout = () => {
   const { handle } = useParams()
   const uploadButtonRef = useRef<any>()
   const { refreshSession } = useAuth()
-  const { data: profile, isLoading, isSuccess: isProfileSuccess } = useProfileQuery({ handle })
-  const { data: organizations, isSuccess: isOrgsSuccess } = useUsersOrganizationsQuery({ userId: user?.id })
+  const {
+    data: profile,
+    isLoading,
+    isSuccess: isProfileSuccess,
+  } = useProfileQuery({ handle })
+  const { data: organizations, isSuccess: isOrgsSuccess } =
+    useUsersOrganizationsQuery({ userId: user?.id })
 
   const [uploadedFile, setUploadedFile] = useState<File>()
   const [previewImage, setPreviewImage] = useState<any>('')
@@ -44,8 +49,7 @@ const EditAccountPage: NextPageWithLayout = () => {
     bio: profile?.bio ?? '',
     handle: profile?.handle ?? '',
     displayName: profile?.display_name ?? '',
-    contactEmail: profile?.contact_email ??
-     '',
+    contactEmail: profile?.contact_email ?? '',
   }
 
   useEffect(() => {
@@ -165,9 +169,7 @@ const EditAccountPage: NextPageWithLayout = () => {
               />
             </div>
 
-            <FormButton disabled={preventUpdating}>
-              Save changes
-            </FormButton>
+            <FormButton disabled={preventUpdating}>Save changes</FormButton>
           </Form>
         </div>
       )}
