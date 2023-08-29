@@ -53,7 +53,7 @@ export interface Database {
             columns: ['id']
             referencedRelation: 'users'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       download_metrics: {
@@ -76,7 +76,7 @@ export interface Database {
             columns: ['package_id']
             referencedRelation: 'packages'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       members: {
@@ -122,7 +122,7 @@ export interface Database {
             columns: ['organization_id']
             referencedRelation: 'organizations'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       organizations: {
@@ -159,7 +159,7 @@ export interface Database {
             columns: ['package_id']
             referencedRelation: 'packages'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       package_versions: {
@@ -186,7 +186,7 @@ export interface Database {
             columns: ['package_id']
             referencedRelation: 'packages'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       packages: {
@@ -207,7 +207,7 @@ export interface Database {
             columns: ['handle']
             referencedRelation: 'handle_registry'
             referencedColumns: ['handle']
-          }
+          },
         ]
       }
     }
@@ -335,7 +335,7 @@ export interface Database {
             columns: ['owner']
             referencedRelation: 'users'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       migrations: {
@@ -402,7 +402,7 @@ export interface Database {
             columns: ['bucket_id']
             referencedRelation: 'buckets'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
     }

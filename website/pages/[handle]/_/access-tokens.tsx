@@ -16,7 +16,6 @@ import { NextPageWithLayout } from '~/lib/types'
 import { NewTokenSchema } from '~/lib/validations'
 
 const ApiTokensPage: NextPageWithLayout = () => {
-
   const [showNewTokenForm, setShowNewTokenForm] = useState(false)
   const [newToken, setNewToken] = useState('')
 
