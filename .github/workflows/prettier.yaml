@@ -17,4 +17,4 @@ jobs:
         uses: creyD/prettier_action@v4.3
         with:
           # Prettier CLI arguments
-          prettier_options: '--config ./wesbite/.prettierrc --ignore-path ./wesbite/.prettierignore --check ./wesbite/**'
+          prettier_options: '--config ./website/.prettierrc --ignore-path ./website/.prettierignore --check ./website/**'
