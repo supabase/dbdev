@@ -15,7 +15,7 @@ export interface PackageCardProps {
 
 const PackageCard = ({ pkg, className }: PackageCardProps) => {
   return (
-        <Link
+    <Link
       key={pkg.package_name}
       href={`/${pkg.handle}/${pkg.partial_name}`}
       className={cn(
