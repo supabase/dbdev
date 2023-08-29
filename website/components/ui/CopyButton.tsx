@@ -55,7 +55,11 @@ const CopyButton = ({
 
   return (
     <button
-      className={cn(copyButtonVariants({ variant }), "bg-gray-50 dark:bg-gray-400 dark:hover:bg-gray-200", className)}
+      className={cn(
+        copyButtonVariants({ variant }),
+        'bg-gray-50 dark:bg-gray-400 dark:hover:bg-gray-200',
+        className
+      )}
       onClick={() => {
         copyToClipboardWithMeta(getValue())
         setHasCopied(true)

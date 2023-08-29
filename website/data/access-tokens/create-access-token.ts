@@ -1,15 +1,17 @@
-import { PostgrestError } from "@supabase/supabase-js"
-import { useMutation, UseMutationOptions, useQueryClient } from "@tanstack/react-query"
-import supabase from "~/lib/supabase"
-import { accessTokensQueryKey } from "./access-tokens-query"
+import { PostgrestError } from '@supabase/supabase-js'
+import {
+  useMutation,
+  UseMutationOptions,
+  useQueryClient,
+} from '@tanstack/react-query'
+import supabase from '~/lib/supabase'
+import { accessTokensQueryKey } from './access-tokens-query'
 
 type NewAccessTokenVariables = {
-    tokenName: string
+  tokenName: string
 }
 
-export async function newAccessToken({
-  tokenName,
-}: NewAccessTokenVariables) {
+export async function newAccessToken({ tokenName }: NewAccessTokenVariables) {
   const { data, error } = await supabase.rpc('new_access_token', {
     token_name: tokenName,
   })
@@ -38,17 +40,13 @@ export const useNewAccessTokenMutation = ({
     NewAccessTokenData,
     NewAccessTokenError,
     NewAccessTokenVariables
-  >(
-    ({ tokenName }) =>
-      newAccessToken({ tokenName }),
-    {
-      async onSuccess(data, variables, context) {
-        await Promise.all([
-          queryClient.invalidateQueries([accessTokensQueryKey]),
-          await onSuccess?.(data, variables, context),
-        ])
-      },
-      ...options,
-    }
-  )
+  >(({ tokenName }) => newAccessToken({ tokenName }), {
+    async onSuccess(data, variables, context) {
+      await Promise.all([
+        queryClient.invalidateQueries([accessTokensQueryKey]),
+        onSuccess?.(data, variables, context),
+      ])
+    },
+    ...options,
+  })
 }

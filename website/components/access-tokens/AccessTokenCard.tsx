@@ -20,7 +20,7 @@ const AccessTokenCard = ({
     <div className="rounded-lg px-6 py-5 border border-gray-200 flex justify-between">
       <div className="flex flex-col space-y-4">
         <div className="font-medium text-lg dark:text-white">{tokenName}</div>
-        <div className="text-gray-500" >{`Token: ${maskedToken}`}</div>
+        <div className="text-gray-500">{`Token: ${maskedToken}`}</div>
         <div className="text-gray-400 text-sm">{`Created ${dayjs(
           createdAt
         ).fromNow()}`}</div>

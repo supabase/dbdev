@@ -18,7 +18,10 @@ export interface FormInputProps
 }
 
 const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
-  ({ name, label, className, outerProps, fieldProps, labelProps, ...props }, ref) => {
+  (
+    { name, label, className, outerProps, fieldProps, labelProps, ...props },
+    ref
+  ) => {
     const {
       input,
       meta: { touched, error, submitError, submitting },
@@ -36,7 +39,7 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
       : error || submitError
 
     return (
-      <div {...outerProps} className={cn("space-y-1", className)}>
+      <div {...outerProps} className={cn('space-y-1', className)}>
         <Label htmlFor={name} {...labelProps}>
           {label}
         </Label>

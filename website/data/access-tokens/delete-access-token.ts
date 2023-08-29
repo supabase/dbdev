@@ -1,10 +1,14 @@
-import { PostgrestError } from "@supabase/supabase-js"
-import { useMutation, UseMutationOptions, useQueryClient } from "@tanstack/react-query"
-import supabase from "~/lib/supabase"
-import { accessTokensQueryKey } from "./access-tokens-query"
+import { PostgrestError } from '@supabase/supabase-js'
+import {
+  useMutation,
+  UseMutationOptions,
+  useQueryClient,
+} from '@tanstack/react-query'
+import supabase from '~/lib/supabase'
+import { accessTokensQueryKey } from './access-tokens-query'
 
 type DeleteAccessTokenVariables = {
-    tokenId: string
+  tokenId: string
 }
 
 export async function deleteAccessToken({
@@ -38,17 +42,13 @@ export const useDeleteAccessTokenMutation = ({
     DeleteAccessTokenData,
     DeleteAccessTokenError,
     DeleteAccessTokenVariables
-  >(
-    ({ tokenId }) =>
-      deleteAccessToken({ tokenId }),
-    {
-      async onSuccess(data, variables, context) {
-        await Promise.all([
-          queryClient.invalidateQueries([accessTokensQueryKey]),
-          await onSuccess?.(data, variables, context),
-        ])
-      },
-      ...options,
-    }
-  )
+  >(({ tokenId }) => deleteAccessToken({ tokenId }), {
+    async onSuccess(data, variables, context) {
+      await Promise.all([
+        queryClient.invalidateQueries([accessTokensQueryKey]),
+        onSuccess?.(data, variables, context),
+      ])
+    },
+    ...options,
+  })
 }

@@ -125,7 +125,6 @@ const Navbar = () => {
                     </Link>
                   </DropdownMenuItem>
 
-
                   {isOrganizationsSuccess && organizations.length > 0 && (
                     <DropdownMenuLabel>Organizations</DropdownMenuLabel>
                   )}
