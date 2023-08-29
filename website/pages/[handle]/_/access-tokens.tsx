@@ -12,12 +12,10 @@ import H1 from '~/components/ui/typography/H1'
 import H3 from '~/components/ui/typography/H3'
 import { useAccessTokensQuery } from '~/data/access-tokens/access-tokens-query'
 import { useNewAccessTokenMutation } from '~/data/access-tokens/create-access-token'
-import { useAuth } from '~/lib/auth'
 import { NextPageWithLayout } from '~/lib/types'
 import { NewTokenSchema } from '~/lib/validations'
 
 const ApiTokensPage: NextPageWithLayout = () => {
-  const { refreshSession } = useAuth()
 
   const [showNewTokenForm, setShowNewTokenForm] = useState(false)
   const [newToken, setNewToken] = useState('')
@@ -33,7 +31,6 @@ const ApiTokensPage: NextPageWithLayout = () => {
 
   const createNewToken = async ({ tokenName }: { tokenName: string }) => {
     try {
-      await refreshSession()
       const newToken = await createNewAccessToken({ tokenName })
       setNewToken(newToken)
     } catch (error: any) {
