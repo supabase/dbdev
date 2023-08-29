@@ -1,4 +1,6 @@
 import dayjs from 'dayjs'
+import { toast } from 'react-hot-toast'
+import { useDeleteAccessTokenMutation } from '~/data/access-tokens/delete-access-token'
 import Button from '../ui/Button'
 
 export interface ApiTokenCardProps {
@@ -6,7 +8,6 @@ export interface ApiTokenCardProps {
   tokenName: string
   maskedToken: string
   createdAt: string
-  onRevokeButtonClick: (tokenId: string) => any
 }
 
 const AccessTokenCard = ({
@@ -14,8 +15,14 @@ const AccessTokenCard = ({
   tokenName,
   maskedToken,
   createdAt,
-  onRevokeButtonClick,
 }: ApiTokenCardProps) => {
+  const { mutate: deleteAccessToken, isLoading: isDeletingAccessToken } =
+    useDeleteAccessTokenMutation({
+      onSuccess() {
+        toast.success('Successfully revoked token!')
+      },
+    })
+
   return (
     <div className="rounded-lg px-6 py-5 border border-gray-200 flex justify-between">
       <div className="flex flex-col space-y-4">
@@ -25,7 +32,11 @@ const AccessTokenCard = ({
           createdAt
         ).fromNow()}`}</div>
       </div>
-      <Button variant="subtle" onClick={() => onRevokeButtonClick(tokenId)}>
+      <Button
+        variant="subtle"
+        onClick={() => deleteAccessToken({ tokenId })}
+        disabled={isDeletingAccessToken}
+      >
         Revoke
       </Button>
     </div>

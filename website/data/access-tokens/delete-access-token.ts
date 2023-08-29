@@ -44,10 +44,9 @@ export const useDeleteAccessTokenMutation = ({
     DeleteAccessTokenVariables
   >(({ tokenId }) => deleteAccessToken({ tokenId }), {
     async onSuccess(data, variables, context) {
-      await Promise.all([
-        queryClient.invalidateQueries([accessTokensQueryKey]),
-        onSuccess?.(data, variables, context),
-      ])
+      await Promise.all([queryClient.invalidateQueries([accessTokensQueryKey])])
+
+      await onSuccess?.(data, variables, context)
     },
     ...options,
   })

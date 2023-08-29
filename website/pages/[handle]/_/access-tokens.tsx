@@ -1,5 +1,4 @@
 import Head from 'next/head'
-import { useRouter } from 'next/router'
 import { MouseEventHandler, useState } from 'react'
 import toast from 'react-hot-toast'
 import AccessTokenCard from '~/components/access-tokens/AccessTokenCard'
@@ -11,20 +10,13 @@ import Button from '~/components/ui/Button'
 import CopyButton from '~/components/ui/CopyButton'
 import H1 from '~/components/ui/typography/H1'
 import H3 from '~/components/ui/typography/H3'
-import {
-  AccessTokensResponse,
-  useAccessTokensQuery,
-} from '~/data/access-tokens/access-tokens-query'
+import { useAccessTokensQuery } from '~/data/access-tokens/access-tokens-query'
 import { useNewAccessTokenMutation } from '~/data/access-tokens/create-access-token'
-import { useDeleteAccessTokenMutation } from '~/data/access-tokens/delete-access-token'
 import { useAuth } from '~/lib/auth'
 import { NextPageWithLayout } from '~/lib/types'
-import { useParams } from '~/lib/utils'
 import { NewTokenSchema } from '~/lib/validations'
 
 const ApiTokensPage: NextPageWithLayout = () => {
-  const router = useRouter()
-  const { handle } = useParams()
   const { refreshSession } = useAuth()
 
   const [showNewTokenForm, setShowNewTokenForm] = useState(false)
@@ -38,13 +30,6 @@ const ApiTokensPage: NextPageWithLayout = () => {
       toast.success('Successfully created token!')
     },
   })
-
-  const {
-    data: accessTokens,
-    isLoading: accessTokensLoading,
-    isSuccess: isAccessTokensSuccess,
-    isError: isAccessTokensError,
-  } = useAccessTokensQuery()
 
   const createNewToken = async ({ tokenName }: { tokenName: string }) => {
     try {
@@ -61,66 +46,52 @@ const ApiTokensPage: NextPageWithLayout = () => {
     }
   }
 
-  const { mutateAsync: deleteAccessToken } = useDeleteAccessTokenMutation({
-    onSuccess() {
-      toast.success('Successfully revoked token!')
-      router.replace(`/${handle}/_/access-tokens`)
-    },
-  })
-
-  const revokeToken = async (tokenId: string) => {
-    try {
-      deleteAccessToken({ tokenId })
-    } catch (error: any) {
-      return {
-        [FORM_ERROR]:
-          'Sorry, we had an unexpected error. Please try again. - ' +
-          error.toString(),
-      }
-    }
-  }
-
   type AccessTokensPageProps = {
     onClickNewToken: MouseEventHandler<HTMLButtonElement>
-    isSuccess: boolean
-    isError: boolean
-    isLoading: boolean
-    accessTokens: AccessTokensResponse | undefined
   }
 
-  const AccessTokensPage = ({
-    onClickNewToken,
-    isSuccess,
-    isError,
-    isLoading,
-    accessTokens,
-  }: AccessTokensPageProps) => (
-    <>
-      <H1 className="!text-3xl">Access Tokens</H1>
-      <div className="flex flex-row my-6">
-        <Button
-          className="bg-slate-700 text-white hover:bg-slate-500 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-500"
-          onClick={onClickNewToken}
-        >
-          New Token
-        </Button>
-      </div>
-      {isLoading && <p className="dark:text-white">Loading...</p>}
-      {isSuccess &&
-        accessTokens &&
-        accessTokens.map((accessToken) => (
-          <AccessTokenCard
-            key={accessToken.id}
-            tokenId={accessToken.id}
-            tokenName={accessToken.token_name}
-            maskedToken={accessToken.masked_token}
-            createdAt={accessToken.created_at}
-            onRevokeButtonClick={revokeToken}
-          ></AccessTokenCard>
-        ))}
-      {isError && <p className="text-red-500">Error loading access tokens</p>}
-    </>
-  )
+  const AccessTokensPage = ({ onClickNewToken }: AccessTokensPageProps) => {
+    const {
+      data: accessTokens,
+      isLoading: accessTokensLoading,
+      isSuccess: isAccessTokensSuccess,
+      isError: isAccessTokensError,
+    } = useAccessTokensQuery()
+
+    return (
+      <>
+        <H1 className="!text-3xl">Access Tokens</H1>
+        <div className="flex flex-row my-6">
+          <Button
+            className="bg-slate-700 text-white hover:bg-slate-500 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-500"
+            onClick={onClickNewToken}
+          >
+            New Token
+          </Button>
+        </div>
+        {accessTokensLoading && <p className="dark:text-white">Loading...</p>}
+        {isAccessTokensSuccess &&
+          accessTokens.length > 0 &&
+          accessTokens.map((accessToken) => (
+            <AccessTokenCard
+              key={accessToken.id}
+              tokenId={accessToken.id}
+              tokenName={accessToken.token_name}
+              maskedToken={accessToken.masked_token}
+              createdAt={accessToken.created_at}
+            />
+          ))}
+        {isAccessTokensSuccess && accessTokens.length <= 0 && (
+          <p className="dark:text-white">
+            No access tokens found. Click &quot;New Token&quot; to create one.
+          </p>
+        )}
+        {isAccessTokensError && (
+          <p className="text-red-500">Error loading access tokens</p>
+        )}
+      </>
+    )
+  }
 
   type NewTokenPageProps = {
     onCloseButtonClick: MouseEventHandler<HTMLButtonElement>
@@ -147,7 +118,7 @@ const ApiTokensPage: NextPageWithLayout = () => {
             disabled
             value={`${newToken}`}
             className="w-full h-15 mt-1 rounded-md border-none text-sm resize-none bg-transparent text-slate-400"
-          ></textarea>
+          />
           <CopyButton
             className="w-14 rounded-none rounded-r-md"
             getValue={() => newToken}
@@ -223,23 +194,17 @@ const ApiTokensPage: NextPageWithLayout = () => {
               setNewToken('')
               setShowNewTokenForm(false)
             }}
-          ></NewTokenPage>
+          />
         )}
         {!newToken && showNewTokenForm && (
           <NewTokenForm
             onCancelButtonClick={() => setShowNewTokenForm(false)}
             onCreateTokenButtonClick={createNewToken}
             disabled={creatingNewAccessToken}
-          ></NewTokenForm>
+          />
         )}
         {!newToken && !showNewTokenForm && (
-          <AccessTokensPage
-            onClickNewToken={() => setShowNewTokenForm(true)}
-            isLoading={accessTokensLoading}
-            isSuccess={isAccessTokensSuccess}
-            isError={isAccessTokensError}
-            accessTokens={accessTokens}
-          ></AccessTokensPage>
+          <AccessTokensPage onClickNewToken={() => setShowNewTokenForm(true)} />
         )}
       </div>
     </>
