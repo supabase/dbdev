@@ -28,7 +28,6 @@ pub(crate) async fn save_access_token(access_token: &Secret<String>) -> anyhow::
 }
 
 use std::fs::{File, OpenOptions};
-#[cfg(target_family = "unix")]
 use std::path::Path;
 
 #[cfg(target_family = "unix")]
@@ -43,7 +42,9 @@ fn create_file(path: &Path) -> anyhow::Result<File> {
 
 #[cfg(not(target_family = "unix"))]
 fn create_file(path: &Path) -> anyhow::Result<File> {
-    unimplemented!("Not yet implemented on this platform.")
+    let mut options = OpenOptions::new();
+    options.create(true).write(true);
+    Ok(options.open(path)?)
 }
 
 pub(crate) async fn read_access_token() -> anyhow::Result<Secret<String>> {
