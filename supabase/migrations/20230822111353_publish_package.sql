@@ -47,6 +47,9 @@ declare
     account app.accounts = account from app.accounts account where id = auth.uid();
     package_id uuid;
 begin
+    if account.handle is null then
+        raise exception 'user not logged in';
+    end if;
     select ap.id
     from app.packages ap
     where ap.handle = account.handle and ap.partial_name = publish_package_version.package_name
@@ -74,6 +77,9 @@ declare
     account app.accounts = account from app.accounts account where id = auth.uid();
     package_id uuid;
 begin
+    if account.handle is null then
+        raise exception 'user not logged in';
+    end if;
     select ap.id
     from app.packages ap
     where ap.handle = account.handle and ap.partial_name = publish_package_upgrade.package_name
