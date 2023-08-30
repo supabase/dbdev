@@ -1,5 +1,5 @@
 use crate::util;
-use anyhow;
+
 use anyhow::Context;
 use std::ffi::OsStr;
 use std::fs;
@@ -88,8 +88,7 @@ impl Payload {
                     if entry_path.is_dir() {
                         continue;
                     }
-                    let extension: Option<&str> =
-                        entry_path.extension().map(OsStr::to_str).flatten();
+                    let extension: Option<&str> = entry_path.extension().and_then(OsStr::to_str);
                     match extension {
                         Some("control") => control_files.push(entry_path),
                         Some("sql") => sql_files.push(entry_path),
@@ -127,7 +126,7 @@ impl Payload {
         let mut upgrade_files = vec![];
 
         for path in sql_files {
-            let file_name = path.file_name().map(OsStr::to_str).flatten().unwrap();
+            let file_name = path.file_name().and_then(OsStr::to_str).unwrap();
             let parts: Vec<&str> = file_name
                 .strip_suffix(".sql")
                 .unwrap()
@@ -180,8 +179,7 @@ impl ControlFileRef {
     fn from_pathbuf(path: &PathBuf) -> anyhow::Result<Self> {
         let control_file_name = path
             .file_name()
-            .map(OsStr::to_str)
-            .flatten()
+            .and_then(OsStr::to_str)
             .context("failed to read control file name")?
             .to_string();
 
@@ -220,12 +218,8 @@ impl ControlFileRef {
         for line in self.contents.lines() {
             if line.starts_with("requires") {
                 let value = self.read_control_line_value(line)?;
-                let required_packages: Vec<String> = value
-                    .split(",")
-                    .collect::<Vec<&str>>()
-                    .iter()
-                    .map(|x| x.trim().to_string())
-                    .collect();
+                let required_packages: Vec<String> =
+                    value.split(',').map(|x| x.trim().to_string()).collect();
                 return Ok(Some(required_packages));
             }
         }
@@ -235,19 +229,19 @@ impl ControlFileRef {
     fn default_version(&self) -> anyhow::Result<String> {
         for line in self.contents.lines() {
             if line.starts_with("default_version") {
-                return Ok(self.read_control_line_value(line)?);
+                return self.read_control_line_value(line);
             }
         }
         Err(anyhow::anyhow!("default version is required"))
     }
 
     fn read_control_line_value(&self, line: &str) -> anyhow::Result<String> {
-        let parts: Vec<&str> = line.split("=").collect();
+        let parts: Vec<&str> = line.split('=').collect();
         match &parts[..] {
             [_, value] => {
                 let mut base_value = value.trim();
-                base_value = base_value.strip_prefix("'").unwrap_or(base_value);
-                base_value = base_value.strip_suffix("'").unwrap_or(base_value);
+                base_value = base_value.strip_prefix('\'').unwrap_or(base_value);
+                base_value = base_value.strip_suffix('\'').unwrap_or(base_value);
                 Ok(base_value.to_string())
             }
             _ => Err(anyhow::anyhow!("invalid line in control file")),

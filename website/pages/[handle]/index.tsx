@@ -65,7 +65,7 @@ const AccountPage: NextPageWithLayout = () => {
             <div>
               <button
                 className="flex items-center px-4 py-2 space-x-2 text-sm text-gray-500 transition bg-white border rounded-md dark:bg-transparent dark:border-slate-500 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:border-slate-400 hover:text-gray-700 hover:border-gray-400"
-                onClick={() => router.push(`/${handle}/edit`)}
+                onClick={() => router.push(`/${handle}/_/edit`)}
               >
                 Edit profile
               </button>

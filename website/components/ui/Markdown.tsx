@@ -7,6 +7,7 @@ import CopyButton from './CopyButton'
 import A from './typography/A'
 import H1 from './typography/H1'
 import H2 from './typography/H2'
+import H3 from './typography/H3'
 import Li from './typography/Li'
 import P from './typography/P'
 import Strong from './typography/Strong'
@@ -64,12 +65,23 @@ const DEFAULT_COMPONENTS: MarkdownProps['components'] = {
   h2({ node, children, ...props }) {
     return <H2 {...props}>{children}</H2>
   },
+  h3({ node, children, ...props }) {
+    return <H3 {...props}>{children}</H3>
+  },
   th({ node, className, children, ...props }) {
-    return <th className={cn('font-semibold dark:text-white', className)} {...props}>{children}</th>
+    return (
+      <th className={cn('font-semibold dark:text-white', className)} {...props}>
+        {children}
+      </th>
+    )
   },
   td({ node, className, children, ...props }) {
-    return <td className={cn('dark:text-white', className)} {...props}>{children}</td>
-  }
+    return (
+      <td className={cn('dark:text-white', className)} {...props}>
+        {children}
+      </td>
+    )
+  },
 }
 
 const COPYABLE_CODE_COMPONENTS: MarkdownProps['components'] = {
