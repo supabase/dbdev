@@ -48,3 +48,7 @@ export const NewOrgSchema = z.object({
   handle,
   displayName: displayName.nullable(),
 })
+
+export const NewTokenSchema = z.object({
+  tokenName: z.string().max(64),
+})
