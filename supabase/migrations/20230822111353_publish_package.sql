@@ -26,6 +26,7 @@ begin
     if account.handle is null then
         raise exception 'user not logged in';
     end if;
+
     insert into app.packages(handle, partial_name, control_description)
     values (account.handle, package_name, package_description)
     on conflict on constraint packages_handle_partial_name_key
@@ -50,6 +51,7 @@ begin
     if account.handle is null then
         raise exception 'user not logged in';
     end if;
+
     select ap.id
     from app.packages ap
     where ap.handle = account.handle and ap.partial_name = publish_package_version.package_name
@@ -80,6 +82,7 @@ begin
     if account.handle is null then
         raise exception 'user not logged in';
     end if;
+
     select ap.id
     from app.packages ap
     where ap.handle = account.handle and ap.partial_name = publish_package_upgrade.package_name
