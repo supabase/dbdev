@@ -25,12 +25,20 @@ pub async fn publish(client: &client::APIClient, path: &Path) -> anyhow::Result<
             readme_file,
         );
         client.publish_package_version(&jwt, &request).await?;
+        println!(
+            "Published package {} version {}",
+            request.package_name, request.version
+        );
     }
 
     for upgrade_file in &payload.upgrade_files {
         let request =
             create_publich_package_upgrade_request(&payload.metadata.extension_name, upgrade_file);
         client.publish_package_upgrade(&jwt, &request).await?;
+        println!(
+            "Published package {} upgrade from {} to {}",
+            request.package_name, request.from_version, request.to_version
+        );
     }
 
     Ok(())
