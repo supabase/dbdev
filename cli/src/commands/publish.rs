@@ -18,27 +18,45 @@ pub async fn publish(client: &client::APIClient, path: &Path) -> anyhow::Result<
     let request = create_publish_package_request(&payload);
     client.publish_package(&jwt, &request).await?;
 
+    let mut num_published = 0;
+
     for install_file in &payload.install_files {
         let request = create_publich_package_version_request(
             &payload.metadata.extension_name,
             install_file,
             readme_file,
         );
-        client.publish_package_version(&jwt, &request).await?;
-        println!(
-            "Published package {} version {}",
-            request.package_name, request.version
-        );
+        if client
+            .publish_package_version(&jwt, &request)
+            .await?
+            .is_some()
+        {
+            num_published += 1;
+            println!(
+                "Published package {} version {}",
+                request.package_name, request.version
+            );
+        }
     }
 
     for upgrade_file in &payload.upgrade_files {
         let request =
             create_publich_package_upgrade_request(&payload.metadata.extension_name, upgrade_file);
-        client.publish_package_upgrade(&jwt, &request).await?;
-        println!(
-            "Published package {} upgrade from {} to {}",
-            request.package_name, request.from_version, request.to_version
-        );
+        if client
+            .publish_package_upgrade(&jwt, &request)
+            .await?
+            .is_some()
+        {
+            num_published += 1;
+            println!(
+                "Published package {} upgrade from {} to {}",
+                request.package_name, request.from_version, request.to_version
+            );
+        }
+    }
+
+    if num_published == 0 {
+        println!("Nothing to publish");
     }
 
     Ok(())

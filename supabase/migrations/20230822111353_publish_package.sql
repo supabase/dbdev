@@ -41,12 +41,13 @@ create or replace function public.publish_package_version(
     version_description text,
     version text
 )
-    returns void
+    returns uuid
     language plpgsql
 as $$
 declare
     account app.accounts = account from app.accounts account where id = auth.uid();
     package_id uuid;
+    version_id uuid;
 begin
     if account.handle is null then
         raise exception 'user not logged in';
@@ -59,9 +60,12 @@ begin
 
     begin
         insert into app.package_versions(package_id, version_struct, sql, description_md)
-        values (package_id, app.text_to_semver(version), version_source, version_description);
+        values (package_id, app.text_to_semver(version), version_source, version_description)
+        returning id into version_id;
+
+        return version_id;
     exception when unique_violation then
-        return;
+        return null;
     end;
 end;
 $$;
@@ -72,12 +76,13 @@ create or replace function public.publish_package_upgrade(
     from_version text,
     to_version text
 )
-    returns void
+    returns uuid
     language plpgsql
 as $$
 declare
     account app.accounts = account from app.accounts account where id = auth.uid();
     package_id uuid;
+    upgrade_id uuid;
 begin
     if account.handle is null then
         raise exception 'user not logged in';
@@ -90,9 +95,12 @@ begin
 
     begin
         insert into app.package_upgrades(package_id, from_version_struct, to_version_struct, sql)
-        values (package_id, app.text_to_semver(from_version), app.text_to_semver(to_version), upgrade_source);
+        values (package_id, app.text_to_semver(from_version), app.text_to_semver(to_version), upgrade_source)
+        returning id into upgrade_id;
+
+        return upgrade_id;
     exception when unique_violation then
-        return;
+        return null;
     end;
 end;
 $$;

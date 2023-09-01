@@ -103,7 +103,7 @@ impl APIClient {
         &self,
         jwt: &Secret<String>,
         request: &PublishPackageVersionRequest<'_>,
-    ) -> anyhow::Result<()> {
+    ) -> anyhow::Result<Option<uuid::Uuid>> {
         let url = format!("{}/rest/v1/rpc/publish_package_version", self.base_url);
         let response = self
             .http_client
@@ -115,18 +115,24 @@ impl APIClient {
             .await
             .context("failed to call publish package version endpoint")?;
 
-        if !response.status().is_success() {
+        let status = response.status();
+        if !status.is_success() {
             return Err(anyhow::anyhow!(response.text().await?));
         }
 
-        Ok(())
+        let version_id = response
+            .json::<Option<uuid::Uuid>>()
+            .await
+            .context("Failed to parse version id")?;
+
+        Ok(version_id)
     }
 
     pub async fn publish_package_upgrade(
         &self,
         jwt: &Secret<String>,
         request: &PublishPackageUpgradeRequest<'_>,
-    ) -> anyhow::Result<()> {
+    ) -> anyhow::Result<Option<uuid::Uuid>> {
         let url = format!("{}/rest/v1/rpc/publish_package_upgrade", self.base_url);
         let response = self
             .http_client
@@ -138,11 +144,18 @@ impl APIClient {
             .await
             .context("failed to call publish package upgrade endpoint")?;
 
-        if !response.status().is_success() {
+        let status = response.status();
+
+        if !status.is_success() {
             return Err(anyhow::anyhow!(response.text().await?));
         }
 
-        Ok(())
+        let upgrade_id = response
+            .json::<Option<uuid::Uuid>>()
+            .await
+            .context("Failed to parse upgrade id")?;
+
+        Ok(upgrade_id)
     }
 }
 
