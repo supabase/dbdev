@@ -203,7 +203,7 @@ CREATE OR REPLACE FUNCTION tests.rls_enabled (testing_schema text)
 RETURNS text AS $$
     select is(
         (select
-           	count(pc.relname)::integer
+               count(pc.relname)::integer
            from pg_class pc
            join pg_namespace pn on pn.oid = pc.relnamespace and pn.nspname = rls_enabled.testing_schema
            join pg_type pt on pt.oid = pc.reltype
@@ -234,7 +234,7 @@ CREATE OR REPLACE FUNCTION tests.rls_enabled (testing_schema text, testing_table
 RETURNS TEXT AS $$
     select is(
         (select
-           	count(*)::integer
+               count(*)::integer
            from pg_class pc
            join pg_namespace pn on pn.oid = pc.relnamespace and pn.nspname = rls_enabled.testing_schema and pc.relname = rls_enabled.testing_table
            join pg_type pt on pt.oid = pc.reltype
