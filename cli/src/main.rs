@@ -1,9 +1,11 @@
 use clap::{Parser, Subcommand};
+use config::Config;
 
 use std::path::PathBuf;
 
 mod client;
 mod commands;
+mod config;
 mod credential_store;
 mod models;
 mod secret;
@@ -76,8 +78,6 @@ enum Commands {
 async fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();
 
-    let client = client::APIClient::new(API_BASE_URL, API_KEY);
-
     // You can check for the existence of subcommands, and if found use their
     // matches just as you would the top level cmd
     match &cli.command {
@@ -86,14 +86,19 @@ async fn main() -> anyhow::Result<()> {
             email,
             password,
         } => {
+            let config = Config::read_from_default_file()?;
+            let client = client::APIClient::from_config(&config)?;
             commands::signup::signup(&client, email, password, handle).await?;
             Ok(())
         }
 
         Commands::Publish { path } => {
+            let config = Config::read_from_default_file()?;
+            let client = client::APIClient::from_config(&config)?;
             commands::publish::publish(&client, path).await?;
             Ok(())
         }
+
         Commands::Uninstall {
             connection,
             package,
@@ -121,11 +126,10 @@ async fn main() -> anyhow::Result<()> {
                 Err(anyhow::anyhow!("Not implemented"))
             }
         }
+
         Commands::Login => {
             commands::login::login().await?;
             Ok(())
         }
     }
 }
-const API_BASE_URL: &str = "http://localhost:54321";
-const API_KEY: &str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0";

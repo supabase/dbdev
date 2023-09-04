@@ -6,7 +6,7 @@ use crate::client::{
 use crate::credential_store::read_access_token;
 use crate::models::{self, InstallFile, Payload, ReadmeFile, UpgradeFile};
 
-pub async fn publish(client: &client::APIClient, path: &Path) -> anyhow::Result<()> {
+pub async fn publish(client: &client::APIClient<'_>, path: &Path) -> anyhow::Result<()> {
     let payload = models::Payload::from_path(path)?;
     let access_token = read_access_token().await?;
     let jwt = client.redeem_access_token(access_token).await?;

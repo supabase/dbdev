@@ -1,7 +1,7 @@
 use crate::client;
 
 pub async fn signup(
-    client: &client::APIClient,
+    client: &client::APIClient<'_>,
     email: &str,
     password: &str,
     handle: &str,

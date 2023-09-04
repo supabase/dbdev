@@ -1,23 +1,25 @@
 use anyhow::Context;
-//use postgrest::Postgrest;
 use serde::{Deserialize, Serialize};
+use url::Url;
 
-use crate::secret::Secret;
+use crate::{config::Config, secret::Secret};
 
-pub struct APIClient {
-    base_url: String,
-    api_key: String,
-    //api_client: Postgrest,
+pub struct APIClient<'a> {
+    base_url: &'a Url,
+    api_key: &'a str,
     http_client: reqwest::Client,
 }
 
-impl APIClient {
-    pub fn new(base_url: &str, api_key: &str) -> Self {
+impl<'a> APIClient<'a> {
+    pub(crate) fn from_config(config: &'a Config) -> anyhow::Result<Self> {
+        let registry = config.get_registry()?;
+
+        Ok(Self::new(&registry.base_url, &registry.api_key))
+    }
+    fn new(base_url: &'a Url, api_key: &'a str) -> Self {
         Self {
-            base_url: base_url.to_string(),
-            api_key: api_key.to_string(),
-            //api_client: Postgrest::new(format!("{base_url}/rest/v1/"))
-            //.insert_header("apiKey", api_key),
+            base_url,
+            api_key,
             http_client: reqwest::Client::new(),
         }
     }
@@ -40,7 +42,7 @@ impl APIClient {
         let response = self
             .http_client
             .post(&url)
-            .header("apiKey", &self.api_key)
+            .header("apiKey", self.api_key)
             .json(&user)
             .send()
             .await
@@ -60,7 +62,7 @@ impl APIClient {
         let response = self
             .http_client
             .post(&url)
-            .header("apiKey", &self.api_key)
+            .header("apiKey", self.api_key)
             .json(&serde_json::json!( {
                 "access_token": jwt.expose(),
             }))
@@ -85,7 +87,7 @@ impl APIClient {
         let response = self
             .http_client
             .post(&url)
-            .header("apiKey", &self.api_key)
+            .header("apiKey", self.api_key)
             .header("Authorization", format!("Bearer {}", jwt.expose()))
             .json(&request)
             .send()
@@ -108,7 +110,7 @@ impl APIClient {
         let response = self
             .http_client
             .post(&url)
-            .header("apiKey", &self.api_key)
+            .header("apiKey", self.api_key)
             .header("Authorization", format!("Bearer {}", jwt.expose()))
             .json(&request)
             .send()
@@ -137,7 +139,7 @@ impl APIClient {
         let response = self
             .http_client
             .post(&url)
-            .header("apiKey", &self.api_key)
+            .header("apiKey", self.api_key)
             .header("Authorization", format!("Bearer {}", jwt.expose()))
             .json(&request)
             .send()
