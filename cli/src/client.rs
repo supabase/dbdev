@@ -2,7 +2,7 @@ use anyhow::Context;
 use serde::{Deserialize, Serialize};
 use url::Url;
 
-use crate::{config::Config, secret::Secret};
+use crate::{config::Registry, secret::Secret};
 
 pub struct APIClient<'a> {
     base_url: &'a Url,
@@ -11,9 +11,7 @@ pub struct APIClient<'a> {
 }
 
 impl<'a> APIClient<'a> {
-    pub(crate) fn from_config(config: &'a Config) -> anyhow::Result<Self> {
-        let registry = config.get_registry()?;
-
+    pub(crate) fn from_registry(registry: &'a Registry) -> anyhow::Result<Self> {
         Ok(Self::new(&registry.base_url, &registry.api_key))
     }
     fn new(base_url: &'a Url, api_key: &'a str) -> Self {

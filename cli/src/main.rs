@@ -68,10 +68,16 @@ enum Commands {
         /// From local directory
         #[arg(long)]
         path: PathBuf,
+
+        /// Registry to publish to
+        registry: Option<String>,
     },
 
     /// Login to a dbdev account
-    Login,
+    Login {
+        /// Registry to login to
+        registry: Option<String>,
+    },
 }
 
 #[tokio::main]
@@ -87,15 +93,18 @@ async fn main() -> anyhow::Result<()> {
             password,
         } => {
             let config = Config::read_from_default_file()?;
-            let client = client::APIClient::from_config(&config)?;
+            let registry = config.get_registry()?;
+            let client = client::APIClient::from_registry(&registry)?;
             commands::signup::signup(&client, email, password, handle).await?;
             Ok(())
         }
 
-        Commands::Publish { path } => {
+        Commands::Publish { path, registry } => {
             let config = Config::read_from_default_file()?;
-            let client = client::APIClient::from_config(&config)?;
-            commands::publish::publish(&client, path, &config.default_registry.name).await?;
+            let registry_name = registry.as_ref().unwrap_or(&config.default_registry.name);
+            let registry = config.get_registry()?;
+            let client = client::APIClient::from_registry(&registry)?;
+            commands::publish::publish(&client, path, registry_name).await?;
             Ok(())
         }
 
@@ -127,9 +136,10 @@ async fn main() -> anyhow::Result<()> {
             }
         }
 
-        Commands::Login => {
+        Commands::Login { registry } => {
             let config = Config::read_from_default_file()?;
-            commands::login::login(&config.default_registry.name)?;
+            let registry_name = registry.as_ref().unwrap_or(&config.default_registry.name);
+            commands::login::login(registry_name)?;
             Ok(())
         }
     }
