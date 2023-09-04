@@ -27,6 +27,7 @@ pub(crate) struct Registry {
 
 #[derive(Serialize, Deserialize)]
 pub(crate) struct DefaultRegistry {
+    #[serde(rename = "default")]
     pub(crate) name: String,
 }
 
