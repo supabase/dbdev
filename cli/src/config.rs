@@ -1,6 +1,7 @@
 use std::{
     collections::HashMap,
     fs::{self, create_dir},
+    io::Write,
     path::Path,
 };
 
@@ -9,10 +10,13 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use url::Url;
 
+use crate::util::create_file;
+
 #[derive(Serialize, Deserialize)]
 pub(crate) struct Config {
     pub(crate) registries: HashMap<String, Registry>,
-    pub(crate) registry: DefaultRegistry,
+    #[serde(rename = "registry")]
+    pub(crate) default_registry: DefaultRegistry,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -39,12 +43,12 @@ impl Default for Config {
                 api_key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0".to_string(),
             },
         );
-        let registry = DefaultRegistry {
+        let default_registry = DefaultRegistry {
             name: registry_name.to_string(),
         };
         Self {
             registries,
-            registry,
+            default_registry,
         }
     }
 }
@@ -62,20 +66,20 @@ impl Default for Config {
                 api_key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhtdXB0cHBsZnZpaWZyYndtbXR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODAxMDczNzIsImV4cCI6MTk5NTY4MzM3Mn0.z2CN0mvO2No8wSi46Gw59DFGCTJrzM0AQKsu_5k134s".to_string(),
             },
         );
-        let registry = DefaultRegistry {
+        let default_registry = DefaultRegistry {
             name: registry_name.to_string(),
         };
         Self {
             registries,
-            registry,
+            default_registry,
         }
     }
 }
 
 #[derive(Error, Debug)]
-pub(crate) enum ConfigValidationError {
-    #[error("invalid config: {0}")]
-    InvalidConfig(String),
+pub(crate) enum FindRegistryError {
+    #[error("registry not found: {0}")]
+    NotFound(String),
 }
 
 #[derive(Error, Debug)]
@@ -100,12 +104,12 @@ pub(crate) enum ConfigWriteError {
 }
 
 impl Config {
-    pub(crate) fn get_registry(&self) -> Result<&Registry, ConfigValidationError> {
-        match self.registries.get(&self.registry.name) {
+    pub(crate) fn get_registry(&self) -> Result<&Registry, FindRegistryError> {
+        match self.registries.get(&self.default_registry.name) {
             Some(registry) => Ok(registry),
-            None => Err(ConfigValidationError::InvalidConfig(format!(
+            None => Err(FindRegistryError::NotFound(format!(
                 "registry `{}` not found",
-                self.registry.name
+                self.default_registry.name
             ))),
         }
     }
@@ -143,7 +147,8 @@ impl Config {
             let default_config = Config::default();
             let config_str = toml::to_string(&default_config)?;
             let config_file_path = dbdev_dir.join("config.toml");
-            fs::write(config_file_path, config_str)?;
+            let mut config_file = create_file(&config_file_path)?;
+            config_file.write_all(config_str.as_bytes())?;
             Ok(())
         } else {
             panic!("Home directory could not be found");

@@ -1,7 +1,7 @@
-use crate::credential_store::{get_secret_from_stdin, save_access_token};
+use crate::credential_store::{get_secret_from_stdin, Credentials};
 
-pub async fn login() -> anyhow::Result<()> {
+pub(crate) fn login(registry_name: &str) -> anyhow::Result<()> {
     let secret = get_secret_from_stdin()?;
-    save_access_token(&secret).await?;
+    Credentials::write(registry_name, &secret)?;
     Ok(())
 }

@@ -95,7 +95,7 @@ async fn main() -> anyhow::Result<()> {
         Commands::Publish { path } => {
             let config = Config::read_from_default_file()?;
             let client = client::APIClient::from_config(&config)?;
-            commands::publish::publish(&client, path).await?;
+            commands::publish::publish(&client, path, &config.default_registry.name).await?;
             Ok(())
         }
 
@@ -128,7 +128,8 @@ async fn main() -> anyhow::Result<()> {
         }
 
         Commands::Login => {
-            commands::login::login().await?;
+            let config = Config::read_from_default_file()?;
+            commands::login::login(&config.default_registry.name)?;
             Ok(())
         }
     }
