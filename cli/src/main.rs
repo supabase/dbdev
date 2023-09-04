@@ -69,14 +69,16 @@ enum Commands {
         #[arg(long)]
         path: PathBuf,
 
-        /// Registry to publish to
-        registry: Option<String>,
+        /// Name of the registry to publish to
+        #[arg(long)]
+        registry_name: Option<String>,
     },
 
     /// Login to a dbdev account
     Login {
-        /// Registry to login to
-        registry: Option<String>,
+        /// Name of the registry to login to
+        #[arg(long)]
+        registry_name: Option<String>,
     },
 }
 
@@ -93,17 +95,22 @@ async fn main() -> anyhow::Result<()> {
             password,
         } => {
             let config = Config::read_from_default_file()?;
-            let registry = config.get_registry()?;
-            let client = client::APIClient::from_registry(&registry)?;
+            let registry = config.get_registry(&config.default_registry.name)?;
+            let client = client::APIClient::from_registry(registry)?;
             commands::signup::signup(&client, email, password, handle).await?;
             Ok(())
         }
 
-        Commands::Publish { path, registry } => {
+        Commands::Publish {
+            path,
+            registry_name,
+        } => {
             let config = Config::read_from_default_file()?;
-            let registry_name = registry.as_ref().unwrap_or(&config.default_registry.name);
-            let registry = config.get_registry()?;
-            let client = client::APIClient::from_registry(&registry)?;
+            let registry_name = registry_name
+                .as_ref()
+                .unwrap_or(&config.default_registry.name);
+            let registry = config.get_registry(registry_name)?;
+            let client = client::APIClient::from_registry(registry)?;
             commands::publish::publish(&client, path, registry_name).await?;
             Ok(())
         }
@@ -136,9 +143,13 @@ async fn main() -> anyhow::Result<()> {
             }
         }
 
-        Commands::Login { registry } => {
+        Commands::Login { registry_name } => {
             let config = Config::read_from_default_file()?;
-            let registry_name = registry.as_ref().unwrap_or(&config.default_registry.name);
+            let registry_name = registry_name
+                .as_ref()
+                .unwrap_or(&config.default_registry.name);
+            // confirm that a registry with the given name exists
+            config.get_registry(registry_name)?;
             commands::login::login(registry_name)?;
             Ok(())
         }

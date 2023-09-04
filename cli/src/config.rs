@@ -104,8 +104,8 @@ pub(crate) enum ConfigWriteError {
 }
 
 impl Config {
-    pub(crate) fn get_registry(&self) -> Result<&Registry, FindRegistryError> {
-        match self.registries.get(&self.default_registry.name) {
+    pub(crate) fn get_registry(&self, registry_name: &str) -> Result<&Registry, FindRegistryError> {
+        match self.registries.get(registry_name) {
             Some(registry) => Ok(registry),
             None => Err(FindRegistryError::NotFound(format!(
                 "registry `{}` not found",
