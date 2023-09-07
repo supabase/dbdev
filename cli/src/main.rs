@@ -50,19 +50,6 @@ enum Commands {
         package: String,
     },
 
-    /// Signup for a dbdev account
-    Signup {
-        /// User handle
-        #[arg(long)]
-        handle: String,
-
-        #[arg(long)]
-        email: String,
-
-        #[arg(long)]
-        password: String,
-    },
-
     /// Publish a package
     Publish {
         /// From local directory
@@ -89,18 +76,6 @@ async fn main() -> anyhow::Result<()> {
     // You can check for the existence of subcommands, and if found use their
     // matches just as you would the top level cmd
     match &cli.command {
-        Commands::Signup {
-            handle,
-            email,
-            password,
-        } => {
-            let config = Config::read_from_default_file()?;
-            let registry = config.get_registry(&config.default_registry.name)?;
-            let client = client::APIClient::from_registry(registry)?;
-            commands::signup::signup(&client, email, password, handle).await?;
-            Ok(())
-        }
-
         Commands::Publish {
             path,
             registry_name,

@@ -22,38 +22,6 @@ impl<'a> APIClient<'a> {
         }
     }
 
-    pub async fn create_user(
-        &self,
-        email: &str,
-        password: &str,
-        handle: &str,
-    ) -> anyhow::Result<SignupResponse> {
-        let user = User {
-            email: email.to_string(),
-            password: password.to_string(),
-            data: UserMetadata {
-                handle: handle.to_string(),
-            },
-        };
-
-        let url = format!("{}/auth/v1/signup", self.base_url);
-        let response = self
-            .http_client
-            .post(&url)
-            .header("apiKey", self.api_key)
-            .json(&user)
-            .send()
-            .await
-            .context("failed to create user")?;
-
-        if response.status() != 200 {
-            return Err(anyhow::anyhow!(response.text().await?));
-        }
-
-        let resp = response.json::<SignupResponse>().await?;
-        Ok(resp)
-    }
-
     /// Redeems the access token for a shorter lived jwt token
     pub async fn redeem_access_token(&self, jwt: Secret<String>) -> anyhow::Result<Secret<String>> {
         let url = format!("{}/rest/v1/rpc/redeem_access_token", self.base_url);
