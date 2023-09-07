@@ -3,7 +3,7 @@ use crate::util;
 use anyhow::Context;
 use std::ffi::OsStr;
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 pub struct ControlFileRef {
     pub filename: String,
@@ -50,9 +50,30 @@ impl HasFilename for InstallFile {
         self.filename.clone()
     }
 }
+
 impl HasFilename for UpgradeFile {
     fn filename(&self) -> String {
         self.filename.clone()
+    }
+}
+
+pub struct ReadmeFile {
+    pub body: String,
+}
+
+impl ReadmeFile {
+    pub(crate) fn from_path(path: &Path) -> anyhow::Result<ReadmeFile> {
+        let file_name = path
+            .file_name()
+            .and_then(OsStr::to_str)
+            .context("Failed to read file name")?;
+        let body =
+            fs::read_to_string(path).context(format!("Failed to read file {}", &file_name))?;
+        Ok(ReadmeFile { body })
+    }
+
+    pub(crate) fn body(&self) -> &str {
+        &self.body
     }
 }
 
@@ -62,10 +83,11 @@ pub struct Payload {
     pub metadata: Metadata,
     pub install_files: Vec<InstallFile>,
     pub upgrade_files: Vec<UpgradeFile>,
+    pub readme_file: Option<ReadmeFile>,
 }
 
 impl Payload {
-    pub fn from_pathbuf(path: &PathBuf) -> anyhow::Result<Self> {
+    pub fn from_path(path: &Path) -> anyhow::Result<Self> {
         // Install from Path
         let abs_path = match fs::canonicalize(path) {
             Ok(abs_path) => abs_path,
@@ -80,12 +102,17 @@ impl Payload {
 
         let mut control_files = vec![];
         let mut sql_files = vec![];
+        let mut readme_file: Option<PathBuf> = None;
 
         for entry in fs::read_dir(&abs_path).unwrap() {
             match entry {
                 Ok(dir_entry) => {
                     let entry_path = dir_entry.path();
                     if entry_path.is_dir() {
+                        continue;
+                    }
+                    if let Some("README.md") = entry_path.file_name().and_then(OsStr::to_str) {
+                        readme_file = Some(entry_path);
                         continue;
                     }
                     let extension: Option<&str> = entry_path.extension().and_then(OsStr::to_str);
@@ -98,6 +125,10 @@ impl Payload {
                 Err(_) => continue,
             }
         }
+
+        let readme_file = readme_file
+            .map(|path| ReadmeFile::from_path(&path))
+            .transpose()?;
 
         // /User/<abridge>/some_ext/some_ext.control
         let control_file_path = match control_files.len() {
@@ -170,13 +201,14 @@ impl Payload {
             metadata: Metadata::from_control_file_ref(&control_file)?,
             install_files,
             upgrade_files,
+            readme_file,
         };
         Ok(payload)
     }
 }
 
 impl ControlFileRef {
-    fn from_pathbuf(path: &PathBuf) -> anyhow::Result<Self> {
+    fn from_pathbuf(path: &Path) -> anyhow::Result<Self> {
         let control_file_name = path
             .file_name()
             .and_then(OsStr::to_str)

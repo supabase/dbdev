@@ -4,7 +4,9 @@ use std::path::PathBuf;
 
 mod client;
 mod commands;
+mod credential_store;
 mod models;
+mod secret;
 mod util;
 
 #[derive(Parser)]
@@ -61,19 +63,13 @@ enum Commands {
 
     /// Publish a package
     Publish {
-        #[arg(long)]
-        handle: String,
-
-        #[arg(long)]
-        email: String,
-
-        #[arg(long)]
-        password: String,
-
         /// From local directory
         #[arg(long)]
         path: PathBuf,
     },
+
+    /// Login to a dbdev account
+    Login,
 }
 
 #[tokio::main]
@@ -94,14 +90,8 @@ async fn main() -> anyhow::Result<()> {
             Ok(())
         }
 
-        Commands::Publish {
-            handle,
-            email,
-            password,
-            path,
-        } => {
-            let payload = models::Payload::from_pathbuf(path)?;
-            commands::publish::publish(&client, &payload, email, password, handle).await?;
+        Commands::Publish { path } => {
+            commands::publish::publish(&client, path).await?;
             Ok(())
         }
         Commands::Uninstall {
@@ -119,7 +109,7 @@ async fn main() -> anyhow::Result<()> {
             path,
         } => {
             if let Some(rel_or_abs_path) = path {
-                let payload = models::Payload::from_pathbuf(rel_or_abs_path)?;
+                let payload = models::Payload::from_path(rel_or_abs_path)?;
                 let conn = util::get_connection(connection).await?;
                 commands::install::install(&payload, conn).await?;
                 Ok(())
@@ -130,6 +120,10 @@ async fn main() -> anyhow::Result<()> {
             } else {
                 Err(anyhow::anyhow!("Not implemented"))
             }
+        }
+        Commands::Login => {
+            commands::login::login().await?;
+            Ok(())
         }
     }
 }
