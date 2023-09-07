@@ -185,7 +185,10 @@ begin
     -- Until we get to read `app.settings.jwt_secret` in dev, we need to
     -- use the following hardcoded secret during dev.
     -- jwt_secret:= 'super-secret-jwt-token-with-at-least-32-characters-long';
-    jwt_secret := current_setting('app.settings.jwt_secret', true);
+    jwt_secret := coalesce(
+        current_setting('app.settings.jwt_secret', true),
+        'super-secret-jwt-token-with-at-least-32-characters-long'
+    );
 
     return sign(json_build_object(
         'aud', 'authenticated',

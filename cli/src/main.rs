@@ -1,9 +1,11 @@
 use clap::{Parser, Subcommand};
+use config::Config;
 
 use std::path::PathBuf;
 
 mod client;
 mod commands;
+mod config;
 mod credential_store;
 mod models;
 mod secret;
@@ -66,17 +68,23 @@ enum Commands {
         /// From local directory
         #[arg(long)]
         path: PathBuf,
+
+        /// Name of the registry to publish to
+        #[arg(long)]
+        registry_name: Option<String>,
     },
 
     /// Login to a dbdev account
-    Login,
+    Login {
+        /// Name of the registry to login to
+        #[arg(long)]
+        registry_name: Option<String>,
+    },
 }
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();
-
-    let client = client::APIClient::new(API_BASE_URL, API_KEY);
 
     // You can check for the existence of subcommands, and if found use their
     // matches just as you would the top level cmd
@@ -86,14 +94,27 @@ async fn main() -> anyhow::Result<()> {
             email,
             password,
         } => {
+            let config = Config::read_from_default_file()?;
+            let registry = config.get_registry(&config.default_registry.name)?;
+            let client = client::APIClient::from_registry(registry)?;
             commands::signup::signup(&client, email, password, handle).await?;
             Ok(())
         }
 
-        Commands::Publish { path } => {
-            commands::publish::publish(&client, path).await?;
+        Commands::Publish {
+            path,
+            registry_name,
+        } => {
+            let config = Config::read_from_default_file()?;
+            let registry_name = registry_name
+                .as_ref()
+                .unwrap_or(&config.default_registry.name);
+            let registry = config.get_registry(registry_name)?;
+            let client = client::APIClient::from_registry(registry)?;
+            commands::publish::publish(&client, path, registry_name).await?;
             Ok(())
         }
+
         Commands::Uninstall {
             connection,
             package,
@@ -121,11 +142,16 @@ async fn main() -> anyhow::Result<()> {
                 Err(anyhow::anyhow!("Not implemented"))
             }
         }
-        Commands::Login => {
-            commands::login::login().await?;
+
+        Commands::Login { registry_name } => {
+            let config = Config::read_from_default_file()?;
+            let registry_name = registry_name
+                .as_ref()
+                .unwrap_or(&config.default_registry.name);
+            // confirm that a registry with the given name exists
+            config.get_registry(registry_name)?;
+            commands::login::login(registry_name)?;
             Ok(())
         }
     }
 }
-const API_BASE_URL: &str = "http://localhost:54321";
-const API_KEY: &str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0";

@@ -3,14 +3,20 @@ use std::path::Path;
 use crate::client::{
     self, PublishPackageRequest, PublishPackageUpgradeRequest, PublishPackageVersionRequest,
 };
-use crate::credential_store::read_access_token;
+use crate::credential_store::Credentials;
 use crate::models::{self, InstallFile, Payload, ReadmeFile, UpgradeFile};
 
-pub async fn publish(client: &client::APIClient, path: &Path) -> anyhow::Result<()> {
-    let payload = models::Payload::from_path(path)?;
-    let access_token = read_access_token().await?;
+pub async fn publish(
+    client: &client::APIClient<'_>,
+    package_foler_path: &Path,
+    registry_name: &str,
+) -> anyhow::Result<()> {
+    let credentials = Credentials::read()?;
+    let access_token = credentials.get_token(registry_name)?.value.clone().into();
+
     let jwt = client.redeem_access_token(access_token).await?;
 
+    let payload = models::Payload::from_path(package_foler_path)?;
     let Some(ref readme_file) = payload.readme_file else {
         return Err(anyhow::anyhow!("No `README.md` file found"));
     };
