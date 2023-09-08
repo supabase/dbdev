@@ -182,13 +182,7 @@ begin
     one_hour_from_now := now + interval '1 hour';
     issued_at := date_part('epoch', now);
     expiry_at := date_part('epoch', one_hour_from_now);
-    -- Until we get to read `app.settings.jwt_secret` in dev, we need to
-    -- use the following hardcoded secret during dev.
-    -- jwt_secret:= 'super-secret-jwt-token-with-at-least-32-characters-long';
-    jwt_secret := coalesce(
-        current_setting('app.settings.jwt_secret', true),
-        'super-secret-jwt-token-with-at-least-32-characters-long'
-    );
+    jwt_secret := current_setting('app.settings.jwt_secret', true);
 
     return sign(json_build_object(
         'aud', 'authenticated',
