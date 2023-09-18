@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 jobs:
-  release:
+  create-release:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
@@ -20,23 +20,21 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
-          body: |
-            Changes in this Release
-            - First Change
-            - Second Change
-          draft: false
+          body_path: |
+            TODO: Write release notes
+          draft: true
           prerelease: false
 
-  build-linux-gnu:
-    name: release artifacts
+  build:
+    name: Release Artifacts
     needs:
       - release
     strategy:
       matrix:
         box:
-          - { runner: ubuntu-20.04, arch: amd64 }
-          # - { runner: arm-runner, arch: arm64 }
-          # - { runner: macos-latest, arch: arm64 }
+          - { runner: ubuntu-20.04, os-and-arch: linux-amd64 }
+          # - { runner: arm-runner, os-and-arch: linux-arm64 }
+          # - { runner: macos-latest, os-and-arch: macos-arm64 }
     runs-on: ${{ matrix.box.runner }}
     timeout-minutes: 45
     steps:
@@ -45,15 +43,18 @@ jobs:
         run: cargo build --release --verbose
         working-directory: ./cli
 
-      - name: Get upload url
+       name: Tarball
+       run: cd ./cli/target/release && tar -czvf dbdev.tar.gz ./dbdev
+
+      - name: Get Upload Url
         run: echo UPLOAD_URL=$(curl --silent https://api.github.com/repos/${{ github.repository }}/releases/latest | jq .upload_url --raw-output) >> $GITHUB_ENV
 
-      - name: Upload release asset
+      - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ env.UPLOAD_URL }}
-          asset_path: ./cli/target/release/dbdev
-          asset_name: dbdev-${{ github.ref_name }}-${{ matrix.box.arch }}
+          asset_path: ./cli/target/release/dbdev.tar.gz
+          asset_name: dbdev-${{ github.ref_name }}-${{ matrix.box.os-and-arch }}
           asset_content_type: application/binary
