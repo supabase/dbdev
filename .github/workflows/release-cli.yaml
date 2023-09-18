@@ -3,7 +3,7 @@ name: Release CLI
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   create-release:
@@ -33,7 +33,7 @@ jobs:
       matrix:
         box:
           - { runner: ubuntu-20.04, os-and-arch: linux-amd64 }
-          # - { runner: arm-runner, os-and-arch: linux-arm64 }
+          - { runner: arm-runner, os-and-arch: linux-arm64 }
           # - { runner: macos-latest, os-and-arch: macos-arm64 }
     runs-on: ${{ matrix.box.runner }}
     timeout-minutes: 45
