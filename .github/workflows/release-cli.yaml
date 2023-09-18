@@ -1,0 +1,59 @@
+name: Release CLI
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body: |
+            Changes in this Release
+            - First Change
+            - Second Change
+          draft: false
+          prerelease: false
+
+  build-linux-gnu:
+    name: release artifacts
+    needs:
+      - release
+    strategy:
+      matrix:
+        box:
+          - { runner: ubuntu-20.04, arch: amd64 }
+          # - { runner: arm-runner, arch: arm64 }
+          # - { runner: macos-latest, arch: arm64 }
+    runs-on: ${{ matrix.box.runner }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build
+        run: cargo build --release --verbose
+        working-directory: ./cli
+
+      - name: Get upload url
+        run: echo UPLOAD_URL=$(curl --silent https://api.github.com/repos/${{ github.repository }}/releases/latest | jq .upload_url --raw-output) >> $GITHUB_ENV
+
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ env.UPLOAD_URL }}
+          asset_path: ./cli/target/release/dbdev
+          asset_name: dbdev-${{ github.ref_name }}-${{ matrix.box.arch }}
+          asset_content_type: application/binary
