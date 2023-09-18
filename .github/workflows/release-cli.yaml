@@ -1,14 +1,9 @@
 name: Release CLI
 
-# on:
-#   push:
-#     tags:
-#       - 'v*'
 on:
   push:
-    branches: ["feat/release-cli"]
-  pull_request:
-    branches: ["feat/release-cli"]
+    tags:
+      - 'v*'
 
 jobs:
   release:
