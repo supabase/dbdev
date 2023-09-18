@@ -49,6 +49,8 @@ jobs:
             rustc --version && \
             cargo --version
 
+          source "$HOME/.cargo/env"
+
       - uses: actions/checkout@v3
       - name: Build
         run: cargo build --release
