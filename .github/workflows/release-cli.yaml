@@ -38,24 +38,14 @@ jobs:
     runs-on: ${{ matrix.box.runner }}
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v3
-      - name: Build on linux
+      - name: Install dependencies
         if: ${{ matrix.box.os-and-arch == 'linux-amd64' ||  matrix.box.os-and-arch == 'linux-arm64' }}
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends curl build-essential libssl-dev pkg-config
 
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile minimal --default-toolchain stable
-          source "$HOME/.cargo/env"
-          rustup --version && rustc --version && cargo --version
-
-          cd cli
-          cargo build --release
-          cd ./target/release && tar -czvf dbdev.tar.gz ./dbdev
-
       - uses: actions/checkout@v3
-      - name: Build on macOS
-        if: ${{ matrix.box.os-and-arch == 'macos-arm64' }}
+      - name: Build
         run: |
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile minimal --default-toolchain stable
           source "$HOME/.cargo/env"
