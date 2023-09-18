@@ -20,7 +20,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
-          body_path: |
+          body: |
             TODO: Write release notes
           draft: true
           prerelease: false
