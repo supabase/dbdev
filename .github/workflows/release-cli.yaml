@@ -49,13 +49,9 @@ jobs:
           source "$HOME/.cargo/env"
           rustup --version && rustc --version && cargo --version
 
-          echo "cd cli"
           cd cli
-          echo "cargo build --release"
           cargo build --release
-          echo "build tar.gz"
           cd ./target/release && tar -czvf dbdev.tar.gz ./dbdev
-          echo "done"
 
       - uses: actions/checkout@v3
       - name: Build on macOS
