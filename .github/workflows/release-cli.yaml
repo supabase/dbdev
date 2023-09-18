@@ -43,7 +43,7 @@ jobs:
         run: cargo build --release --verbose
         working-directory: ./cli
 
-      - name: Tarball
+      - name: Create Tarball
         run: cd ./cli/target/release && tar -czvf dbdev.tar.gz ./dbdev
 
       - name: Get Upload Url
