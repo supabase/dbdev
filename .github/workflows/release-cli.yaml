@@ -28,7 +28,7 @@ jobs:
   build:
     name: Release Artifacts
     needs:
-      - release
+      - create-release
     strategy:
       matrix:
         box:
