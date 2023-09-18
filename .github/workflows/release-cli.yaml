@@ -34,7 +34,7 @@ jobs:
         box:
           - { runner: ubuntu-20.04, os-and-arch: linux-amd64 }
           - { runner: arm-runner, os-and-arch: linux-arm64 }
-          - { runner: macos-12, os-and-arch: macos-arm64 }
+          - { runner: macos-12, os-and-arch: macos-amd64 }
     runs-on: ${{ matrix.box.runner }}
     timeout-minutes: 45
     steps:
