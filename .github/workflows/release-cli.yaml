@@ -34,16 +34,29 @@ jobs:
         box:
           - { runner: ubuntu-20.04, os-and-arch: linux-amd64 }
           - { runner: arm-runner, os-and-arch: linux-arm64 }
-          # - { runner: macos-latest, os-and-arch: macos-arm64 }
+          - { runner: macos-12, os-and-arch: macos-arm64 }
     runs-on: ${{ matrix.box.runner }}
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v3
-      - name: Build
+      - name: Build on linux
+        if: ${{ matrix.box.os-and-arch == 'linux-amd64' ||  matrix.box.os-and-arch == 'linux-arm64' }}
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends curl build-essential libssl-dev pkg-config
 
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile minimal --default-toolchain stable
+          source "$HOME/.cargo/env"
+          rustup --version && rustc --version && cargo --version
+
+          cd cli
+          cargo build --release
+          cd ./target/release && tar -czvf dbdev.tar.gz ./dbdev
+
+      - uses: actions/checkout@v3
+      - name: Build on macOS
+        if: ${{ matrix.box.os-and-arch == 'macos-arm64' }}
+        run: |
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile minimal --default-toolchain stable
           source "$HOME/.cargo/env"
           rustup --version && rustc --version && cargo --version
