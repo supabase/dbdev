@@ -39,8 +39,7 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v3
-      - name: Build on linux-arm64
-        if: ${{ matrix.box.os-and-arch == 'linux-arm64' }}
+      - name: Build
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends curl build-essential libssl-dev pkg-config
@@ -49,16 +48,9 @@ jobs:
           source "$HOME/.cargo/env"
           rustup --version && rustc --version && cargo --version
 
-          cd cli && cargo build --release
-
-      - uses: actions/checkout@v3
-      - name: Build on linux-amd64
-        if: ${{ matrix.box.os-and-arch == 'linux-amd64' }}
-        run: cargo build --release
-        working-directory: ./cli
-
-      - name: Create Tarball
-        run: cd ./cli/target/release && tar -czvf dbdev.tar.gz ./dbdev
+          cd cli
+          cargo build --release
+          cd ./target/release && tar -czvf dbdev.tar.gz ./dbdev
 
       - name: Get Upload Url
         run: echo UPLOAD_URL=$(curl --silent https://api.github.com/repos/${{ github.repository }}/releases/latest | jq .upload_url --raw-output) >> $GITHUB_ENV
