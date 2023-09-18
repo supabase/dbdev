@@ -49,12 +49,17 @@ jobs:
           source "$HOME/.cargo/env"
           rustup --version && rustc --version && cargo --version
 
-          echo "cd cli"
+          pwd
           cd cli
-          echo "cargo build --release"
+          pwd
           cargo build --release
+          echo "cd ./target/release"
+          cd ./target/release
+          pwd
+          ls -al
           echo "build tar.gz"
-          cd ./target/release && tar -czvf dbdev.tar.gz ./dbdev
+          tar -czvf dbdev.tar.gz ./dbdev
+          ls -al
           echo "done"
 
       - uses: actions/checkout@v3
