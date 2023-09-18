@@ -60,6 +60,8 @@ jobs:
           echo "build tar.gz"
           tar -czvf dbdev.tar.gz ./dbdev
           ls -al
+          cd ../../../
+          pwd
           echo "done"
 
       - uses: actions/checkout@v3
