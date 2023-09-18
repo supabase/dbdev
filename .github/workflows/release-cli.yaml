@@ -49,10 +49,9 @@ jobs:
           source "$HOME/.cargo/env"
           rustup --version && rustc --version && cargo --version
 
-          cd cli && \
-          cargo build --release && \
-          cd ./target/release && \
-          tar -czvf dbdev.tar.gz ./dbdev
+          cd cli
+          cargo build --release
+          cd ./target/release && tar -czvf dbdev.tar.gz ./dbdev
 
       - uses: actions/checkout@v3
       - name: Build on macOS
@@ -62,10 +61,9 @@ jobs:
           source "$HOME/.cargo/env"
           rustup --version && rustc --version && cargo --version
 
-          cd cli && \
-          cargo build --release && \
-          cd ./target/release && \
-          tar -czvf dbdev.tar.gz ./dbdev
+          cd cli
+          cargo build --release
+          cd ./target/release && tar -czvf dbdev.tar.gz ./dbdev
 
       - name: Get Upload Url
         run: echo UPLOAD_URL=$(curl --silent https://api.github.com/repos/${{ github.repository }}/releases/latest | jq .upload_url --raw-output) >> $GITHUB_ENV
