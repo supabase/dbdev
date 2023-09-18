@@ -55,11 +55,13 @@ jobs:
           cargo build --release
           cd ./target/release && tar -czvf dbdev.tar.gz ./dbdev
 
+      - name: Get Upload Url
+        run: echo UPLOAD_URL=$(curl --silent https://api.github.com/repos/${{ github.repository }}/releases/latest | jq .upload_url --raw-output) >> $GITHUB_ENV
+
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          UPLOAD_URL: ${{ needs.create-release.outputs.upload_url }}
         with:
           upload_url: ${{ env.UPLOAD_URL }}
           asset_path: ./cli/target/release/dbdev.tar.gz
