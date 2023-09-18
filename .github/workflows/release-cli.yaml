@@ -38,9 +38,20 @@ jobs:
     runs-on: ${{ matrix.box.runner }}
     timeout-minutes: 45
     steps:
+      - name: Install Rust
+        if: ${{ matrix.box.os-and-arch != 'linux-amd64' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends curl
+
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile minimal --default-toolchain stable && \
+            rustup --version && \
+            rustc --version && \
+            cargo --version
+
       - uses: actions/checkout@v3
       - name: Build
-        run: cargo build --release --verbose
+        run: cargo build --release
         working-directory: ./cli
 
       - name: Create Tarball
