@@ -22,7 +22,7 @@ jobs:
           release_name: ${{ github.ref }}
           body: |
             TODO: Write release notes
-          draft: true
+          draft: false
           prerelease: false
 
   build:
@@ -38,12 +38,12 @@ jobs:
     runs-on: ${{ matrix.box.runner }}
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v3
       - name: Build
-        run: cargo build --release --verbose
+      - uses: actions/checkout@v3
+        run: cargo build --release
         working-directory: ./cli
 
-      - name: Tarball
+      - name: Create Tarball
         run: cd ./cli/target/release && tar -czvf dbdev.tar.gz ./dbdev
 
       - name: Get Upload Url
@@ -56,5 +56,5 @@ jobs:
         with:
           upload_url: ${{ env.UPLOAD_URL }}
           asset_path: ./cli/target/release/dbdev.tar.gz
-          asset_name: dbdev-${{ github.ref_name }}-${{ matrix.box.os-and-arch }}
-          asset_content_type: application/binary
+          asset_name: dbdev-${{ github.ref_name }}-${{ matrix.box.os-and-arch }}.tar.gz
+          asset_content_type: application/gzip
