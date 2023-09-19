@@ -6,7 +6,7 @@ repo_name: supabase/dbdev
 repo_url: https://github.com/supabase/dbdev
 
 nav:
-    - Welcome: 'welcome.md'
+    - Welcome: 'index.md'
     - SQL Client: 'sql-client.md'
     - CLI: 'cli.md'
 
