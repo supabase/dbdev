@@ -25,22 +25,57 @@ jobs:
           draft: false
           prerelease: false
 
-  build:
-    name: Release Artifacts
+  build-linux:
+    name: Release Artifacts on Linux
     needs:
       - create-release
     strategy:
       matrix:
         box:
-          - { runner: ubuntu-20.04, os-and-arch: linux-amd64, content-type: gzip, extension: tar.gz }
-          - { runner: arm-runner, os-and-arch: linux-arm64, content-type: gzip, extension: tar.gz }
-          - { runner: macos-12, os-and-arch: macos-amd64, content-type: gzip, extension: tar.gz }
-          - { runner: windows-2022, os-and-arch: windows-amd64, content-type: zip, extension: zip }
+          - { runner: ubuntu-20.04, os-and-arch: linux-amd64 }
+          - { runner: arm-runner, os-and-arch: linux-arm64 }
     runs-on: ${{ matrix.box.runner }}
     timeout-minutes: 45
     steps:
       - name: Install dependencies
-        if: ${{ matrix.box.os-and-arch == 'linux-amd64' ||  matrix.box.os-and-arch == 'linux-arm64' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends curl build-essential libssl-dev pkg-config
+
+      - name: Install Rust Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+
+      - uses: actions/checkout@v3
+      - name: Build and Package
+        run: |
+          cd cli
+          cargo build --release
+          cd ./target/release && tar -czvf dbdev.tar.gz ./dbdev
+
+      - name: Get Upload Url
+        run: echo UPLOAD_URL=$(curl --silent https://api.github.com/repos/${{ github.repository }}/releases/latest | jq .upload_url --raw-output) >> $GITHUB_ENV
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ env.UPLOAD_URL }}
+          asset_path: ./cli/target/release/dbdev.tar.gz
+          asset_name: dbdev-${{ github.ref_name }}-${{ matrix.box.os-and-arch }}.tar.gz
+          asset_content_type: application/gzip
+
+  build-macos:
+    name: Release Artifacts on macOS
+    needs:
+      - create-release
+    runs-on: macos-12
+    timeout-minutes: 45
+    steps:
+      - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends curl build-essential libssl-dev pkg-config
@@ -53,15 +88,39 @@ jobs:
 
       - uses: actions/checkout@v3
       - name: Build and Package on Unix
-        if: ${{ matrix.box.os-and-arch != 'windows-amd64' }}
         run: |
           cd cli
           cargo build --release
           cd ./target/release && tar -czvf dbdev.tar.gz ./dbdev
 
+      - name: Get Upload Url
+        run: echo UPLOAD_URL=$(curl --silent https://api.github.com/repos/${{ github.repository }}/releases/latest | jq .upload_url --raw-output) >> $GITHUB_ENV
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ env.UPLOAD_URL }}
+          asset_path: ./cli/target/release/dbdev.tar.gz
+          asset_name: dbdev-${{ github.ref_name }}-macos-amd64.tar.gz
+          asset_content_type: application/${{ matrix.box.content-type }}
+
+  build-windows:
+    name: Release Artifacts on Windows
+    needs:
+      - create-release
+    runs-on: windows-2022
+    timeout-minutes: 45
+    steps:
+      - name: Install Rust Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+
       - uses: actions/checkout@v3
       - name: Build and Package on Windows
-        if: ${{ matrix.box.os-and-arch == 'windows-amd64' }}
         run: |
           cd cli
           cargo build --release
@@ -76,6 +135,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ env.UPLOAD_URL }}
-          asset_path: ./cli/target/release/dbdev.${{ matrix.box.extension }}
-          asset_name: dbdev-${{ github.ref_name }}-${{ matrix.box.os-and-arch }}.${{ matrix.box.extension }}
-          asset_content_type: application/${{ matrix.box.content-type }}
+          asset_path: ./cli/target/release/dbdev.zip
+          asset_name: dbdev-${{ github.ref_name }}-windows-amd64.zip
+          asset_content_type: application/zip
