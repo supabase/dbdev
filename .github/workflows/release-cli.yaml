@@ -52,19 +52,19 @@ jobs:
           toolchain: stable
 
       - uses: actions/checkout@v3
-      - name: Build
+      - name: Build and Package on Unix
+        if: ${{ matrix.box.os-and-arch != 'windows-amd64' }}
         run: |
           cd cli
           cargo build --release
-
-      - name: Package on Unix
-        if: ${{ matrix.box.os-and-arch != 'windows-amd64' }}
-        run: |
           cd ./target/release && tar -czvf dbdev.tar.gz ./dbdev
 
-      - name: Package on Windows
+      - uses: actions/checkout@v3
+      - name: Build and Package on Windows
         if: ${{ matrix.box.os-and-arch == 'windows-amd64' }}
         run: |
+          cd cli
+          cargo build --release
           cd ./target/release && Compress-Archive -Path ./dbdev -Destination dbdev.zip
 
       - name: Get Upload Url
