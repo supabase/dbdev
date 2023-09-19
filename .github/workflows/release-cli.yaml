@@ -119,7 +119,7 @@ jobs:
         run: |
           cd cli
           cargo build --release
-          cd ./target/release && Compress-Archive -Path ./dbdev -Destination dbdev.zip
+          cd ./target/release && Compress-Archive -Path ./dbdev.exe -Destination dbdev.zip
 
       - name: Get Upload Url
         run: echo UPLOAD_URL=$(curl --silent https://api.github.com/repos/${{ github.repository }}/releases/latest | jq .upload_url --raw-output) >> $GITHUB_ENV
