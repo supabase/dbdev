@@ -33,6 +33,3 @@ markdown_extensions:
     - pymdownx.snippets
     - pymdownx.tasklist
     - admonition
-    - pymdownx.emoji:
-        emoji_index: !!python/name:materialx.emoji.twemoji
-        emoji_generator: !!python/name:materialx.emoji.to_svg
