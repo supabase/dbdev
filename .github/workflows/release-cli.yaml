@@ -75,11 +75,6 @@ jobs:
     runs-on: macos-12
     timeout-minutes: 45
     steps:
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends curl build-essential libssl-dev pkg-config
-
       - name: Install Rust Toolchain
         uses: actions-rs/toolchain@v1
         with:
