@@ -32,9 +32,10 @@ jobs:
     strategy:
       matrix:
         box:
-          - { runner: ubuntu-20.04, os-and-arch: linux-amd64 }
-          - { runner: arm-runner, os-and-arch: linux-arm64 }
-          - { runner: macos-12, os-and-arch: macos-amd64 }
+          - { runner: ubuntu-20.04, os-and-arch: linux-amd64, content-type: gzip, extension: tar.gz }
+          - { runner: arm-runner, os-and-arch: linux-arm64, content-type: gzip, extension: tar.gz }
+          - { runner: macos-12, os-and-arch: macos-amd64, content-type: gzip, extension: tar.gz }
+          - { runner: windows-2022, os-and-arch: windows-amd64, content-type: zip, extension: zip }
     runs-on: ${{ matrix.box.runner }}
     timeout-minutes: 45
     steps:
@@ -44,16 +45,27 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends curl build-essential libssl-dev pkg-config
 
+      - name: Install Rust Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+
       - uses: actions/checkout@v3
       - name: Build
         run: |
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile minimal --default-toolchain stable
-          source "$HOME/.cargo/env"
-          rustup --version && rustc --version && cargo --version
-
           cd cli
           cargo build --release
+
+      - name: Package on Unix
+        if: ${{ matrix.box.os-and-arch != 'windows-amd64' }}
+        run: |
           cd ./target/release && tar -czvf dbdev.tar.gz ./dbdev
+
+      - name: Package on Windows
+        if: ${{ matrix.box.os-and-arch == 'windows-amd64' }}
+        run: |
+          cd ./target/release && Compress-Archive -Path ./dbdev -Destination dbdev.zip
 
       - name: Get Upload Url
         run: echo UPLOAD_URL=$(curl --silent https://api.github.com/repos/${{ github.repository }}/releases/latest | jq .upload_url --raw-output) >> $GITHUB_ENV
@@ -64,6 +76,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ env.UPLOAD_URL }}
-          asset_path: ./cli/target/release/dbdev.tar.gz
-          asset_name: dbdev-${{ github.ref_name }}-${{ matrix.box.os-and-arch }}.tar.gz
-          asset_content_type: application/gzip
+          asset_path: ./cli/target/release/dbdev.${{ matrix.box.extension }}
+          asset_name: dbdev-${{ github.ref_name }}-${{ matrix.box.os-and-arch }}.${{ matrix.box.extension }}
+          asset_content_type: application/${{ matrix.box.content-type }}
