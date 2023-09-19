@@ -7,6 +7,9 @@ repo_url: https://github.com/supabase/dbdev
 
 nav:
     - Welcome: 'index.md'
+    - SQL Client: 'sql-client.md'
+    - Website: 'website.md'
+    - CLI: 'cli.md'
 
 theme:
     name: 'material'
