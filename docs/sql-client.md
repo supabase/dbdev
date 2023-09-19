@@ -1,4 +1,4 @@
-The dbdev SQL client helps in easily installing a TLE available on database.dev.
+The dbdev SQL client is required to install a TLE available on database.dev.
 
 ## Installation
 

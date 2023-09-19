@@ -22,4 +22,4 @@ dbdev is a package package manager for Postgres [trusted lanuguage extensions](h
 
 If you want to install an extension from the registry, you will need the SQL dbdev client. Follow the [installation instructions](/dbdev/sql-client#installation) to install it in your database.
 
-If you want to publish your own TLE, you will need the dbdev CLI. Follow its [installation instructions](/dbdev/cli) to install it for your OS.
+If you want to publish your own TLE, you will need the dbdev CLI. Follow its [installation instructions](/dbdev/cli#installation) to install it for your OS.
