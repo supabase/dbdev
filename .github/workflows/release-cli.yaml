@@ -1,0 +1,138 @@
+name: Release CLI
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body: |
+            TODO: Write release notes
+          draft: false
+          prerelease: false
+
+  build-linux:
+    name: Release Artifacts on Linux
+    needs:
+      - create-release
+    strategy:
+      matrix:
+        box:
+          - { runner: ubuntu-20.04, os-and-arch: linux-amd64 }
+          - { runner: arm-runner, os-and-arch: linux-arm64 }
+    runs-on: ${{ matrix.box.runner }}
+    timeout-minutes: 45
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends curl build-essential libssl-dev pkg-config
+
+      - name: Install Rust Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+
+      - uses: actions/checkout@v3
+      - name: Build and Package
+        run: |
+          cd cli
+          cargo build --release
+          cd ./target/release && tar -czvf dbdev.tar.gz ./dbdev
+
+      - name: Get Upload Url
+        run: echo UPLOAD_URL=$(curl --silent https://api.github.com/repos/${{ github.repository }}/releases/latest | jq .upload_url --raw-output) >> $GITHUB_ENV
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ env.UPLOAD_URL }}
+          asset_path: ./cli/target/release/dbdev.tar.gz
+          asset_name: dbdev-${{ github.ref_name }}-${{ matrix.box.os-and-arch }}.tar.gz
+          asset_content_type: application/gzip
+
+  build-macos:
+    name: Release Artifacts on macOS
+    needs:
+      - create-release
+    runs-on: macos-12
+    timeout-minutes: 45
+    steps:
+      - name: Install Rust Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+
+      - uses: actions/checkout@v3
+      - name: Build and Package on Unix
+        run: |
+          cd cli
+          cargo build --release
+          cd ./target/release && tar -czvf dbdev.tar.gz ./dbdev
+
+      - name: Get Upload Url
+        run: echo UPLOAD_URL=$(curl --silent https://api.github.com/repos/${{ github.repository }}/releases/latest | jq .upload_url --raw-output) >> $GITHUB_ENV
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ env.UPLOAD_URL }}
+          asset_path: ./cli/target/release/dbdev.tar.gz
+          asset_name: dbdev-${{ github.ref_name }}-macos-amd64.tar.gz
+          asset_content_type: application/${{ matrix.box.content-type }}
+
+  build-windows:
+    name: Release Artifacts on Windows
+    needs:
+      - create-release
+    runs-on: windows-2022
+    timeout-minutes: 45
+    steps:
+      - name: Install Rust Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+
+      - uses: actions/checkout@v3
+      - name: Build and Package on Windows
+        run: |
+          cd cli
+          cargo build --release
+          cd ./target/release && Compress-Archive -Path ./dbdev.exe -Destination dbdev.zip
+
+      - name: Get Upload Url
+        run: |
+          $Json = Invoke-WebRequest -Uri https://api.github.com/repos/${{ github.repository }}/releases/latest | ConvertFrom-Json
+          $UploadUrl = $Json.upload_url
+          echo "UPLOAD_URL=$UploadUrl" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ env.UPLOAD_URL }}
+          asset_path: ./cli/target/release/dbdev.zip
+          asset_name: dbdev-${{ github.ref_name }}-windows-amd64.zip
+          asset_content_type: application/zip
