@@ -1,14 +1,9 @@
 name: Release CLI
 
-# on:
-#   push:
-#     tags:
-#       - "v*"
-
-# used only for testing
 on:
   push:
-    branches: ['feat/better-upload-url']
+    tags:
+      - "v*"
 
 jobs:
   create-release:
@@ -23,8 +18,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v0.0.1
-          release_name: v0.0.1
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
           body: |
             TODO: Write release notes
           draft: false
