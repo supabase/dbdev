@@ -1,4 +1,4 @@
-# `supabase/dbdev`
+# `dbdev`
 
 <p>
 <a href=""><img src="https://img.shields.io/badge/postgresql-14+-blue.svg" alt="PostgreSQL version" height="18"></a>
@@ -18,8 +18,12 @@
 
 ## Overview
 
-dbdev is a package package manager for Postgres [trusted lanuguage extensions](https://github.com/aws/pg_tle) (TLEs). It consists of a package registry to store and distribute TLEs, a CLI to publish your TLEs, and a Postgres extension to install TLEs in your database.
+dbdev is a package manager for Postgres [trusted lanuguage extensions](https://github.com/aws/pg_tle) (TLEs). It consists of:
 
-If you want to install an extension from the registry, you will need the SQL dbdev client. Follow the [installation instructions](/dbdev/sql-client#installation) to install it in your database.
+- [database.dev](https://database.dev): our first-party package registry to store and distribute TLEs
+- dbdev CLI: a CLI for publishing TLEs to a registries
+- dbdev client: an in-database client for installing TLEs from registries
 
-If you want to publish your own TLE, you will need the dbdev CLI. Follow its [installation instructions](/dbdev/cli#installation) to install it for your OS.
+If you want to publish your own TLE, you will need the dbdev CLI. Follow its [installation instructions](/dbdev/cli#installation) to get started.
+
+If you want to install an extension from the registry, you will need the SQL dbdev client. Follow the [installation instructions](https://database.dev/installer) to enable it in your database.
