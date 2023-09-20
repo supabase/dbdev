@@ -57,6 +57,26 @@ create extension "supabase-dbdev";
 select dbdev.install('supabase-dbdev');
 drop extension if exists "supabase-dbdev";
 create extension "supabase-dbdev";
+\`\`\`
+
+## Use
+
+Once the client is installed, you an install a TLE available on [database.dev](https://database.dev/) by running SQL that looks like the following:
+
+\`\`\`sql
+select dbdev.install(<extension_name>);
+create extension <extension_name>
+    schema <schema>
+    version <version>;
+\`\`\`
+
+For example, to install [pg_headerkit](https://database.dev/burggraf/pg_headerkit) version \`1.0.0\` in schema \`public\` run:
+
+\`\`\`sql
+select dbdev.install('burggraf-pg_headerkit');
+create extension "burggraf-pg_headerkit"
+    schema 'public'
+    version '1.0.0';
 \`\`\``}
         </Markdown>
       </div>
