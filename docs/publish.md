@@ -2,7 +2,7 @@ Before you can publish your TLE, you need to authenticate with [database.dev](ht
 
 ### Login to database.dev
 
-If you don't have an account, sign-up for one on the website. Then follow the below steps:
+If you don't have an account, [sign-up for one](https://database.dev/sign-up) on the website. Then follow the steps below:
 
 1. Make sure you are logged into the `database.dev` website.
 2. Navigate to the **Access Tokens** page from the account drop-down at top right.
