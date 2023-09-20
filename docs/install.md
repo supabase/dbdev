@@ -1,4 +1,4 @@
-The dbdev CLI is required to publish your TLE to [database.dev](https://database.dev/)
+The dbdev CLI is required to publish your TLE to [database.dev](https://database.dev/).
 
 ## Installation
 
@@ -14,4 +14,4 @@ Alternatively, you can build the binary from source. You will need to have [Rust
 If you have [cargo-install](https://doc.rust-lang.org/cargo/commands/cargo-install.html), you can perform all the above steps with a single command: ```cargo install --git https://github.com/supabase/dbdev.git dbdev```.
 
 
-Now you're ready to [publish your first package](publish.md)
+Now you're ready to [publish your first package](publish.md).
