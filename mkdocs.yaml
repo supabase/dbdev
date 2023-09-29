@@ -9,6 +9,7 @@ nav:
     - Welcome: 'index.md'
     - Install CLI: 'install.md'
     - Publish a Package: 'publish.md'
+    - Structure of a Postgres Extension: 'extension_structure.md'
 
 theme:
     name: 'material'
