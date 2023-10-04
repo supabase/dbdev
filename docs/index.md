@@ -18,7 +18,7 @@
 
 ## Overview
 
-dbdev is a package manager for Postgres [trusted lanuguage extensions](https://github.com/aws/pg_tle) (TLEs). It consists of:
+dbdev is a package manager for Postgres [trusted language extensions](https://github.com/aws/pg_tle) (TLEs). It consists of:
 
 - [database.dev](https://database.dev): our first-party package registry to store and distribute TLEs.
 - dbdev CLI: a CLI for publishing TLEs to a registry.
