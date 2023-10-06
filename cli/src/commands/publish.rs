@@ -45,6 +45,10 @@ pub async fn publish(
         }
     }
 
+    if num_published == 0 {
+        return Err(anyhow::anyhow!("No valid script file (.sql) found."));
+    }
+
     for upgrade_file in &payload.upgrade_files {
         let request =
             create_publich_package_upgrade_request(&payload.metadata.extension_name, upgrade_file);

@@ -1,4 +1,5 @@
 use anyhow::Context;
+use regex::Regex;
 use sqlx::postgres::PgConnection;
 use sqlx::Connection;
 use std::fs::{File, OpenOptions};
@@ -10,8 +11,9 @@ pub async fn get_connection(connection_str: &str) -> anyhow::Result<PgConnection
         .context("Failed to establish PostgreSQL connection")
 }
 
-pub fn is_valid_extension_name(_name: &str) -> bool {
-    true
+pub fn is_valid_extension_name(name: &str) -> bool {
+    let name_regex = Regex::new(r"^[A-z][A-z0-9\_]{2,32}$").expect("regex is valid");
+    name_regex.is_match(name)
 }
 
 pub fn is_valid_version(_version: &str) -> bool {
