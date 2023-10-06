@@ -16,7 +16,9 @@ You are now logged into `database.dev`.
 
 ### Publish TLE
 
-To publish a TLE, run the `dbdev publish` command. For example, to publish a TLE in the `/all_tles/my_tle` folder run the following:
+A TLE has a specific [file and folder structure](extension_structure.md) for it to be valid. Make sure you have a valid TLE structure before trying to publish it.
+
+Once you have a valid TLE, run the `dbdev publish` command to publish it. For example, to publish a TLE in the `/all_tles/my_tle` folder run the following:
 
 ```
 dbdev publish --path /all_tles/my_tle
