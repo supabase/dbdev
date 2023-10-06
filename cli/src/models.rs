@@ -166,31 +166,46 @@ impl Payload {
             match &parts[..] {
                 [file_ext_name, ver] => {
                     // Make sure the file's extension name matches the control file
-                    if file_ext_name == &extension_name && util::is_valid_version(ver) {
-                        let ifile = InstallFile {
-                            filename: file_name.to_string(),
-                            version: ver.to_string(),
-                            body: fs::read_to_string(&path)
-                                .context(format!("Failed to read file {}", &file_name))?,
-                        };
-                        install_files.push(ifile);
+                    if file_ext_name != &extension_name {
+                        println!("Warning: file `{file_name}` will be skipped because its extension name(`{file_ext_name}`) doesn't match `{extension_name}`");
+                        continue;
                     }
+                    if !util::is_valid_version(ver) {
+                        println!("Warning: file `{file_name}` will be skipped because its version (`{ver}`) is invalid");
+                        continue;
+                    }
+
+                    let ifile = InstallFile {
+                        filename: file_name.to_string(),
+                        version: ver.to_string(),
+                        body: fs::read_to_string(&path)
+                            .context(format!("Failed to read file {}", &file_name))?,
+                    };
+                    install_files.push(ifile);
                 }
                 [file_ext_name, from_ver, to_ver] => {
                     // Make sure the file's extension name matches the control file
-                    if file_ext_name == &extension_name
-                        && util::is_valid_version(from_ver)
-                        && util::is_valid_version(to_ver)
-                    {
-                        let ufile = UpgradeFile {
-                            filename: file_name.to_string(),
-                            from_version: from_ver.to_string(),
-                            to_version: to_ver.to_string(),
-                            body: fs::read_to_string(&path)
-                                .context(format!("Failed to read file {}", &file_name))?,
-                        };
-                        upgrade_files.push(ufile);
+                    if file_ext_name != &extension_name {
+                        println!("Warning: file `{file_name}` will be skipped because its extension name(`{file_ext_name}`) doesn't match `{extension_name}`");
+                        continue;
                     }
+                    if !util::is_valid_version(from_ver) {
+                        println!("Warning: file `{file_name}` will be skipped because its from version(`{from_ver}`) is invalid.");
+                        continue;
+                    }
+                    if !util::is_valid_version(to_ver) {
+                        println!("Warning: file `{file_name}` will be skipped because its from version(`{to_ver}`) is invalid.");
+                        continue;
+                    }
+
+                    let ufile = UpgradeFile {
+                        filename: file_name.to_string(),
+                        from_version: from_ver.to_string(),
+                        to_version: to_ver.to_string(),
+                        body: fs::read_to_string(&path)
+                            .context(format!("Failed to read file {}", &file_name))?,
+                    };
+                    upgrade_files.push(ufile);
                 }
                 _ => (),
             }
