@@ -34,9 +34,38 @@ superuser = false
 
 For a complete list of keys available in a control file, refer to [Postgres documentation](https://www.postgresql.org/docs/current/extend-extensions.html#EXTEND-EXTENSIONS-FILES).
 
-!!! note
+### Syntax
 
-    A control file should only contain plain ASCII characters.
+A control file contains key-value pairs. Each pair should be on a separate line. Empty lines are ignored. Text after a `#` is a comment and is also ignored. Keys should start with a letter and contain only letters or digits. The `=` sign following a key is optional, but there must be at least one whitespace after a key if `=` is omitted. Values can be either a boolean or a string. Valid values for a boolean are `true` or `false`. Strings are anything between a pair of single quotes. If you want to include a single quote in the middle of a string, use `''` to escape it. A complete list of escape sequences is:
+
+1. `\b` - backspace
+2. `f` - formfeed
+3. `\n` - newline
+4. `\r` - carriage return
+5. `\t` - tab
+6. `''` - single quote
+
+Strings which do not contain whitespace or escape sequences can be written without the surrounding single quotes.
+
+An example control file looks like this:
+
+```
+# A boolean value
+relocatable = true
+
+# `=` is optional
+superuser false
+
+# A string
+comment = 'a comment for the extension'
+
+# A string without quotes
+comment = ACommentForTheExtension
+
+# A string with escapse sequences
+comment = 'A double quote '' and a newline \n'
+```
+
 
 ## Script Files
 
