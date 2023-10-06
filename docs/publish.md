@@ -1,4 +1,4 @@
-Before you can publish your TLE, you need to authenticate with [database.dev](https://database.dev/).
+Before you can publish your extension, you need to authenticate with [database.dev](https://database.dev/).
 
 ### Login to database.dev
 
@@ -14,12 +14,42 @@ If you don't have an account, [sign-up for one](https://database.dev/sign-up) on
 
 You are now logged into `database.dev`.
 
-### Publish TLE
+### Publish Your First Extension
 
-To publish a TLE, run the `dbdev publish` command. For example, to publish a TLE in the `/all_tles/my_tle` folder run the following:
+Let's create your first extension. Create a folder which will contain the extension:
 
 ```
-dbdev publish --path /all_tles/my_tle
+mkdir my_first_tle
+cd my_first_tle
 ```
 
-Your TLE is now published to `database.dev` and visible at `https://database.dev/<handle>/<package_name>`. Users can install it using the [dbdev in-database client](https://database.dev/installer).
+Next create a `hello_world--0.0.1.sql` file, which will contain your extension's SQL objects.  Add the following function definition to this file:
+
+```sql
+create function greet(name text default 'world')
+  returns text language sql
+as $$ select 'hello, ' || name; $$;
+```
+
+Let's also add some docs about this extension. Create a `README.md` file and add the following content to it:
+
+```
+The `hello_world` extension provides a `greet` function, which returns a greeting.
+```
+
+Lastly, add a `hello_world.control` file with the following key-value pairs:
+
+```
+default_version = 0.0.1
+comment = 'An extension to generate greetings'
+```
+
+Your extension is ready to publish. Its name is `hello_world` and version is `0.0.1`. For details about what constitutes a valid extension, read about the [Structure of an Extension](extension_structure.md).
+
+Now run the `dbdev publish` command to publish it.
+
+```
+dbdev publish --path /path/to/my_first_tle
+```
+
+Your extension is now published to `database.dev` and visible under your account profile. You can visit your account profile from the account drop-down at the top right. Users can now install your extension using the [dbdev in-database client](https://database.dev/installer).
