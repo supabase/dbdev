@@ -6,8 +6,8 @@ A Postgres [trusted lanuguage extension](https://github.com/aws/pg_tle) (TLE) co
 For an extension to be valid, one file of each type must be present in an extension. For example, if you want to create an extension named `my-extension`, create the following folder structure:
 
 - my-extension
-  - my-extension.control
-  - my-extension--0.0.1.sql
+    - my-extension.control
+    - my-extension--0.0.1.sql
 
 In the above example, the `my-extension` folder contains the extension files. Names of the files are important. The control file should be named `<extension_name>.control` and the script file should be named `<extension_name>--<extension_version>.sql`.
 
@@ -42,7 +42,7 @@ For a complete list of keys available in a control file, refer to [Postgres docu
 
 Script files contain the SQL commands to create or modify database objects. These database objects can be, but are not limited to, tables, views, functions, types, operators etc. For example, the [pgjwt's `pgjwt--0.1.1.sql` file](https://github.com/michelp/pgjwt/blob/master/pgjwt--0.1.1.sql) contains definitions for functions which the extension adds to the database. One exception to the SQL command which can exist in a script file are transaction control commands like `BEGIN`, `COMMIT`, `ROLLBACK` etc.
 
-You might have noticed a strange line at the beginning of the [`pgjwt-0.1.1.sql` file](\echo Use "CREATE EXTENSION pgjwt" to load this file. \quit) starting with `\echo`. This line prevents the script file from being run accidentally in `psql`. Lines starting with `\echo` are run only in `psql` but are ignored when the script file is executed by the [`CREATE EXTENSION` command](https://www.postgresql.org/docs/current/sql-createextension.html). It is recommended that you include such a line at the beginning of your script file.
+You might have noticed a strange line at the beginning of the [`pgjwt-0.1.1.sql` file](https://github.com/michelp/pgjwt/blob/master/pgjwt--0.1.1.sql) starting with `\echo`. This line prevents the script file from being run accidentally in `psql`. Lines starting with `\echo` are run only in `psql` but are ignored when the script file is executed by the [`CREATE EXTENSION` command](https://www.postgresql.org/docs/current/sql-createextension.html). It is recommended that you include such a line at the beginning of your script file.
 
 ### Update Scripts
 
