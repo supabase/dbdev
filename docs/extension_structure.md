@@ -8,8 +8,9 @@ For an extension to be valid, one file of each type must be present in an extens
 - my-extension
     - my-extension.control
     - my-extension--0.0.1.sql
+    - README.md
 
-In the above example, the `my-extension` folder contains the extension files. Names of the files are important. The control file should be named `<extension_name>.control` and the script file should be named `<extension_name>--<extension_version>.sql`.
+In the above example, the `my-extension` folder contains the extension files. Names of the files are important. The control file should be named `<extension_name>.control` and the script file should be named `<extension_name>--<extension_version>.sql`. The readme file should be named `README.md` (case sensitive).
 
 ## Control Files
 
@@ -76,3 +77,7 @@ You might have noticed a strange line at the beginning of the [`pgjwt-0.1.1.sql`
 ### Update Scripts
 
 Update scripts are used to update an installed extension. An update script should be named `<extension_name>--<old_version>--<new_version>.sql`. For example if version `1.0` of `my-extension` was published already and you want to publish a new version `1.1` you need to create `my-extension--1.0--1.1.sql`. Update scripts can create new database object or modify/delete existing objects created by the previous version of the extension.
+
+## README.md File
+
+README.md file contains documentation for the extension in the [markdown](https://en.wikipedia.org/wiki/Markdown) format. The documentation typically contains installation and usage instructions about the extension.
