@@ -24,6 +24,10 @@ pub async fn publish(
     let request = create_publish_package_request(&payload);
     client.publish_package(&jwt, &request).await?;
 
+    if payload.install_files.is_empty() {
+        return Err(anyhow::anyhow!("No valid script file (.sql) found."));
+    }
+
     let mut num_published = 0;
 
     for install_file in &payload.install_files {
