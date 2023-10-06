@@ -47,7 +47,7 @@ A control file contains key-value pairs. Each pair should be on a separate line.
 
 Strings which do not contain whitespace or escape sequences can be written without the surrounding single quotes.
 
-An example control file looks like this:
+Some examples of valid control file syntax follow:
 
 ```
 # A boolean value
@@ -59,7 +59,7 @@ superuser false
 # A string
 comment = 'a comment for the extension'
 
-# A string without quotes
+# A string without quotes should not have whitespace or escape sequences
 comment = ACommentForTheExtension
 
 # A string with escapse sequences
@@ -69,7 +69,7 @@ comment = 'A double quote '' and a newline \n'
 
 ## Script Files
 
-Script files contain the SQL commands to create or modify database objects. These database objects can be, but are not limited to, tables, views, functions, types, operators etc. For example, the [pgjwt's `pgjwt--0.1.1.sql` file](https://github.com/michelp/pgjwt/blob/master/pgjwt--0.1.1.sql) contains definitions for functions which the extension adds to the database. One exception to the SQL command which can exist in a script file are transaction control commands like `BEGIN`, `COMMIT`, `ROLLBACK` etc.
+Script files contain the SQL commands to create or modify database objects. These database objects can be, but are not limited to, tables, views, functions, types, operators etc. For example, the [pgjwt's `pgjwt--0.1.1.sql` file](https://github.com/michelp/pgjwt/blob/master/pgjwt--0.1.1.sql) contains definitions for functions which the extension adds to the database. One exception to the SQL commands which can exist in a script file are transaction control commands like `BEGIN`, `COMMIT`, `ROLLBACK` etc.
 
 You might have noticed a strange line at the beginning of the [`pgjwt-0.1.1.sql` file](https://github.com/michelp/pgjwt/blob/master/pgjwt--0.1.1.sql) starting with `\echo`. This line prevents the script file from being run accidentally in `psql`. Lines starting with `\echo` are run only in `psql` but are ignored when the script file is executed by the [`CREATE EXTENSION` command](https://www.postgresql.org/docs/current/sql-createextension.html). It is recommended that you include such a line at the beginning of your script file.
 
