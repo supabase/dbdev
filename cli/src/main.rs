@@ -126,6 +126,7 @@ async fn main() -> anyhow::Result<()> {
             // confirm that a registry with the given name exists
             config.get_registry(registry_name)?;
             commands::login::login(registry_name)?;
+            println!("Login successful");
             Ok(())
         }
     }
