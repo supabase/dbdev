@@ -2,17 +2,22 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://supabase.github.io/dbdev/</loc>
-         <lastmod>2023-09-25</lastmod>
+         <lastmod>2023-10-06</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://supabase.github.io/dbdev/extension_structure/</loc>
+         <lastmod>2023-10-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://supabase.github.io/dbdev/install/</loc>
-         <lastmod>2023-09-25</lastmod>
+         <lastmod>2023-10-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://supabase.github.io/dbdev/publish/</loc>
-         <lastmod>2023-09-25</lastmod>
+         <lastmod>2023-10-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
