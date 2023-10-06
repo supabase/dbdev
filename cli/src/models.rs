@@ -1,6 +1,7 @@
 use crate::util;
 
 use anyhow::Context;
+use regex::Regex;
 use std::ffi::OsStr;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -225,10 +226,16 @@ impl ControlFileRef {
 
     // Name of the extension. Used in the `create extesnion <extension_name>`
     fn extension_name(&self) -> anyhow::Result<String> {
-        self.filename
+        let name_regex = Regex::new(r"^[A-z][A-z0-9\_]{2,32}$").expect("regex is valid");
+        let name = self
+            .filename
             .strip_suffix(".control")
             .context("failed to read extension name from control file")
-            .map(str::to_string)
+            .map(str::to_string)?;
+        if !name_regex.is_match(&name) {
+            return Err(anyhow::anyhow!("extension name must begin with an alphabet, contain only alphanumeric characters or `_` and should be between 2 and 32 characters long."));
+        }
+        Ok(name)
     }
 
     // A comment (any string) about the extension. The comment is applied when initially creating
@@ -264,7 +271,9 @@ impl ControlFileRef {
                 return self.read_control_line_value(line);
             }
         }
-        Err(anyhow::anyhow!("default version is required"))
+        Err(anyhow::anyhow!(
+            "`default_version` in control file is required"
+        ))
     }
 
     fn read_control_line_value(&self, line: &str) -> anyhow::Result<String> {

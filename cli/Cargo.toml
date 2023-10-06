@@ -11,6 +11,7 @@ anyhow = "1.0.69"
 clap = { version = "4.1.6", features = ["derive"] }
 dirs = "5.0.1"
 postgrest = "1.5.0"
+regex = "1.9"
 reqwest = { version = "0.11.14", features = ["json", "native-tls-vendored"] }
 rpassword = "7.2.0"
 serde = { version = "1.0.156", features = ["derive"] }
