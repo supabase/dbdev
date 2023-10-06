@@ -171,7 +171,7 @@ impl Payload {
                         continue;
                     }
                     if !util::is_valid_version(ver) {
-                        println!("Warning: file `{file_name}` will be skipped because its version (`{ver}`) is invalid");
+                        println!("Warning: file `{file_name}` will be skipped because its version (`{ver}`) is invalid. It should be have the format `major.minor.patch`.");
                         continue;
                     }
 
@@ -190,11 +190,11 @@ impl Payload {
                         continue;
                     }
                     if !util::is_valid_version(from_ver) {
-                        println!("Warning: file `{file_name}` will be skipped because its from version(`{from_ver}`) is invalid.");
+                        println!("Warning: file `{file_name}` will be skipped because its from version(`{from_ver}`) is invalid. It should be have the format `major.minor.patch`.");
                         continue;
                     }
                     if !util::is_valid_version(to_ver) {
-                        println!("Warning: file `{file_name}` will be skipped because its from version(`{to_ver}`) is invalid.");
+                        println!("Warning: file `{file_name}` will be skipped because its from version(`{to_ver}`) is invalid. It should be have the format `major.minor.patch`.");
                         continue;
                     }
 

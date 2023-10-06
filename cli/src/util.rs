@@ -16,7 +16,23 @@ pub fn is_valid_extension_name(name: &str) -> bool {
     name_regex.is_match(name)
 }
 
-pub fn is_valid_version(_version: &str) -> bool {
+pub fn is_valid_version(version: &str) -> bool {
+    let nums: Vec<&str> = version.split('.').collect();
+    if nums.len() != 3 {
+        println!("1");
+        return false;
+    }
+
+    for num_str in nums {
+        let num: i16 = match num_str.parse() {
+            Ok(n) => n,
+            _ => return false,
+        };
+        if num < 0 {
+            return false;
+        }
+    }
+
     true
 }
 
