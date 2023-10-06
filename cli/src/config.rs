@@ -62,8 +62,8 @@ impl Default for Config {
         registries.insert(
             registry_name.to_string(),
             Registry {
-                base_url: url::Url::parse("https://database.dev")
-                    .expect("Failed to parse database.dev url"),
+                base_url: url::Url::parse("https://api.database.dev")
+                    .expect("Failed to parse api.database.dev url"),
                 api_key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhtdXB0cHBsZnZpaWZyYndtbXR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODAxMDczNzIsImV4cCI6MTk5NTY4MzM3Mn0.z2CN0mvO2No8wSi46Gw59DFGCTJrzM0AQKsu_5k134s".to_string(),
             },
         );
