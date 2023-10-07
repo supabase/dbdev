@@ -19,10 +19,14 @@ jobs:
           file: './cli/Cargo.toml'
           field: 'package.version'
       - name: Check Release Version is Same as CLI Version
-        if: ${{ github.ref }} != test${{ steps.read_cli_version.outputs.value }}
+        if: endsWith(${{ github.ref }}, ${{ steps.read_cli_version.outputs.value }})
         run: |
           echo "Tag version ${{ github.ref }} is not equal to Cargo.toml version ${{ steps.read_cli_version.outputs.value }}";
           echo "Did you forget to update version in Cargo.toml?"
+          exit 1
+      - name: Always fail during testing to avoid creating a release
+        run: |
+          echo "Failing to avoid creating a release"
           exit 1
       - name: Create Release
         id: create_release
