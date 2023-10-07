@@ -3,7 +3,7 @@ name: Release CLI
 on:
   push:
     tags:
-      - "v*"
+      - "test*"
 
 jobs:
   create-release:
@@ -19,7 +19,7 @@ jobs:
           file: './cli/Cargo.toml'
           field: 'package.version'
       - name: Check Release Version is Same as CLI Version
-        if: ${{ github.ref }} != v${{ steps.read_cli_version.outputs.value }}
+        if: ${{ github.ref }} != test${{ steps.read_cli_version.outputs.value }}
         run: |
           echo "Tag version ${{ github.ref }} is not equal to Cargo.toml version {{ steps.read_cli_version.outputs.value }}"; exit 1
       - name: Create Release
