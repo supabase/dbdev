@@ -1,4 +1,4 @@
-A Postgres [trusted lanuguage extension](https://github.com/aws/pg_tle) (TLE) consists of the following files:
+A Postgres [trusted language extension](https://github.com/aws/pg_tle) (TLE) consists of the following files:
 
 1. Script files. These files contain the SQL commands to create the extension's objects.
 2. Control files. These files contain basic properties of the extension itself.
