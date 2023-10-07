@@ -3,7 +3,7 @@ name: Release CLI
 on:
   push:
     tags:
-      - "test*"
+      - "v*"
 
 jobs:
   create-release:
@@ -21,12 +21,8 @@ jobs:
       - name: Check Release Version is Same as CLI Version
         if: ${{ !endsWith(github.ref, steps.read_cli_version.outputs.value) }}
         run: |
-          echo "Tag version ${{ github.ref }} is not equal to Cargo.toml version ${{ steps.read_cli_version.outputs.value }}";
+          echo "Tag version ${{ github.ref }} doesn't match Cargo.toml version ${{ steps.read_cli_version.outputs.value }}";
           echo "Did you forget to update version in Cargo.toml?"
-          exit 1
-      - name: Always fail during testing to avoid creating a release
-        run: |
-          echo "Failing to avoid creating a release"
           exit 1
       - name: Create Release
         id: create_release
