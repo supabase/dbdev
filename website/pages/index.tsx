@@ -93,6 +93,14 @@ const IndexPage: NextPageWithLayout = () => {
               <Link href="/installer" className="border-b">
                 here
               </Link>
+              . Publish your own trusted language extension by following{' '}
+              <Link
+                href="https://supabase.github.io/dbdev/"
+                className="border-b"
+              >
+                the publishing guide
+              </Link>
+              .
             </p>
           </div>
         </div>
