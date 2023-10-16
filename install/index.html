@@ -297,6 +297,19 @@
     Native Package
   </a>
   
+    <nav class="md-nav" aria-label="Native Package">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#linux-packages" class="md-nav__link">
+    Linux packages
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -401,6 +414,19 @@
     Native Package
   </a>
   
+    <nav class="md-nav" aria-label="Native Package">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#linux-packages" class="md-nav__link">
+    Linux packages
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -457,10 +483,18 @@
 <p>Install the CLI with <a href="https://brew.sh/">Homebrew</a>:
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>brew install supabase/tap/dbdev
 </code></pre></div></td></tr></table></div></p>
-<p>Not yet available as a Linux package. Read the next sections to download a binary or build from source.</p>
+<h4 id="linux-packages">Linux packages</h4>
+<p>Debian Linux packages are provided in <a href="https://github.com/supabase/dbdev/releases">Releases</a>.
+To install, download the <code>.deb</code> file and run the following:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>sudo dpkg -i &lt;...&gt;.deb
+</code></pre></div></td></tr></table></div>
 </div>
 <div class="tabbed-block">
-<p>Not yet available as a <a href="https://scoop.sh/">Scoop</a> package. Read the next sections to download a binary or build from source.</p>
+<p>Install the CLI with <a href="https://scoop.sh/">Scoop</a>.
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code>scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
+scoop install dbdev
+</code></pre></div></td></tr></table></div></p>
 </div>
 </div>
 </div>
