@@ -93,8 +93,6 @@ jobs:
           sudo chmod -R 00755 ${package_dir}
           sudo dpkg-deb --build ${package_dir}
 
-          ls -al
-
       - name: Upload gzip Package
         uses: actions/upload-release-asset@v1
         env:
@@ -113,7 +111,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ env.UPLOAD_URL }}
-          asset_path: ./dbdev-${{ github.ref_name }}-linux-${{ matrix.box.arch }}.deb
+          asset_path: ./cli/dbdev-${{ github.ref_name }}-linux-${{ matrix.box.arch }}.deb
           asset_name: dbdev-${{ github.ref_name }}-linux-${{ matrix.box.arch }}.deb
           asset_content_type: application/vnd.debian.binary-package
 
