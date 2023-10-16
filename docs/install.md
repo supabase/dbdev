@@ -20,11 +20,22 @@ Installation is available through a native package, binary download or building 
     brew install supabase/tap/dbdev
     ```
 
-    Not yet available as a Linux package. Read the next sections to download a binary or build from source.
+    #### Linux packages
+
+    Debian Linux packages are provided in [Releases](https://github.com/supabase/dbdev/releases).
+    To install, download the `.deb` file and run the following:
+
+    ```
+    sudo dpkg -i <...>.deb
+    ```
 
 === "Windows"
 
-    Not yet available as a [Scoop](https://scoop.sh/) package. Read the next sections to download a binary or build from source.
+    Install the CLI with [Scoop](https://scoop.sh/).
+    ```
+    scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
+    scoop install dbdev
+    ```
 
 ### Binary Download
 
