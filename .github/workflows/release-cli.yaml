@@ -46,8 +46,8 @@ jobs:
     strategy:
       matrix:
         box:
-          - { runner: ubuntu-20.04, os-and-arch: linux-amd64 }
-          - { runner: arm-runner, os-and-arch: linux-arm64 }
+          - { runner: ubuntu-20.04, arch: amd64 }
+          - { runner: arm-runner, arch: arm64 }
     runs-on: ${{ matrix.box.runner }}
     timeout-minutes: 45
     steps:
@@ -67,9 +67,33 @@ jobs:
         run: |
           cd cli
           cargo build --release
-          cd ./target/release && tar -czvf dbdev.tar.gz ./dbdev
 
-      - name: Upload Release Asset
+          # Build gzip package
+          cd ./target/release && tar -czvf dbdev.tar.gz ./dbdev
+          cd ../..
+
+          # Build debian package
+          package_dir=dbdev-${{ github.ref_name }}-linux-${{ matrix.box.arch }}
+          mkdir -p ${package_dir}/usr/local/bin
+          cp ./target/release/dbdev ${package_dir}/usr/local/bin/dbdev
+
+          extension_version=${{ github.ref_name }}
+          # strip the leading v
+          deb_version=${extension_version:1}
+
+          mkdir -p ${package_dir}/DEBIAN
+          touch ${package_dir}/DEBIAN/control
+          echo 'Package: dbdev' >> ${package_dir}/DEBIAN/control
+          echo 'Version:' ${deb_version} >> ${package_dir}/DEBIAN/control
+          echo 'Architecture: ${{ matrix.box.arch }}' >> ${package_dir}/DEBIAN/control
+          echo 'Maintainer: supabase' >> ${package_dir}/DEBIAN/control
+          echo 'Description: CLI for publishing to database.dev' >> ${package_dir}/DEBIAN/control
+
+          # Create deb package
+          sudo chmod -R 00755 ${package_dir}
+          sudo dpkg-deb --build ${package_dir}
+
+      - name: Upload gzip Package
         uses: actions/upload-release-asset@v1
         env:
           UPLOAD_URL: ${{ needs.create-release.outputs.upload_url }}
@@ -77,8 +101,19 @@ jobs:
         with:
           upload_url: ${{ env.UPLOAD_URL }}
           asset_path: ./cli/target/release/dbdev.tar.gz
-          asset_name: dbdev-${{ github.ref_name }}-${{ matrix.box.os-and-arch }}.tar.gz
+          asset_name: dbdev-${{ github.ref_name }}-linux-${{ matrix.box.arch }}.tar.gz
           asset_content_type: application/gzip
+
+      - name: Upload Debian Package
+        uses: actions/upload-release-asset@v1
+        env:
+          UPLOAD_URL: ${{ needs.create-release.outputs.upload_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ env.UPLOAD_URL }}
+          asset_path: ./cli/dbdev-${{ github.ref_name }}-linux-${{ matrix.box.arch }}.deb
+          asset_name: dbdev-${{ github.ref_name }}-linux-${{ matrix.box.arch }}.deb
+          asset_content_type: application/vnd.debian.binary-package
 
   build-macos:
     name: Release Artifacts on macOS
@@ -94,7 +129,7 @@ jobs:
           toolchain: stable
 
       - uses: actions/checkout@v3
-      - name: Build and Package on Unix
+      - name: Build and Package
         run: |
           cd cli
           cargo build --release
@@ -125,7 +160,7 @@ jobs:
           toolchain: stable
 
       - uses: actions/checkout@v3
-      - name: Build and Package on Windows
+      - name: Build and Package
         run: |
           cd cli
           cargo build --release
