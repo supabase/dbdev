@@ -93,6 +93,8 @@ jobs:
           sudo chmod -R 00755 ${package_dir}
           sudo dpkg-deb --build ${package_dir}
 
+          ls -al
+
       - name: Upload gzip Package
         uses: actions/upload-release-asset@v1
         env:
