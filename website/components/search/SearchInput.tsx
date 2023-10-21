@@ -1,4 +1,3 @@
-import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { forwardRef } from 'react'
 import { Input } from '@/components/ui/input'
 
