@@ -34,6 +34,7 @@ const IndexPage: NextPageWithLayout = ({}) => {
               href="https://github.com/aws/pg_tle"
               className="transition border-b-2 border-gray-300 hover:border-gray-500 dark:border-slate-700 dark:hover:border-slate-500"
               target="_blank"
+              rel="noopener noreferrer"
             >
               Trusted Language Extensions
             </a>
