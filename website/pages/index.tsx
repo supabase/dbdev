@@ -73,7 +73,7 @@ select dbdev.install('olirice-index_advisor');
           <h2 className="text-2xl font-bold tracking-tight">
             Popular packages
           </h2>
-          <p className="text-muted-foreground">Trending on dbdev this week</p>
+          <p className="text-muted-foreground">Trending on database.dev</p>
 
           <div className="grid sm:grid-cols-8 md:grid-cols-12 gap-4">
             {data?.map((pkg: any) => <PackageCard key={pkg.id} pkg={pkg} />)}
