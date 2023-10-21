@@ -6,13 +6,7 @@ export interface FooterProps {
 
 const Footer = ({ gradientBg = false }: FooterProps) => {
   return (
-    <footer
-      className={cn(
-        'flex items-center w-full h-12 px-4 py-4 border-t border-gray-100 bg-white ',
-        'dark:border-slate-700 dark:text-slate-400 dark:bg-slate-800',
-        gradientBg ? 'dark:!bg-slate-900' : '!bg-white'
-      )}
-    >
+    <footer className={cn('flex items-center w-full h-12 px-4 py-4 border-t')}>
       <a
         className="flex items-center justify-center gap-2"
         href="https://supabase.com"
