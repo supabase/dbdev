@@ -82,7 +82,7 @@ jobs:
         echo '      end' >> dbdev.rb
         echo '    end' >> dbdev.rb
         echo '    if Hardware::CPU.intel?' >> dbdev.rb
-        echo "      url "https://github.com/supabase/dbdev/releases/download/v${version}/dbdev-v${version}-linux-amd64.tar.gz"" >> dbdev.rb
+        echo "      url \"https://github.com/supabase/dbdev/releases/download/v${version}/dbdev-v${version}-linux-amd64.tar.gz\"" >> dbdev.rb
         echo "      sha256 \"${linux_amd64_hash}\"" >> dbdev.rb
         echo '' >> dbdev.rb
         echo '      def install' >> dbdev.rb
