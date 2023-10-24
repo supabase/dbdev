@@ -9,6 +9,6 @@ jobs:
   call-release-workflow:
     uses: ./.github/workflows/release-homebrew-tap.yaml
     with:
-      tag: v0.1.1
+      tag: v0.1.2
     secrets:
       homebrew_tap_rw: ${{ secrets.HOMEBREW_TAP_RW }}
