@@ -1,0 +1,33 @@
+name: Release Homebrew Tap
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download Linux AMD64 package
+      uses: robinraju/release-downloader@v1.8
+      with:
+        repository: "supabase/dbdev"
+        tag: ${{ inputs.tag }}
+        fileName: "dbdev-${{ inputs.tag }}-linux-amd64.tar.gz"
+
+    - name: Download Linux ARM64 package
+      uses: robinraju/release-downloader@v1.8
+      with:
+        repository: "supabase/dbdev"
+        tag: ${{ inputs.tag }}
+        fileName: "dbdev-${{ inputs.tag }}-linux-arm64.tar.gz"
+
+    - name: Download macOS AMD64 package
+      uses: robinraju/release-downloader@v1.8
+      with:
+        repository: "supabase/dbdev"
+        tag: ${{ inputs.tag }}
+        fileName: "dbdev-${{ inputs.tag }}-macos-amd64.tar.gz"

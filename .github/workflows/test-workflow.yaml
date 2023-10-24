@@ -1,0 +1,12 @@
+name: Call a reusable workflow
+
+on:
+  push:
+    branches:
+      - chore/release-workflow
+
+jobs:
+  call-release-workflow:
+    uses: ./.github/workflows/release-homebrew-tap.yaml
+    with:
+      tag: v0.1.2
