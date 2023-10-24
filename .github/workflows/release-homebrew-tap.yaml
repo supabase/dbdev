@@ -16,7 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       with:
-        repository: imor/homebrew-tap #TODO: replace with supabase/homebrew-tap after testing
+        repository: supabase/homebrew-tap
         ref: 'main'
         token:  ${{ secrets.homebrew_tap_rw }}
     - name: Download Linux AMD64 package

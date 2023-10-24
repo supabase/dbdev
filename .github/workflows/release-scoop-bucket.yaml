@@ -16,7 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       with:
-        repository: imor/scoop-bucket #TODO: replace with supabase/scoop-bucket after testing
+        repository: supabase/scoop-bucket
         ref: 'main'
         token:  ${{ secrets.scoop_bucket_rw }}
 
