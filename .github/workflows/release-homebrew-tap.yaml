@@ -38,6 +38,58 @@ jobs:
         linux_arm64_hash=`shasum -a 256 dbdev-${{ inputs.tag }}-linux-arm64.tar.gz | cut -d" " -f1`
         macos_amd64_hash=`shasum -a 256 dbdev-${{ inputs.tag }}-macos-amd64.tar.gz | cut -d" " -f1`
 
-        echo $linux_amd64_hash
-        echo $linux_arm64_hash
-        echo $macos_amd64_hash
+        tag=${{ inputs.tag }}
+        # strip the leading v
+        version=${tag:1}
+
+        touch dbdev.rb
+
+        echo '# typed: false' > dbdev.rb
+        echo '# frozen_string_literal: true' >> dbdev.rb
+        echo '' >> dbdev.rb
+        echo 'class Dbdev < Formula' >> dbdev.rb
+        echo '  desc "Dbdev CLI"' >> dbdev.rb
+        echo '  homepage "https://database.dev/"' >> dbdev.rb
+        echo "  version \"${version}\"" >> dbdev.rb
+        echo '  license "MIT"' >> dbdev.rb
+        echo '' >> dbdev.rb
+        echo '  on_macos do' >> dbdev.rb
+        echo '    if Hardware::CPU.arm?' >> dbdev.rb
+        echo "      url \"https://github.com/supabase/dbdev/releases/download/v${version}/dbdev-v${version}-macos-amd64.tar.gz\"" >> dbdev.rb
+        echo "      sha256 \"${macos_amd64_hash}\"" >> dbdev.rb
+        echo '' >> dbdev.rb
+        echo '      def install' >> dbdev.rb
+        echo '        bin.install "dbdev"' >> dbdev.rb
+        echo '      end' >> dbdev.rb
+        echo '    end' >> dbdev.rb
+        echo '    if Hardware::CPU.intel?' >> dbdev.rb
+        echo "      url \"https://github.com/supabase/dbdev/releases/download/v${version}/dbdev-v${version}-macos-amd64.tar.gz\"" >> dbdev.rb
+        echo "      sha256 \"${macos_amd64_hash}\"" >> dbdev.rb
+        echo '' >> dbdev.rb
+        echo '      def install' >> dbdev.rb
+        echo '        bin.install "dbdev"' >> dbdev.rb
+        echo '      end' >> dbdev.rb
+        echo '    end' >> dbdev.rb
+        echo '  end' >> dbdev.rb
+        echo '' >> dbdev.rb
+        echo '  on_linux do' >> dbdev.rb
+        echo '    if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?' >> dbdev.rb
+        echo "      url \"https://github.com/supabase/dbdev/releases/download/v${version}/dbdev-v${version}-linux-arm64.tar.gz\"" >> dbdev.rb
+        echo "      sha256 \"${linux_arm64_hash}\"" >> dbdev.rb
+        echo '' >> dbdev.rb
+        echo '      def install' >> dbdev.rb
+        echo '        bin.install "dbdev"' >> dbdev.rb
+        echo '      end' >> dbdev.rb
+        echo '    end' >> dbdev.rb
+        echo '    if Hardware::CPU.intel?' >> dbdev.rb
+        echo "      url "https://github.com/supabase/dbdev/releases/download/v${version}/dbdev-v${version}-linux-amd64.tar.gz"" >> dbdev.rb
+        echo "      sha256 \"${linux_amd64_hash}\"" >> dbdev.rb
+        echo '' >> dbdev.rb
+        echo '      def install' >> dbdev.rb
+        echo '        bin.install "dbdev"' >> dbdev.rb
+        echo '      end' >> dbdev.rb
+        echo '    end' >> dbdev.rb
+        echo '  end' >> dbdev.rb
+        echo 'end' >> dbdev.rb
+
+        cat dbdev.rb
