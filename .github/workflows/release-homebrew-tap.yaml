@@ -6,6 +6,9 @@ on:
       tag:
         required: true
         type: string
+    secrets:
+      homebrew_tap_rw:
+        required: true
 
 jobs:
   release:
@@ -36,7 +39,7 @@ jobs:
       with:
         repository: imor/homebrew-tap #TODO: replace with supabase/homebrew-tap after testing
         ref: 'main'
-        token:  ${{ secrets.HOMEBREW_TAP_RW }}
+        token:  ${{ secrets.homebrew_tap_rw }}
 
     - name: Generate Manifest File
       run: |
