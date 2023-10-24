@@ -34,6 +34,10 @@ jobs:
 
     - name: Generate Manifest File
       run: |
-        shasum -a 256 dbdev-${{ inputs.tag }}-linux-amd64.tar.gz | cut -d" " -f1
-        shasum -a 256 dbdev-${{ inputs.tag }}-linux-arm64.tar.gz | cut -d" " -f1
-        shasum -a 256 dbdev-${{ inputs.tag }}-macos-amd64.tar.gz | cut -d" " -f1
+        linux_amd64_hash=`shasum -a 256 dbdev-${{ inputs.tag }}-linux-amd64.tar.gz | cut -d" " -f1`
+        linux_arm64_hash=`shasum -a 256 dbdev-${{ inputs.tag }}-linux-arm64.tar.gz | cut -d" " -f1`
+        macos_amd64_hash=`shasum -a 256 dbdev-${{ inputs.tag }}-macos-amd64.tar.gz | cut -d" " -f1`
+
+        echo $linux_amd64_hash
+        echo $linux_arm64_hash
+        echo $macos_amd64_hash
