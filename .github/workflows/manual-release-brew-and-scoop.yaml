@@ -1,0 +1,23 @@
+name: Release CLI on Homebrew and Scoop
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release (e.g. v1.2.3)"
+        required: true
+
+jobs:
+  call-release-homebrew-tap:
+    uses: ./.github/workflows/release-homebrew-tap.yaml
+    with:
+      tag: ${{ github.event.inputs.tag }}
+    secrets:
+      homebrew_tap_rw: ${{ secrets.HOMEBREW_TAP_RW }}
+
+  call-release-scoop-bucket:
+    uses: ./.github/workflows/release-scoop-bucket.yaml
+    with:
+      tag: ${{ github.event.inputs.tag }}
+    secrets:
+      scoop_bucket_rw: ${{ secrets.SCOOP_BUCKET_RW }}
