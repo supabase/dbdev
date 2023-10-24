@@ -51,6 +51,7 @@ jobs:
         echo '    "license": "Apache",' >> dbdev.json
         echo '    "description": "CLI to help publish extensions to database.dev"' >> dbdev.json
         echo '}' >> dbdev.json
+        echo ''
 
         git diff
 
