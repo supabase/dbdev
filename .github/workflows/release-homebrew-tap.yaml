@@ -50,6 +50,7 @@ jobs:
         # strip the leading v
         version=${tag:1}
 
+        # update dbdev.rb file
         echo '# typed: false' > dbdev.rb
         echo '# frozen_string_literal: true' >> dbdev.rb
         echo '' >> dbdev.rb

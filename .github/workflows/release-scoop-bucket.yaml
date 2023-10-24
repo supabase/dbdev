@@ -1,0 +1,61 @@
+name: Release Scoop Bucket
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
+    secrets:
+      scoop_bucket_rw:
+        required: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        repository: imor/scoop-bucket #TODO: replace with supabase/scoop-bucket after testing
+        ref: 'main'
+        token:  ${{ secrets.scoop_bucket_rw }}
+
+    - name: Download Windows AMD64 package
+      uses: robinraju/release-downloader@v1.8
+      with:
+        repository: "supabase/dbdev"
+        tag: ${{ inputs.tag }}
+        fileName: "dbdev-${{ inputs.tag }}-windows-amd64.zip"
+
+    - name: Generate and Push Manifest File
+      run: |
+        windows_amd64_hash=`shasum -a 256 dbdev-${{ inputs.tag }}-windows-amd64.zip | cut -d" " -f1`
+
+        tag=${{ inputs.tag }}
+        # strip the leading v
+        version=${tag:1}
+
+        # update dbdev.json file
+        echo '{' > dbdev.json
+        echo "    \"version\": \"${version}\"," >> dbdev.json
+        echo '    "architecture": {' >> dbdev.json
+        echo '        "64bit": {' >> dbdev.json
+        echo "            \"url\": \"https://github.com/supabase/dbdev/releases/download/v${version}/dbdev-v${version}-windows-amd64.zip\"," >> dbdev.json
+        echo '            "bin": [' >> dbdev.json
+        echo '                "dbdev.exe"' >> dbdev.json
+        echo '            ],' >> dbdev.json
+        echo "            \"hash\": \"${windows_amd64_hash}\"" >> dbdev.json
+        echo '        }' >> dbdev.json
+        echo '    },' >> dbdev.json
+        echo '    "homepage": "https://database.dev",' >> dbdev.json
+        echo '    "license": "Apache",' >> dbdev.json
+        echo '    "description": "CLI to help publish extensions to database.dev"' >> dbdev.json
+        echo '}' >> dbdev.json
+
+        git diff
+
+        git config user.name "dbdev release-scoop-bucket.yaml workflow"
+        git config user.email raminder@supabase.io
+        git add ./dbdev.json
+        git commit -m "dbdev scoop update for version v${version}"
+        git push

@@ -6,9 +6,16 @@ on:
       - chore/release-workflow
 
 jobs:
-  call-release-workflow:
+  call-release-homebrew-tap:
     uses: ./.github/workflows/release-homebrew-tap.yaml
     with:
-      tag: v0.1.2
+      tag: v0.1.1
     secrets:
       homebrew_tap_rw: ${{ secrets.HOMEBREW_TAP_RW }}
+
+  call-release-scoop-bucket:
+    uses: ./.github/workflows/release-scoop-bucket.yaml
+    with:
+      tag: v0.1.1
+    secrets:
+      scoop_bucket_rw: ${{ secrets.SCOOP_BUCKET_RW }}
