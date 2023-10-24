@@ -32,8 +32,16 @@ jobs:
         tag: ${{ inputs.tag }}
         fileName: "dbdev-${{ inputs.tag }}-macos-amd64.tar.gz"
 
+    - uses: actions/checkout@v3
+      with:
+        repository: imor/homebrew-tap #TODO: replace with supabase/homebrew-tap after testing
+        ref: 'main'
+        token:  ${{ secrets.HOMEBREW_TAP_RW }}
+
     - name: Generate Manifest File
       run: |
+        ls -al
+
         linux_amd64_hash=`shasum -a 256 dbdev-${{ inputs.tag }}-linux-amd64.tar.gz | cut -d" " -f1`
         linux_arm64_hash=`shasum -a 256 dbdev-${{ inputs.tag }}-linux-arm64.tar.gz | cut -d" " -f1`
         macos_amd64_hash=`shasum -a 256 dbdev-${{ inputs.tag }}-macos-amd64.tar.gz | cut -d" " -f1`
