@@ -6,9 +6,6 @@ on:
       tag:
         description: "Tag to release (e.g. v1.2.3)"
         required: true
-  push:
-    branches:
-      - chore/release-workflow
 
 jobs:
   call-release-homebrew-tap:
