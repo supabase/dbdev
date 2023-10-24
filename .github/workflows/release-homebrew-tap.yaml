@@ -14,6 +14,11 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v3
+      with:
+        repository: imor/homebrew-tap #TODO: replace with supabase/homebrew-tap after testing
+        ref: 'main'
+        token:  ${{ secrets.homebrew_tap_rw }}
     - name: Download Linux AMD64 package
       uses: robinraju/release-downloader@v1.8
       with:
@@ -34,12 +39,6 @@ jobs:
         repository: "supabase/dbdev"
         tag: ${{ inputs.tag }}
         fileName: "dbdev-${{ inputs.tag }}-macos-amd64.tar.gz"
-
-    - uses: actions/checkout@v3
-      with:
-        repository: imor/homebrew-tap #TODO: replace with supabase/homebrew-tap after testing
-        ref: 'main'
-        token:  ${{ secrets.homebrew_tap_rw }}
 
     - name: Generate Manifest File
       run: |
@@ -103,6 +102,6 @@ jobs:
 
         git config user.name "dbdev release-homebrew-tap.yaml workflow"
         git config user.email raminder@supabase.io
-        git add .
+        git add ./dbdev.rb
         git commit -m "dbdev brew formula update for version v${version}"
         git push
