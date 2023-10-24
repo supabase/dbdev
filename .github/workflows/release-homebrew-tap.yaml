@@ -43,8 +43,6 @@ jobs:
 
     - name: Generate Manifest File
       run: |
-        ls -al
-
         linux_amd64_hash=`shasum -a 256 dbdev-${{ inputs.tag }}-linux-amd64.tar.gz | cut -d" " -f1`
         linux_arm64_hash=`shasum -a 256 dbdev-${{ inputs.tag }}-linux-arm64.tar.gz | cut -d" " -f1`
         macos_amd64_hash=`shasum -a 256 dbdev-${{ inputs.tag }}-macos-amd64.tar.gz | cut -d" " -f1`
@@ -52,8 +50,6 @@ jobs:
         tag=${{ inputs.tag }}
         # strip the leading v
         version=${tag:1}
-
-        touch dbdev.rb
 
         echo '# typed: false' > dbdev.rb
         echo '# frozen_string_literal: true' >> dbdev.rb
@@ -103,4 +99,10 @@ jobs:
         echo '  end' >> dbdev.rb
         echo 'end' >> dbdev.rb
 
-        cat dbdev.rb
+        git diff
+
+        git config user.name "dbdev release-homebrew-tap.yaml workflow"
+        git config user.email raminder@supabase.io
+        git add .
+        git commit -m "dbdev brew formula update for version v${version}"
+        git push
