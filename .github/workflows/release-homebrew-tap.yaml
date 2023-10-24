@@ -31,3 +31,9 @@ jobs:
         repository: "supabase/dbdev"
         tag: ${{ inputs.tag }}
         fileName: "dbdev-${{ inputs.tag }}-macos-amd64.tar.gz"
+
+    - name: Generate Manifest File
+      run: |
+        shasum -a 256 dbdev-${{ inputs.tag }}-linux-amd64.tar.gz | cut -d" " -f1
+        shasum -a 256 dbdev-${{ inputs.tag }}-linux-arm64.tar.gz | cut -d" " -f1
+        shasum -a 256 dbdev-${{ inputs.tag }}-macos-amd64.tar.gz | cut -d" " -f1
