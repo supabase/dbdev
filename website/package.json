@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.0.16",
-    "@next/font": "13.1.6",
     "@radix-ui/react-avatar": "^1.0.1",
     "@radix-ui/react-dialog": "^1.0.2",
     "@radix-ui/react-dropdown-menu": "^2.0.2",
@@ -30,7 +29,7 @@
     "eslint": "8.34.0",
     "eslint-config-next": "13.1.6",
     "final-form": "^4.20.9",
-    "next": "13.1.6",
+    "next": "13.5.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-final-form": "^6.5.9",
