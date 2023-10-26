@@ -90,7 +90,10 @@ const IndexPage: NextPageWithLayout = () => {
             <p className="dark:text-white">
               Install the dbdev client in your PostgreSQL database by following
               the guide{' '}
-              <Link href="https://supabase.github.io/dbdev/install-in-db-client/" className="border-b">
+              <Link
+                href="https://supabase.github.io/dbdev/install-in-db-client/"
+                className="border-b"
+              >
                 here
               </Link>
               . Publish your own trusted language extension by following{' '}
