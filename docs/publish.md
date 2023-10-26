@@ -49,7 +49,7 @@ Your extension is ready to publish. Its name is `hello_world` and version is `0.
 Now run the `dbdev publish` command to publish it.
 
 ```
-dbdev publish --path /path/to/my_first_tle
+dbdev publish
 ```
 
 Your extension is now published to `database.dev` and visible under your account profile. You can visit your account profile from the account drop-down at the top right. Users can now install your extension using the [dbdev in-database client](https://database.dev/installer).

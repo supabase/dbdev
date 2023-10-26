@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 use config::Config;
 
-use std::path::PathBuf;
+use std::{env, path::PathBuf};
 
 mod client;
 mod commands;
@@ -30,13 +30,8 @@ enum Commands {
         #[arg(short, long)]
         connection: String,
 
-        #[arg(short, long)]
-        /// Package name on database.new in form handle/package
-        package: Option<String>,
-
-        /// From local directory
-        #[arg(long)]
-        path: Option<PathBuf>,
+        #[clap(flatten)]
+        install_args: InstallArgs,
     },
 
     /// Uninstall a package from a database
@@ -52,9 +47,9 @@ enum Commands {
 
     /// Publish a package
     Publish {
-        /// From local directory
+        /// Path of the local directory containing the package
         #[arg(long)]
-        path: PathBuf,
+        path: Option<PathBuf>,
 
         /// Name of the registry to publish to
         #[arg(long)]
@@ -67,6 +62,18 @@ enum Commands {
         #[arg(long)]
         registry_name: Option<String>,
     },
+}
+
+#[derive(Debug, clap::Args)]
+#[group(required = false, multiple = false)]
+pub struct InstallArgs {
+    #[arg(short, long)]
+    /// Package name on database.dev in handle/package form
+    package: Option<String>,
+
+    /// Path of the local directory containing the package
+    #[arg(long)]
+    path: Option<PathBuf>,
 }
 
 #[tokio::main]
@@ -86,7 +93,9 @@ async fn main() -> anyhow::Result<()> {
                 .unwrap_or(&config.default_registry.name);
             let registry = config.get_registry(registry_name)?;
             let client = client::APIClient::from_registry(registry)?;
-            commands::publish::publish(&client, path, registry_name).await?;
+            let current_dir = env::current_dir()?;
+            let extension_dir = path.as_ref().unwrap_or(&current_dir);
+            commands::publish::publish(&client, extension_dir, registry_name).await?;
             Ok(())
         }
 
@@ -101,21 +110,22 @@ async fn main() -> anyhow::Result<()> {
 
         Commands::Install {
             connection,
-            package,
-            path,
+            install_args: InstallArgs { package, path },
         } => {
-            if let Some(rel_or_abs_path) = path {
-                let payload = models::Payload::from_path(rel_or_abs_path)?;
-                let conn = util::get_connection(connection).await?;
-                commands::install::install(&payload, conn).await?;
-                Ok(())
-            } else if let Some(package) = package {
-                Err(anyhow::anyhow!(
+            if let Some(package) = package {
+                return Err(anyhow::anyhow!(
                     "Remote package {package} installing not yet supported"
-                ))
-            } else {
-                Err(anyhow::anyhow!("Not implemented"))
+                ));
             }
+
+            let current_dir = env::current_dir()?;
+            let extension_dir = path.as_ref().unwrap_or(&current_dir);
+            let payload = models::Payload::from_path(extension_dir)?;
+            let conn = util::get_connection(connection).await?;
+
+            commands::install::install(&payload, conn).await?;
+
+            Ok(())
         }
 
         Commands::Login { registry_name } => {
