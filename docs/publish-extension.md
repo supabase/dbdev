@@ -23,7 +23,7 @@ mkdir my_first_tle
 cd my_first_tle
 ```
 
-Next create a `hello_world--0.0.1.sql` file, which will contain your extension's SQL objects.  Add the following function definition to this file:
+Next create a `hello_world--0.0.1.sql` file, which will contain your extension's SQL objects. Add the following function definition to this file:
 
 ```sql
 create function greet(name text default 'world')
@@ -52,4 +52,4 @@ Now run the `dbdev publish` command to publish it.
 dbdev publish
 ```
 
-Your extension is now published to `database.dev` and visible under your account profile. You can visit your account profile from the account drop-down at the top right. Users can now install your extension using the [dbdev in-database client](https://database.dev/installer).
+Your extension is now published to `database.dev` and visible under your account profile. You can visit your account profile from the account drop-down at the top right. Users can now install your extension using the [dbdev in-database client](install-in-db-client.md).
