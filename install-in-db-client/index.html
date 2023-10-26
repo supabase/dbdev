@@ -10,11 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://supabase.github.io/dbdev/extension_structure/">
+        <link rel="canonical" href="https://supabase.github.io/dbdev/install-in-db-client/">
       
       
-        <link rel="prev" href="../install-in-db-client/">
+        <link rel="prev" href="../publish-extension/">
       
+      
+        <link rel="next" href="../extension_structure/">
       
       
       <link rel="icon" href="../assets/favicon.ico">
@@ -22,7 +24,7 @@
     
     
       
-        <title>Structure of a Postgres Extension - dbdev</title>
+        <title>Install a Package - dbdev</title>
       
     
     
@@ -73,7 +75,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#control-files" class="md-skip">
+        <a href="#installation" class="md-skip">
           Skip to content
         </a>
       
@@ -108,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Structure of a Postgres Extension
+              Install a Package
             
           </span>
         </div>
@@ -277,25 +279,6 @@
       
   
   
-  
-    <li class="md-nav__item">
-      <a href="../install-in-db-client/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Install a Package
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
     
   
   
@@ -309,7 +292,7 @@
           
   
   <span class="md-ellipsis">
-    Structure of a Postgres Extension
+    Install a Package
   </span>
   
 
@@ -320,7 +303,7 @@
         
   
   <span class="md-ellipsis">
-    Structure of a Postgres Extension
+    Install a Package
   </span>
   
 
@@ -340,48 +323,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#control-files" class="md-nav__link">
-    Control Files
+  <a href="#installation" class="md-nav__link">
+    Installation
   </a>
-  
-    <nav class="md-nav" aria-label="Control Files">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#syntax" class="md-nav__link">
-    Syntax
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#script-files" class="md-nav__link">
-    Script Files
-  </a>
-  
-    <nav class="md-nav" aria-label="Script Files">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#update-scripts" class="md-nav__link">
-    Update Scripts
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#readmemd-file" class="md-nav__link">
-    README.md File
+  <a href="#use" class="md-nav__link">
+    Use
   </a>
   
 </li>
@@ -390,6 +340,25 @@
   
 </nav>
       
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extension_structure/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Structure of a Postgres Extension
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -419,48 +388,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#control-files" class="md-nav__link">
-    Control Files
+  <a href="#installation" class="md-nav__link">
+    Installation
   </a>
-  
-    <nav class="md-nav" aria-label="Control Files">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#syntax" class="md-nav__link">
-    Syntax
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#script-files" class="md-nav__link">
-    Script Files
-  </a>
-  
-    <nav class="md-nav" aria-label="Script Files">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#update-scripts" class="md-nav__link">
-    Update Scripts
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#readmemd-file" class="md-nav__link">
-    README.md File
+  <a href="#use" class="md-nav__link">
+    Use
   </a>
   
 </li>
@@ -483,58 +419,20 @@
   
 
 
-  <h1>Structure of a Postgres Extension</h1>
+  <h1>Install a Package</h1>
 
-<p>A Postgres <a href="https://github.com/aws/pg_tle">trusted language extension</a> (TLE) consists of the following files:</p>
-<ol>
-<li>Script files. These files contain the SQL commands to create the extension's objects.</li>
-<li>Control files. These files contain basic properties of the extension itself.</li>
-</ol>
-<p>For an extension to be valid, one file of each type must be present in an extension. For example, if you want to create an extension named <code>my-extension</code>, create the following folder structure:</p>
+<p>You can install extensions available on the database.dev registry using the dbdev in-database client. The dbdev client is itself an extension which you can install by following the instructions below.</p>
+<h2 id="installation">Installation</h2>
+<p>Before you can install the dbdev extension into your database, ensure you have the following dependencies already installed:</p>
 <ul>
-<li>my-extension<ul>
-<li>my-extension.control</li>
-<li>my-extension--0.0.1.sql</li>
-<li>README.md</li>
+<li><a href="https://github.com/aws/pg_tle">pg_tle</a></li>
+<li><a href="https://github.com/pramsey/pgsql-http">pgsql-http</a></li>
 </ul>
-</li>
-</ul>
-<p>In the above example, the <code>my-extension</code> folder contains the extension files. Names of the files are important. The control file should be named <code>&lt;extension_name&gt;.control</code> and the script file should be named <code>&lt;extension_name&gt;--&lt;extension_version&gt;.sql</code>. The readme file should be named <code>README.md</code> (case sensitive).</p>
-<h2 id="control-files">Control Files</h2>
-<p>A control file contains metadata about the extension in key-value pairs. The most common keys that you should consider setting are the following:</p>
-<ul>
-<li>default_version (string). The version to use if the user doesn't provide one in the <code>create extension</code> command.</li>
-<li>comment (string). A comment added to the extension object created in the database.</li>
-<li>requires (string). A comma separated list of extensions that this extension depends on.</li>
-<li>relocatable (boolean). Set to true if the extension's objects can be moved to a different schema after they are created.</li>
-<li>superuser (boolean). Set to true if only superusers should be able to create this extension.</li>
-</ul>
-<p>For example, the <a href="https://github.com/michelp/pgjwt/blob/master/pgjwt.control">pgjwt extension's control file</a> looks like this:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="err"># pgjwt extension</span>
-<span class="err">comment = &#39;JSON Web Token API for Postgresql&#39;</span>
-<span class="err">default_version = &#39;0.2.0&#39;</span>
-<span class="err">relocatable = false</span>
-<span class="err">requires = pgcrypto</span>
-<span class="err">superuser = false</span>
-</code></pre></div></td></tr></table></div>
-<p>For a complete list of keys available in a control file, refer to <a href="https://www.postgresql.org/docs/current/extend-extensions.html#EXTEND-EXTENSIONS-FILES">Postgres documentation</a>.</p>
-<h3 id="syntax">Syntax</h3>
-<p>A control file contains key-value pairs. Each pair should be on a separate line. Empty lines are ignored. Text after a <code>#</code> is a comment and is also ignored. Keys should start with a letter and contain only letters or digits. The <code>=</code> sign following a key is optional, but there must be at least one whitespace after a key if <code>=</code> is omitted. Values can be either a boolean or a string. Valid values for a boolean are <code>true</code> or <code>false</code>. Strings are anything between a pair of single quotes. If you want to include a single quote in the middle of a string, use <code>''</code> to escape it. A complete list of escape sequences is:</p>
-<ol>
-<li><code>\b</code> - backspace</li>
-<li><code>f</code> - formfeed</li>
-<li><code>\n</code> - newline</li>
-<li><code>\r</code> - carriage return</li>
-<li><code>\t</code> - tab</li>
-<li><code>''</code> - single quote</li>
-</ol>
-<p>Strings which do not contain whitespace or escape sequences can be written without the surrounding single quotes.</p>
-<p>Some examples of valid control file syntax follow:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you database is running on Supabase, the above dependencies are already installed.</p>
+</div>
+<p>Run the following SQL to install the client:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
@@ -548,28 +446,80 @@
 <span class="normal">11</span>
 <span class="normal">12</span>
 <span class="normal">13</span>
-<span class="normal">14</span></pre></div></td><td class="code"><div><pre><span></span><code># A boolean value
-relocatable = true
-
-# `=` is optional
-superuser false
-
-# A string
-comment = &#39;a comment for the extension&#39;
-
-# A string without quotes should not have whitespace or escape sequences
-comment = ACommentForTheExtension
-
-# A string with escapse sequences
-comment = &#39;A double quote &#39;&#39; and a newline \n&#39;
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">create</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">exists</span><span class="w"> </span><span class="n">http</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="k">schema</span><span class="w"> </span><span class="n">extensions</span><span class="p">;</span>
+<span class="k">create</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">exists</span><span class="w"> </span><span class="n">pg_tle</span><span class="p">;</span>
+<span class="k">select</span><span class="w"> </span><span class="n">pgtle</span><span class="p">.</span><span class="n">uninstall_extension_if_exists</span><span class="p">(</span><span class="s1">&#39;supabase-dbdev&#39;</span><span class="p">);</span>
+<span class="k">drop</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="k">exists</span><span class="w"> </span><span class="ss">&quot;supabase-dbdev&quot;</span><span class="p">;</span>
+<span class="k">select</span>
+<span class="w">    </span><span class="n">pgtle</span><span class="p">.</span><span class="n">install_extension</span><span class="p">(</span>
+<span class="w">        </span><span class="s1">&#39;supabase-dbdev&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="n">resp</span><span class="p">.</span><span class="n">contents</span><span class="w"> </span><span class="o">-&gt;&gt;</span><span class="w"> </span><span class="s1">&#39;version&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;PostgreSQL package manager&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="n">resp</span><span class="p">.</span><span class="n">contents</span><span class="w"> </span><span class="o">-&gt;&gt;</span><span class="w"> </span><span class="s1">&#39;sql&#39;</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="k">from</span><span class="w"> </span><span class="n">http</span><span class="p">(</span>
+<span class="w">    </span><span class="p">(</span>
+<span class="w">        </span><span class="s1">&#39;GET&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;https://api.database.dev/rest/v1/&#39;</span>
+<span class="w">        </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;package_versions?select=sql,version&#39;</span>
+<span class="w">        </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;&amp;package_name=eq.supabase-dbdev&#39;</span>
+<span class="w">        </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;&amp;order=version.desc&#39;</span>
+<span class="w">        </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;&amp;limit=1&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nb">array</span><span class="p">[</span>
+<span class="w">            </span><span class="p">(</span><span class="s1">&#39;apiKey&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhtdXB0cHBsZnZpaWZyYndtbXR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODAxMDczNzIsImV4cCI6MTk5NTY4MzM3Mn0.z2CN0mvO2No8wSi46Gw59DFGCTJrzM0AQKsu_5k134s&#39;</span><span class="p">)::</span><span class="n">http_header</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">        </span><span class="k">null</span><span class="p">,</span>
+<span class="w">        </span><span class="k">null</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="p">)</span><span class="w"> </span><span class="n">x</span><span class="p">,</span>
+<span class="k">lateral</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="k">select</span>
+<span class="w">        </span><span class="p">((</span><span class="n">row_to_json</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="s1">&#39;content&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">#&gt;&gt;</span><span class="w"> </span><span class="s1">&#39;{}&#39;</span><span class="p">)::</span><span class="n">json</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">0</span>
+<span class="p">)</span><span class="w"> </span><span class="n">resp</span><span class="p">(</span><span class="n">contents</span><span class="p">);</span>
+<span class="k">create</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="ss">&quot;supabase-dbdev&quot;</span><span class="p">;</span>
+<span class="k">select</span><span class="w"> </span><span class="n">dbdev</span><span class="p">.</span><span class="n">install</span><span class="p">(</span><span class="s1">&#39;supabase-dbdev&#39;</span><span class="p">);</span>
+<span class="k">drop</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="k">exists</span><span class="w"> </span><span class="ss">&quot;supabase-dbdev&quot;</span><span class="p">;</span>
+<span class="k">create</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="ss">&quot;supabase-dbdev&quot;</span><span class="p">;</span>
 </code></pre></div></td></tr></table></div>
-<h2 id="script-files">Script Files</h2>
-<p>Script files contain the SQL commands to create or modify database objects. These database objects can be, but are not limited to, tables, views, functions, types, operators etc. For example, the <a href="https://github.com/michelp/pgjwt/blob/master/pgjwt--0.1.1.sql">pgjwt's <code>pgjwt--0.1.1.sql</code> file</a> contains definitions for functions which the extension adds to the database. One exception to the SQL commands which can exist in a script file are transaction control commands like <code>BEGIN</code>, <code>COMMIT</code>, <code>ROLLBACK</code> etc.</p>
-<p>You might have noticed a strange line at the beginning of the <a href="https://github.com/michelp/pgjwt/blob/master/pgjwt--0.1.1.sql"><code>pgjwt-0.1.1.sql</code> file</a> starting with <code>\echo</code>. This line prevents the script file from being run accidentally in <code>psql</code>. Lines starting with <code>\echo</code> are run only in <code>psql</code> but are ignored when the script file is executed by the <a href="https://www.postgresql.org/docs/current/sql-createextension.html"><code>CREATE EXTENSION</code> command</a>. It is recommended that you include such a line at the beginning of your script file.</p>
-<h3 id="update-scripts">Update Scripts</h3>
-<p>Update scripts are used to update an installed extension. An update script should be named <code>&lt;extension_name&gt;--&lt;old_version&gt;--&lt;new_version&gt;.sql</code>. For example if version <code>1.0</code> of <code>my-extension</code> was published already and you want to publish a new version <code>1.1</code> you need to create <code>my-extension--1.0--1.1.sql</code>. Update scripts can create new database object or modify/delete existing objects created by the previous version of the extension.</p>
-<h2 id="readmemd-file">README.md File</h2>
-<p>README.md file contains documentation for the extension in the <a href="https://en.wikipedia.org/wiki/Markdown">markdown</a> format. The documentation typically contains installation and usage instructions about the extension.</p>
+<h2 id="use">Use</h2>
+<p>Once the client is installed, you an install a TLE available on database.dev by running SQL that looks like the following:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">select</span><span class="w"> </span><span class="n">dbdev</span><span class="p">.</span><span class="n">install</span><span class="p">(</span><span class="o">&lt;</span><span class="n">extension_name</span><span class="o">&gt;</span><span class="p">);</span>
+<span class="k">create</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="o">&lt;</span><span class="n">extension_name</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="k">schema</span><span class="w"> </span><span class="o">&lt;</span><span class="k">schema</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="k">version</span><span class="w"> </span><span class="o">&lt;</span><span class="k">version</span><span class="o">&gt;</span><span class="p">;</span>
+</code></pre></div></td></tr></table></div>
+<p>For example, to install pg_headerkit version 1.0.0 in schema public run:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">select</span><span class="w"> </span><span class="n">dbdev</span><span class="p">.</span><span class="n">install</span><span class="p">(</span><span class="s1">&#39;burggraf-pg_headerkit&#39;</span><span class="p">);</span>
+<span class="k">create</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="ss">&quot;burggraf-pg_headerkit&quot;</span>
+<span class="w">    </span><span class="k">schema</span><span class="w"> </span><span class="s1">&#39;public&#39;</span>
+<span class="w">    </span><span class="k">version</span><span class="w"> </span><span class="s1">&#39;1.0.0&#39;</span><span class="p">;</span>
+</code></pre></div></td></tr></table></div>
 
 
 

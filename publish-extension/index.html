@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://supabase.github.io/dbdev/install/">
+        <link rel="canonical" href="https://supabase.github.io/dbdev/publish-extension/">
       
       
-        <link rel="prev" href="..">
+        <link rel="prev" href="../install-cli/">
       
       
-        <link rel="next" href="../publish/">
+        <link rel="next" href="../install-in-db-client/">
       
       
       <link rel="icon" href="../assets/favicon.ico">
@@ -24,7 +24,7 @@
     
     
       
-        <title>Install CLI - dbdev</title>
+        <title>Publish a Package - dbdev</title>
       
     
     
@@ -75,7 +75,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#installation" class="md-skip">
+        <a href="#login-to-databasedev" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Install CLI
+              Publish a Package
             
           </span>
         </div>
@@ -241,6 +241,25 @@
       
   
   
+  
+    <li class="md-nav__item">
+      <a href="../install-cli/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Install CLI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -254,7 +273,7 @@
           
   
   <span class="md-ellipsis">
-    Install CLI
+    Publish a Package
   </span>
   
 
@@ -265,7 +284,7 @@
         
   
   <span class="md-ellipsis">
-    Install CLI
+    Publish a Package
   </span>
   
 
@@ -285,49 +304,16 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
-  </a>
-  
-    <nav class="md-nav" aria-label="Installation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#native-package" class="md-nav__link">
-    Native Package
-  </a>
-  
-    <nav class="md-nav" aria-label="Native Package">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#linux-packages" class="md-nav__link">
-    Linux packages
+  <a href="#login-to-databasedev" class="md-nav__link">
+    Login to database.dev
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#binary-download" class="md-nav__link">
-    Binary Download
+      
+        <li class="md-nav__item">
+  <a href="#publish-your-first-extension" class="md-nav__link">
+    Publish Your First Extension
   </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#build-from-source" class="md-nav__link">
-    Build From Source
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -345,11 +331,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../publish/" class="md-nav__link">
+      <a href="../install-in-db-client/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Publish a Package
+    Install a Package
   </span>
   
 
@@ -402,49 +388,16 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
-  </a>
-  
-    <nav class="md-nav" aria-label="Installation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#native-package" class="md-nav__link">
-    Native Package
-  </a>
-  
-    <nav class="md-nav" aria-label="Native Package">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#linux-packages" class="md-nav__link">
-    Linux packages
+  <a href="#login-to-databasedev" class="md-nav__link">
+    Login to database.dev
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#binary-download" class="md-nav__link">
-    Binary Download
+      
+        <li class="md-nav__item">
+  <a href="#publish-your-first-extension" class="md-nav__link">
+    Publish Your First Extension
   </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#build-from-source" class="md-nav__link">
-    Build From Source
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -466,50 +419,47 @@
   
 
 
-  <h1>Install CLI</h1>
+  <h1>Publish a Package</h1>
 
-<p>The dbdev CLI is required to publish your TLE to <a href="https://database.dev/">database.dev</a>.</p>
-<h2 id="installation">Installation</h2>
-<p>Installation is available through a native package, binary download or building from source.</p>
-<h3 id="native-package">Native Package</h3>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">macOS</label><label for="__tabbed_1_2">Linux</label><label for="__tabbed_1_3">Windows</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<p>Install the CLI with <a href="https://brew.sh/">Homebrew</a>:
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>brew install supabase/tap/dbdev
-</code></pre></div></td></tr></table></div></p>
-</div>
-<div class="tabbed-block">
-<p>Install the CLI with <a href="https://brew.sh/">Homebrew</a>:
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>brew install supabase/tap/dbdev
-</code></pre></div></td></tr></table></div></p>
-<h4 id="linux-packages">Linux packages</h4>
-<p>Debian Linux packages are provided in <a href="https://github.com/supabase/dbdev/releases">Releases</a>.
-To install, download the <code>.deb</code> file and run the following:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>sudo dpkg -i &lt;...&gt;.deb
-</code></pre></div></td></tr></table></div>
-</div>
-<div class="tabbed-block">
-<p>Install the CLI with <a href="https://scoop.sh/">Scoop</a>.
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code>scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
-scoop install dbdev
-</code></pre></div></td></tr></table></div></p>
-</div>
-</div>
-</div>
-<h3 id="binary-download">Binary Download</h3>
-<p>Binaries for dbdev CLI are available for Linux, Windows and macOS platforms. Visit the <a href="https://github.com/supabase/dbdev/releases">dbdev releases page</a> to download a binary for your OS. The downloaded binary should be placed in a folder which is in your <a href="https://en.wikipedia.org/wiki/PATH_(variable)">PATH</a>.</p>
-<h3 id="build-from-source">Build From Source</h3>
-<p>Alternatively, you can build the binary from source. You will need to have <a href="https://www.rust-lang.org/tools/install">Rust installed</a> on your system. To build from source:</p>
+<p>Before you can publish your extension, you need to authenticate with <a href="https://database.dev/">database.dev</a>.</p>
+<h3 id="login-to-databasedev">Login to database.dev</h3>
+<p>If you don't have an account, <a href="https://database.dev/sign-up">sign-up for one</a> on the website. Then follow the steps below:</p>
 <ol>
-<li>Clone the repo: <code>git clone https://github.com/supabase/dbdev.git</code>.</li>
-<li>Change directory to <code>dbdev</code>: <code>cd dbdev</code>.</li>
-<li>Build: <code>cargo install --release</code>.</li>
-<li>Copy the <code>dbdev</code> binary in <code>target/release</code> to a folder in your PATH.</li>
+<li>Make sure you are logged into the <code>database.dev</code> website.</li>
+<li>Navigate to the <strong>Access Tokens</strong> page from the account drop-down at top right.</li>
+<li>Click <strong>New Token</strong>.</li>
+<li>Enter a token name and click <strong>Create Token</strong>.</li>
+<li>Copy the generated token. Note that this is the only time the token will be shown.</li>
+<li>On the terminal, run the <code>dbdev login</code> command.</li>
+<li>Paste the token you copied.</li>
 </ol>
-<p>If you have <a href="https://doc.rust-lang.org/cargo/commands/cargo-install.html">cargo-install</a>, you can perform all the above steps with a single command: <code>cargo install --git https://github.com/supabase/dbdev.git dbdev</code>.</p>
-<p>Now you're ready to <a href="../publish/">publish your first package</a>.</p>
+<p>You are now logged into <code>database.dev</code>.</p>
+<h3 id="publish-your-first-extension">Publish Your First Extension</h3>
+<p>Let's create your first extension. Create a folder which will contain the extension:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code>mkdir my_first_tle
+cd my_first_tle
+</code></pre></div></td></tr></table></div>
+<p>Next create a <code>hello_world--0.0.1.sql</code> file, which will contain your extension's SQL objects. Add the following function definition to this file:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">create</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="n">greet</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="nb">text</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="s1">&#39;world&#39;</span><span class="p">)</span>
+<span class="w">  </span><span class="k">returns</span><span class="w"> </span><span class="nb">text</span><span class="w"> </span><span class="k">language</span><span class="w"> </span><span class="k">sql</span>
+<span class="k">as</span><span class="w"> </span><span class="err">$$</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="s1">&#39;hello, &#39;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w"> </span><span class="err">$$</span><span class="p">;</span>
+</code></pre></div></td></tr></table></div>
+<p>Let's also add some docs about this extension. Create a <code>README.md</code> file and add the following content to it:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>The `hello_world` extension provides a `greet` function, which returns a greeting.
+</code></pre></div></td></tr></table></div>
+<p>Lastly, add a <code>hello_world.control</code> file with the following key-value pairs:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code>default_version = 0.0.1
+comment = &#39;An extension to generate greetings&#39;
+</code></pre></div></td></tr></table></div>
+<p>Your extension is ready to publish. Its name is <code>hello_world</code> and version is <code>0.0.1</code>. For details about what constitutes a valid extension, read about the <a href="../extension_structure/">Structure of an Extension</a>.</p>
+<p>Now run the <code>dbdev publish</code> command to publish it.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>dbdev publish
+</code></pre></div></td></tr></table></div>
+<p>Your extension is now published to <code>database.dev</code> and visible under your account profile. You can visit your account profile from the account drop-down at the top right. Users can now install your extension using the <a href="../install-in-db-client/">dbdev in-database client</a>.</p>
 
 
 
@@ -547,7 +497,7 @@ scoop install dbdev
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.expand"], "search": "../assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.expand", "content.code.copy"], "search": "../assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../assets/javascripts/bundle.dff1b7c8.min.js"></script>
