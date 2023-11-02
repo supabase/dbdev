@@ -125,7 +125,7 @@ async fn update_paths(
     extension_name: &str,
 ) -> anyhow::Result<HashSet<UpdatePath>> {
     let mut rows = sqlx::query_as::<_, UpdatePath>(
-        "select source, target from pgtle.extension_update_paths($1);",
+        "select source, target from pgtle.extension_update_paths($1) where path is not null;",
     )
     .bind(extension_name)
     .fetch(conn);
