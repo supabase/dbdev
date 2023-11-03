@@ -2,12 +2,14 @@
 
 # dbdev
 
-dbdev is a package manager for PostgreSQL [trusted language extensions (TLE)](https://github.com/aws/pg_tle). To publish your own TLE, follow [the publishing guide](https://supabase.github.io/dbdev/).
+dbdev is a package manager for Postgres [trusted language extensions (TLE)](https://github.com/aws/pg_tle). 
 
-For more info, check out the [dbdev release blog post](https://supabase.com/blog/dbdev) or start searching for packages on [database.dev](https://database.dev).
+- Search for packages on [database.dev](https://database.dev).
+- Documentation: [supabase.github.io/dbdev/](https://supabase.github.io/dbdev/)
+- Publish your own Extension: [supabase.github.io/dbdev/publish-extension/](https://supabase.github.io/dbdev/publish-extension/)
+- Read the dbdev [release blog post](https://supabase.com/blog/dbdev)
 
-
-## UX
+## Usage
 
 Users primarily interact with the registry using the dbdev SQL client. Once present, pglets can be installed as follows:
 
