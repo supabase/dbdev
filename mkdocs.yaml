@@ -7,7 +7,7 @@ repo_url: https://github.com/supabase/dbdev
 
 nav:
     - Welcome: 'index.md'
-    - Install CLI: 'install-cli.md'
+    - Using the CLI: 'cli.md'
     - Publish a Package: 'publish-extension.md'
     - Install a Package: 'install-in-db-client.md'
     - Structure of a Postgres Extension: 'extension_structure.md'

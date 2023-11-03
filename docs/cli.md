@@ -1,4 +1,8 @@
-The dbdev CLI is required to publish your TLE to [database.dev](https://database.dev/).
+The `dbdev` CLI can be used for:
+
+- Installing TLEs from [database.dev] or your local machine.
+- Updating TLEs from [database.dev] or your local machine.
+- Publishing TLEs to [database.dev](https://database.dev/).
 
 ## Installation
 
@@ -35,6 +39,42 @@ Installation is available through a native package, binary download or building 
     ```
     scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
     scoop install dbdev
+    ```
+
+## Upgrading
+
+Use `dbdev --version` to check if you are on the latest version of the CLI.
+
+### Native Package
+
+=== "macOS"
+
+    Upgrade the CLI with [Homebrew](https://brew.sh/):
+    ```
+    brew upgrade dbdev
+    ```
+
+=== "Linux"
+
+    Install the CLI with [Homebrew](https://brew.sh/):
+    ```
+    brew upgrade dbdev
+    ```
+
+    #### Linux packages
+
+    Debian Linux packages are provided in [Releases](https://github.com/supabase/dbdev/releases).
+    To upgrade, download the `.deb` file and run the following:
+
+    ```
+    sudo dpkg -i <...>.deb
+    ```
+
+=== "Windows"
+
+    Update the CLI with [Scoop](https://scoop.sh/).
+    ```
+    scoop update dbdev
     ```
 
 ### Binary Download
