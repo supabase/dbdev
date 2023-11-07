@@ -2,7 +2,7 @@
 
 # dbdev
 
-dbdev is a package manager for Postgres [trusted language extensions (TLE)](https://github.com/aws/pg_tle). 
+dbdev is a package manager for Postgres [trusted language extensions (TLE)](https://github.com/aws/pg_tle).
 
 - Search for packages on [database.dev](https://database.dev).
 - Documentation: [supabase.github.io/dbdev/](https://supabase.github.io/dbdev/)
