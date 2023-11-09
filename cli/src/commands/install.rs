@@ -115,12 +115,12 @@ async fn extension_versions(
 }
 
 #[derive(sqlx::FromRow, PartialEq, Eq, Hash)]
-struct UpdatePath {
-    source: String,
-    target: String,
+pub(crate) struct UpdatePath {
+    pub(crate) source: String,
+    pub(crate) target: String,
 }
 
-async fn update_paths(
+pub(crate) async fn update_paths(
     conn: &mut PgConnection,
     extension_name: &str,
 ) -> anyhow::Result<HashSet<UpdatePath>> {

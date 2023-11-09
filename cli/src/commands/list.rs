@@ -3,14 +3,27 @@ use std::collections::HashMap;
 use futures::TryStreamExt;
 use sqlx::PgConnection;
 
+use crate::commands::install::update_paths;
+
 pub(crate) async fn list(conn: &mut PgConnection) -> anyhow::Result<()> {
     let available_extensions = available_extensions(conn).await?;
 
-    for (extension, versions) in available_extensions {
-        println!("{extension}");
+    for (extension_name, versions) in available_extensions {
+        println!("{extension_name}");
+        println!("  available versions:");
         for version in versions {
-            println!("  {version}");
+            println!("    {version}");
         }
+        println!("  available update paths:");
+        let update_paths = update_paths(conn, &extension_name).await?;
+        if update_paths.is_empty() {
+            println!("    None");
+        } else {
+            for update_path in update_paths {
+                println!("    from {} to {}", update_path.source, update_path.target);
+            }
+        }
+        println!();
     }
 
     Ok(())
