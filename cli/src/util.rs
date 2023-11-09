@@ -19,7 +19,6 @@ pub fn is_valid_extension_name(name: &str) -> bool {
 pub fn is_valid_version(version: &str) -> bool {
     let nums: Vec<&str> = version.split('.').collect();
     if nums.len() != 3 {
-        println!("1");
         return false;
     }
 

@@ -1,6 +1,7 @@
 use crate::util;
 
 use anyhow::Context;
+use std::collections::HashSet;
 use std::ffi::OsStr;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -218,7 +219,30 @@ impl Payload {
             upgrade_files,
             readme_file,
         };
+
+        payload.validate_default_version()?;
+
         Ok(payload)
+    }
+
+    fn validate_default_version(&self) -> anyhow::Result<()> {
+        let mut valid_versions: HashSet<&str> = HashSet::new();
+
+        for install_file in &self.install_files {
+            valid_versions.insert(&install_file.version);
+        }
+
+        for update_file in &self.upgrade_files {
+            valid_versions.insert(&update_file.from_version);
+            valid_versions.insert(&update_file.to_version);
+        }
+
+        if !valid_versions.contains(self.metadata.default_version.as_str()) {
+            return Err(anyhow::anyhow!("Invalid default version ({}) in control file. It should match one of the following: {}",
+                self.metadata.default_version, valid_versions.into_iter().collect::<Vec<&str>>().join(", ")));
+        }
+
+        Ok(())
     }
 }
 
