@@ -62,6 +62,14 @@ enum Commands {
         #[arg(long)]
         registry_name: Option<String>,
     },
+
+    /// List available packages
+    #[clap(alias = "ls")]
+    List {
+        /// PostgreSQL connection string
+        #[arg(short, long)]
+        connection: String,
+    },
 }
 
 #[derive(Debug, clap::Args)]
@@ -137,6 +145,12 @@ async fn main() -> anyhow::Result<()> {
             config.get_registry(registry_name)?;
             commands::login::login(registry_name)?;
             println!("Login successful");
+            Ok(())
+        }
+
+        Commands::List { connection } => {
+            let mut conn = util::get_connection(connection).await?;
+            commands::list::list(&mut conn).await?;
             Ok(())
         }
     }
