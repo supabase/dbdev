@@ -66,7 +66,7 @@ pub async fn publish(
     }
 
     if num_published == 0 {
-        println!("Nothing to publish");
+        println!("Updated package properties");
     }
 
     Ok(())
