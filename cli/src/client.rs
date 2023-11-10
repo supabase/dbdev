@@ -163,6 +163,8 @@ pub enum TokenType {
 pub struct PublishPackageRequest<'a> {
     pub package_name: &'a str,
     pub package_description: &'a Option<String>,
+    pub relocatable: bool,
+    pub requires: &'a [String],
 }
 
 #[derive(Serialize)]
