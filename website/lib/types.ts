@@ -24,6 +24,6 @@ export type NonNullableObject<T> = {
   [K in keyof T]: T[K] extends Array<infer U>
     ? Array<NonNullable<U>>
     : T[K] extends object
-    ? NonNullableObject<T[K]>
-    : NonNullable<T[K]>
+      ? NonNullableObject<T[K]>
+      : NonNullable<T[K]>
 }
