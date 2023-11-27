@@ -1,5 +1,5 @@
 
-Let's create your first Trusted Language Extension for [database.dev](https://database.dev). 
+Let's create your first Trusted Language Extension for [database.dev](https://database.dev).
 
 ## Create your package
 
@@ -14,10 +14,10 @@ Next create a `hello_world--0.0.1.sql` file, which will contain your extension's
 
 ```sql
 create function greet(name text default 'world')
-returns text 
+returns text
 language sql
-as $$ 
-  select 'hello, ' || name; 
+as $$
+  select 'hello, ' || name;
 $$;
 ```
 
@@ -92,7 +92,7 @@ If you need to reference the schema in your SQL files, you can use the `@extsche
 
 ```sql
 create function @extschema@.my_function(args)
-returns return_type 
+returns return_type
 language plpgsql
 as $$
 begin
