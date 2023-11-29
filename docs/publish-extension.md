@@ -72,7 +72,7 @@ It's common to hardcode `public` into your SQL files, but this isn't a great pra
 
 ### Relocatable schemas
 
-You can define a shcema to be `relocatable` in the `.control` file:
+You can define a schema to be `relocatable` in the `.control` file:
 
 ```
 default_version = 0.0.1
