@@ -1,5 +1,6 @@
 import { isAuthApiError } from '@supabase/supabase-js'
 import Head from 'next/head'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import toast from 'react-hot-toast'
 import Form, { FORM_ERROR } from '~/components/forms/Form'
@@ -88,6 +89,16 @@ const SignUpPage: NextPageWithLayout = () => {
           </div>
 
           <FormButton>Sign Up</FormButton>
+
+          <p className="text-center text-sm mt-2 text-lighter text-slate-500 ">
+            Already have an account?{' '}
+            <Link
+              href="/sign-in"
+              className=" transition underline hover:decoration-2"
+            >
+              Sign In
+            </Link>
+          </p>
         </Form>
       </div>
     </div>

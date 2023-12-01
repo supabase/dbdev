@@ -76,7 +76,7 @@ const Navbar = () => {
     )
 
   return (
-    <header className="px-4 py-4 border-b border-gray-100 shadow-sm dark:border-slate-700 md:px-8">
+    <header className="px-4 py-2 border-b border-gray-100 dark:border-slate-700 md:px-8">
       {/* sticky top-0 bg-gray-100 dark:bg-slate-900 */}
       <nav className="flex items-center justify-between gap-4 md:gap-6">
         <div>
@@ -152,17 +152,14 @@ const Navbar = () => {
               </DropdownMenu>
             ) : (
               <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
-                <Link
-                  href="/sign-up"
-                  className="px-1 sm:px-4 py-1 sm:py-2  transition border border-gray-300 rounded hover:text-gray-800 dark:text-slate-400 hover:border-gray-500 dark:border-slate-700 dark:hover:bg-slate-800 hover:dark:text-white"
-                >
-                  Sign Up
+                <Link href="https://supabase.github.io/dbdev/" target="blank">
+                  Docs
                 </Link>
                 <Link
-                  href="/sign-in"
+                  href="/sign-up"
                   className="text-sm transition hover:text-gray-800 dark:text-slate-400 hover:dark:text-white"
                 >
-                  Sign In
+                  Login
                 </Link>
               </div>
             )}

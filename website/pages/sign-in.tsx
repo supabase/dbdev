@@ -81,6 +81,15 @@ const SignInPage: NextPageWithLayout = () => {
           </div>
 
           <FormButton>Sign In</FormButton>
+          <p className="text-center text-sm mt-2 text-lighter text-slate-500 ">
+            Need to create an account?{' '}
+            <Link
+              href="/sign-up"
+              className=" transition underline hover:decoration-2"
+            >
+              Sign Up
+            </Link>
+          </p>
         </Form>
       </div>
     </div>
