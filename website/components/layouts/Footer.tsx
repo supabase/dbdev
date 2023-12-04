@@ -10,7 +10,7 @@ export const links = [
 const Footer = () => (
   <footer
     role="menu"
-    className="border-t py-4 w-full px-4 flex justify-between"
+    className="container border-t py-4 w-full px-4 flex justify-between"
   >
     <ul className="flex items-center gap-4 text-xs md:text-sm">
       {links.map((link, index) => (
