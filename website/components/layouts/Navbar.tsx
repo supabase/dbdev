@@ -17,7 +17,7 @@ import { useUser } from '~/lib/auth'
 import { getAvatarUrl } from '~/lib/avatars'
 import { useTheme } from '../themes/ThemeContext'
 import ThemeSwitcher from '../themes/ThemeSwitcher'
-import { Button } from '../ui/button'
+import { Button } from '~/components/ui/button'
 
 const Navbar = () => {
   const router = useRouter()
