@@ -14,7 +14,8 @@ pub struct Metadata {
     pub extension_name: String,
     pub default_version: String,
     pub comment: Option<String>,
-    pub requires: Option<Vec<String>>,
+    pub relocatable: bool,
+    pub requires: Vec<String>,
 }
 
 impl Metadata {
@@ -23,6 +24,7 @@ impl Metadata {
             extension_name: control_file_ref.extension_name()?.clone(),
             default_version: control_file_ref.default_version()?.clone(),
             comment: control_file_ref.comment()?.clone(),
+            relocatable: control_file_ref.relocatable()?,
             requires: control_file_ref.requires()?.clone(),
         })
     }
@@ -261,16 +263,26 @@ impl ControlFileRef {
 
     // A list of names of extensions that this extension depends on, for example requires = 'foo,
     // bar'. Those extensions must be installed before this one can be installed.
-    fn requires(&self) -> anyhow::Result<Option<Vec<String>>> {
+    fn requires(&self) -> anyhow::Result<Vec<String>> {
         for line in self.contents.lines() {
             if line.starts_with("requires") {
                 let value = self.read_control_line_value(line)?;
                 let required_packages: Vec<String> =
                     value.split(',').map(|x| x.trim().to_string()).collect();
-                return Ok(Some(required_packages));
+                return Ok(required_packages);
             }
         }
-        Ok(None)
+        Ok(vec![])
+    }
+
+    fn relocatable(&self) -> anyhow::Result<bool> {
+        for line in self.contents.lines() {
+            if line.starts_with("relocatable") {
+                let value: bool = self.read_control_line_value(line)?.parse()?;
+                return Ok(value);
+            }
+        }
+        Ok(false)
     }
 
     fn default_version(&self) -> anyhow::Result<String> {

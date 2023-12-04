@@ -66,7 +66,7 @@ pub async fn publish(
     }
 
     if num_published == 0 {
-        println!("Nothing to publish");
+        println!("Updated package properties");
     }
 
     Ok(())
@@ -76,6 +76,8 @@ fn create_publish_package_request(payload: &Payload) -> PublishPackageRequest {
     PublishPackageRequest {
         package_name: &payload.metadata.extension_name,
         package_description: &payload.metadata.comment,
+        relocatable: payload.metadata.relocatable,
+        requires: &payload.metadata.requires,
     }
 }
 
