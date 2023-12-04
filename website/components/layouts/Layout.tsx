@@ -19,9 +19,7 @@ const Layout = ({
       <main
         className={cn(
           'flex flex-col flex-1 w-full mt-8',
-          containerWidth === 'md'
-            ? 'max-w-4xl 2xl:max-w-3xl px-4 mx-auto'
-            : 'px-4'
+          containerWidth === 'md' ? 'max-w-4xl 2xl:max-w-3xl mx-auto' : ''
         )}
       >
         {children}

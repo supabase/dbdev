@@ -8,17 +8,16 @@ export const links = [
 ]
 
 const Footer = () => (
-  <footer
-    role="menu"
-    className="container border-t py-4 w-full px-4 flex justify-between"
-  >
-    <ul className="flex items-center gap-4 text-xs md:text-sm">
-      {links.map((link, index) => (
-        <li key={index}>
-          <Link href={link.url}>{link.title}</Link>
-        </li>
-      ))}
-    </ul>
+  <footer role="menu" className="container w-full flex justify-between">
+    <div className="border-t w-full py-4">
+      <ul className="grid md:flex items-center gap-4 text-xs md:text-sm">
+        {links.map((link, index) => (
+          <li key={index}>
+            <Link href={link.url}>{link.title}</Link>
+          </li>
+        ))}
+      </ul>
+    </div>
   </footer>
 )
 

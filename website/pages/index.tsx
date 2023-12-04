@@ -23,8 +23,8 @@ const IndexPage: NextPageWithLayout = ({}) => {
         <title>dbdev | The Database Package Manager</title>
       </Head>
 
-      <div className="mx-auto container px-6 py-16 sm:py-32 lg:flex lg:items-center lg:gap-x-10 lg:px-8 lg:pt-40 lg:pb-24">
-        <div className="mx-auto max-w-2xl lg:mx-0 lg:flex-auto">
+      <div className="mx-auto container py-8 sm:py-32 lg:flex lg:items-center lg:gap-x-10 lg:px-8 lg:pt-40 lg:pb-24">
+        <div className="mx-auto max-w-2xl lg:mx-0 lg:flex-auto md:text-center lg:text-left">
           <h1
             className="text-2xl font-bold -translate-y-10 sm:text-4xl md:text-6xl
             leading-tight tracking-tighter lg:leading-[1.125]"
@@ -44,19 +44,18 @@ const IndexPage: NextPageWithLayout = ({}) => {
               Trusted Language Extensions
             </a>
           </p>
-          <div className="flex flex-col sm:flex-row md:items-center mt-6 gap-4">
+          <div className="flex flex-col sm:flex-row md:items-center mt-6 gap-4 md:justify-center lg:justify-start">
             <Button variant="default" asChild>
               <Link href="/installer">Getting started</Link>
             </Button>
-            <Button asChild variant="outline">
+            <Button asChild variant="secondary">
               <a href="https://supabase.github.io/dbdev/" target="blank">
                 Documentation
               </a>
             </Button>
           </div>
         </div>
-        <div className="mt-4 lg:-mt-16 lg:flex-shrink-0">
-          {/* Getting started section */}
+        <div className="mt-4 md:mt-12 lg:-mt-16 lg:flex-shrink-0 md:text-center lg:text-left">
           <div className="relative border inline-block px-4 pt-4 pb-4 md:pb-24 rounded-md justify-end">
             <div className="inline-block">
               <div>
@@ -114,10 +113,10 @@ select dbdev.install('olirice-index_advisor');
           </div>
         </div>
       </div>
-
-      <div className="flex flex-col justify-center pb-20 container border-t">
+      <hr />
+      <div className="container flex flex-col justify-center pb-20 ">
         {/* Popular packages section */}
-        <div className="mt-8 md:mt-20 space-y-4">
+        <div className="mt-6 md:mt-20 space-y-4">
           <h2 className="text-2xl font-bold tracking-tight">
             Popular packages
           </h2>

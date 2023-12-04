@@ -6,7 +6,7 @@ export interface AProps extends ComponentPropsWithoutRef<'a'> {}
 const A = forwardRef<HTMLAnchorElement, AProps>(
   ({ className, children, ...props }) => (
     <a
-      className={cn('tracking-tight dark:text-white line-break', className)}
+      className={cn('tracking-tight dark:text-white break-words', className)}
       {...props}
     >
       {children}
