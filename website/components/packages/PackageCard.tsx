@@ -30,9 +30,8 @@ const PackageCard = ({ pkg, className }: PackageCardProps) => {
             {pkg.partial_name}{' '}
           </p>
 
-          <p className="font-normal text-gray-400">•</p>
           <p className="font-mono text-xs text-gray-400">
-            {pkg.latest_version}
+            v{pkg.latest_version}
           </p>
         </div>
         <ArrowTopRightOnSquareIcon

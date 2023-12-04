@@ -22,7 +22,7 @@ const IndexPage: NextPageWithLayout = ({}) => {
         <title>dbdev | The Database Package Manager</title>
       </Head>
 
-      <div className="mx-auto container px-6 py-24 sm:py-32 lg:flex lg:items-center lg:gap-x-10 lg:px-8 lg:pt-40 lg:pb-24">
+      <div className="mx-auto container px-6 py-16 sm:py-32 lg:flex lg:items-center lg:gap-x-10 lg:px-8 lg:pt-40 lg:pb-24">
         <div className="mx-auto max-w-2xl lg:mx-0 lg:flex-auto">
           <h1
             className="text-2xl font-bold -translate-y-10 sm:text-4xl md:text-6xl
@@ -54,13 +54,13 @@ const IndexPage: NextPageWithLayout = ({}) => {
             </Button>
           </div>
         </div>
-        <div className="lg:-mt-16 lg:flex-shrink-0">
+        <div className="mt-4 lg:-mt-16 lg:flex-shrink-0">
           {/* Getting started section */}
-          <div className="relative border inline-block px-4 pt-4 pb-24 rounded-md justify-end">
+          <div className="relative border inline-block px-4 pt-4 pb-4 md:pb-24 rounded-md justify-end">
             <div className="inline-block">
               <div>
                 <h3 className="text-lg font-bold">Download and install</h3>
-                <p className=" text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   Install extensions via a SQL command
                 </p>
               </div>
@@ -72,25 +72,25 @@ const IndexPage: NextPageWithLayout = ({}) => {
                   <span>
                     <span className="bg-slate-100 rounded-sm p-1 dark:bg-slate-700 relative">
                       <span className="text-red-500">olirice</span>
-                      <div className="bg-slate-50 absolute -left-14 -bottom-6">
+                      <div className="hidden md:block  bg-slate-50 absolute -left-14 -bottom-6">
                         <div className="absolute left-0 top-6 text-xs uppercase whitespace-nowrap text-muted-foreground">
                           Publisher handle
                         </div>
                         <div className="w-12 h-[1px] bg-slate-500 -rotate-45 absolute left-12"></div>
                       </div>
                     </span>
-                    -
+                    <span className="text-red-500">-</span>
                     <span className="bg-slate-100 dark:bg-slate-700 rounded-sm p-1 relative">
                       <span className="text-red-500">index_advisor</span>
-                      <div className="bg-slate-50 absolute right-32 -bottom-6">
+                      <div className="hidden md:block bg-slate-50 absolute right-32 -bottom-6">
                         <div className="absolute left-8 top-6 text-xs uppercase whitespace-nowrap text-muted-foreground">
                           Extension name
                         </div>
                         <div className="w-12 h-[1px] bg-slate-500 rotate-45 absolute left-12"></div>
                       </div>
                     </span>
+                    <span className="text-muted-foreground">);</span>
                   </span>
-                  );
                 </code>
               </div>
               <CopyButton
