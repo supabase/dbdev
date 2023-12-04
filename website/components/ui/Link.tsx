@@ -10,7 +10,7 @@ const Link = forwardRef<ElementRef<typeof NextLink>, LinkProps>(
       <NextLink
         ref={ref}
         className={cn(
-          'text-blue-700 hover:text-blue-600 hover:underline transition duration-200',
+          'underline hover:decoration-2 transition duration-200',
           className
         )}
         {...props}

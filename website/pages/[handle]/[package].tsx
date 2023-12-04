@@ -70,8 +70,8 @@ create extension "${pkg?.package_name ?? 'Loading...'}"
             {pkg && <CopyButton getValue={() => pkg.package_name} />}
           </div>
 
-          <div className="flex items-center gap-1 text-slate-700 dark:text-slate-400">
-            <span>{pkg?.latest_version ?? '0.0.0'}</span>
+          <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 mt-4">
+            <span className="font-mono">v{pkg?.latest_version ?? '0.0.0'}</span>
             <span>&bull;</span>
             <span>
               Created {pkg ? dayjs(pkg.created_at).fromNow() : 'Loading...'}
@@ -85,8 +85,18 @@ create extension "${pkg?.package_name ?? 'Loading...'}"
 
         <Tabs defaultValue="description">
           <TabsList>
-            <TabsTrigger value="description">Description</TabsTrigger>
-            <TabsTrigger value="versions">Versions</TabsTrigger>
+            <TabsTrigger
+              value="description"
+              className="data-[state=active]:border-b-2 border-slate-700"
+            >
+              Description
+            </TabsTrigger>
+            <TabsTrigger
+              value="versions"
+              className="data-[state=active]:border-b-2 border-slate-700"
+            >
+              Versions
+            </TabsTrigger>
           </TabsList>
 
           <div className="grid grid-cols-1 gap-x-2 md:grid-cols-6">
@@ -126,7 +136,7 @@ create extension "${pkg?.package_name ?? 'Loading...'}"
 
                 <ol role="list" className="list-decimal list-inside">
                   <li className="dark:text-white">
-                    <Link href="/installer" className="dark:text-blue-400">
+                    <Link href="/installer">
                       Install the <code>dbdev</code> package manager
                     </Link>
                   </li>

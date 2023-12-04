@@ -19,7 +19,7 @@ const PackageCard = ({ pkg, className }: PackageCardProps) => {
       key={pkg.package_name}
       href={`/${pkg.handle}/${pkg.partial_name}`}
       className={cn(
-        'col-span-4 bg-gradient-to-br from-white via-white to-gray-100 rounded-lg px-6 py-5 transition duration-300 group hover:shadow-xl opacity-90 hover:opacity-100 border border-gray-200',
+        'col-span-4  from-white via-white to-gray-100 rounded-lg px-6 py-5 transition duration-300 group hover:shadow-md opacity-90 hover:opacity-100 border border-gray-200',
         'dark:from-slate-600 dark:to-slate-800 dark:border-slate-800',
         className
       )}
@@ -30,8 +30,9 @@ const PackageCard = ({ pkg, className }: PackageCardProps) => {
             {pkg.partial_name}{' '}
           </p>
 
-          <p className="font-normal text-gray-400">•</p>
-          <p className="font-normal text-gray-400">{pkg.latest_version}</p>
+          <p className="font-mono text-xs text-gray-400">
+            v{pkg.latest_version}
+          </p>
         </div>
         <ArrowTopRightOnSquareIcon
           className="w-4 h-4 text-gray-400 transition group-hover:text-gray-600 dark:group-hover:text-gray-200"

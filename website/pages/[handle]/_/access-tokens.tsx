@@ -6,7 +6,7 @@ import Form, { FORM_ERROR } from '~/components/forms/Form'
 import FormButton from '~/components/forms/FormButton'
 import FormInput from '~/components/forms/FormInput'
 import Layout from '~/components/layouts/Layout'
-import Button from '~/components/ui/Button'
+import { Button } from '~/components/ui/Button'
 import CopyButton from '~/components/ui/CopyButton'
 import H1 from '~/components/ui/typography/H1'
 import H3 from '~/components/ui/typography/H3'
@@ -122,7 +122,7 @@ const ApiTokensPage: NextPageWithLayout = () => {
         </div>
       </Form>
       <div className="flex flex-row-reverse">
-        <Button onClick={onCloseButtonClick} variant="subtle">
+        <Button onClick={onCloseButtonClick} variant="secondary">
           Close
         </Button>
       </div>
@@ -159,7 +159,7 @@ const ApiTokensPage: NextPageWithLayout = () => {
           <Button
             type="button"
             onClick={onCancelButtonClick}
-            variant="subtle"
+            variant="secondary"
             className="mt-4"
             disabled={disabled}
           >

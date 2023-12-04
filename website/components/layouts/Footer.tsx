@@ -1,28 +1,24 @@
-import { cn } from '~/lib/utils'
+import Link from 'next/link'
 
-export interface FooterProps {
-  gradientBg?: boolean
-}
+export const links = [
+  { title: ` © Supabase`, url: 'https://supabase.com/' },
+  { title: 'FAQs', url: '/faq' },
+  { title: 'Open Source', url: 'https://supabase.com/open-source' },
+  { title: 'Privacy Settings', url: 'https://supabase.com/privacy' },
+]
 
-const Footer = ({ gradientBg = false }: FooterProps) => {
-  return (
-    <footer
-      className={cn(
-        'flex items-center w-full h-12 px-4 py-4 border-t border-gray-100 bg-white ',
-        'dark:border-slate-700 dark:text-slate-400 dark:bg-slate-800',
-        gradientBg ? 'dark:!bg-slate-900' : '!bg-white'
-      )}
-    >
-      <a
-        className="flex items-center justify-center gap-2"
-        href="https://supabase.com"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        &copy; Supabase
-      </a>
-    </footer>
-  )
-}
+const Footer = () => (
+  <footer role="menu" className="container w-full flex justify-between">
+    <div className="border-t w-full py-4">
+      <ul className="grid md:flex items-center gap-4 text-xs md:text-sm">
+        {links.map((link, index) => (
+          <li key={index}>
+            <Link href={link.url}>{link.title}</Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </footer>
+)
 
 export default Footer

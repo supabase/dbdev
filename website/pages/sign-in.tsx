@@ -72,7 +72,7 @@ const SignInPage: NextPageWithLayout = () => {
               <div className="flex items-center justify-end mt-2 text-sm">
                 <Link
                   href="/forgot-password"
-                  className="font-medium text-indigo-600 hover:text-indigo-500"
+                  className="font-medium underline hover:decoration-2 transition"
                 >
                   Forgot your password?
                 </Link>
@@ -81,6 +81,15 @@ const SignInPage: NextPageWithLayout = () => {
           </div>
 
           <FormButton>Sign In</FormButton>
+          <p className="text-center text-sm mt-2 text-lighter text-slate-500">
+            Need to create an account?{' '}
+            <Link
+              href="/sign-up"
+              className=" transition underline hover:decoration-2"
+            >
+              Sign Up
+            </Link>
+          </p>
         </Form>
       </div>
     </div>
