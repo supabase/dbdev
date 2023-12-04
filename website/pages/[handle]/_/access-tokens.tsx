@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import { MouseEventHandler, useState } from 'react'
 import toast from 'react-hot-toast'
-import AccessTokenCard from '~/components/access-tokens/AccessTokenCard'
+
 import Form, { FORM_ERROR } from '~/components/forms/Form'
 import FormButton from '~/components/forms/FormButton'
 import FormInput from '~/components/forms/FormInput'
@@ -66,17 +66,7 @@ const ApiTokensPage: NextPageWithLayout = () => {
           </Button>
         </div>
         {accessTokensLoading && <p className="dark:text-white">Loading...</p>}
-        {isAccessTokensSuccess &&
-          accessTokens.length > 0 &&
-          accessTokens.map((accessToken) => (
-            <AccessTokenCard
-              key={accessToken.id}
-              tokenId={accessToken.id}
-              tokenName={accessToken.token_name}
-              maskedToken={accessToken.masked_token}
-              createdAt={accessToken.created_at}
-            />
-          ))}
+
         {isAccessTokensSuccess && accessTokens.length <= 0 && (
           <p className="dark:text-white">
             No access tokens found. Click &quot;New Token&quot; to create one.
