@@ -7,7 +7,7 @@ import PackageCard from '~/components/packages/PackageCard'
 
 import CopyButton from '~/components/ui/CopyButton'
 import Markdown from '~/components/ui/Markdown'
-import { Button } from '~/components/ui/button'
+import { Button } from '~/components/ui/Button'
 import {
   prefetchPopularPackages,
   usePopularPackagesQuery,
