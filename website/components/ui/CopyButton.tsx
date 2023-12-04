@@ -57,7 +57,7 @@ const CopyButton = ({
     <button
       className={cn(
         copyButtonVariants({ variant }),
-        'bg-gray-50 dark:bg-gray-400 dark:hover:bg-gray-200',
+        'bg-gray-50 text-slate-700 dark:text-slate-100 dark:bg-gray-700 dark:hover:bg-gray-900 transition-colors',
         className
       )}
       onClick={() => {

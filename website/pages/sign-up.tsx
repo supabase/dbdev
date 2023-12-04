@@ -88,7 +88,7 @@ const SignUpPage: NextPageWithLayout = () => {
             />
           </div>
 
-          <FormButton>Sign Up</FormButton>
+          <FormButton variant="default">Sign Up</FormButton>
 
           <p className="text-center text-sm mt-2 text-lighter text-slate-500 ">
             Already have an account?{' '}

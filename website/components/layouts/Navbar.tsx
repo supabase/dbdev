@@ -17,6 +17,7 @@ import { useUser } from '~/lib/auth'
 import { getAvatarUrl } from '~/lib/avatars'
 import { useTheme } from '../themes/ThemeContext'
 import ThemeSwitcher from '../themes/ThemeSwitcher'
+import { Button } from '../ui/button'
 
 const Navbar = () => {
   const router = useRouter()
@@ -151,16 +152,15 @@ const Navbar = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
-                <Link href="https://supabase.github.io/dbdev/" target="blank">
-                  Docs
-                </Link>
-                <Link
-                  href="/sign-up"
-                  className="text-sm transition hover:text-gray-800 dark:text-slate-400 hover:dark:text-white"
-                >
-                  Login
-                </Link>
+              <div className="flex items-center ">
+                <Button variant="link" asChild>
+                  <Link href="https://supabase.github.io/dbdev/" target="blank">
+                    Docs
+                  </Link>
+                </Button>
+                <Button variant="link" asChild>
+                  <Link href="/sign-up">Login</Link>
+                </Button>
               </div>
             )}
           </div>

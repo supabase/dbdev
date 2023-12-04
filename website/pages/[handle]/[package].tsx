@@ -85,8 +85,18 @@ create extension "${pkg?.package_name ?? 'Loading...'}"
 
         <Tabs defaultValue="description">
           <TabsList>
-            <TabsTrigger value="description">Description</TabsTrigger>
-            <TabsTrigger value="versions">Versions</TabsTrigger>
+            <TabsTrigger
+              value="description"
+              className="data-[state=active]:border-b-2 border-slate-700"
+            >
+              Description
+            </TabsTrigger>
+            <TabsTrigger
+              value="versions"
+              className="data-[state=active]:border-b-2 border-slate-700"
+            >
+              Versions
+            </TabsTrigger>
           </TabsList>
 
           <div className="grid grid-cols-1 gap-x-2 md:grid-cols-6">

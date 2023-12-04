@@ -4,9 +4,10 @@ import Head from 'next/head'
 import Link from 'next/link'
 import Layout from '~/components/layouts/Layout'
 import PackageCard from '~/components/packages/PackageCard'
-import { Button } from '~/components/ui/Button'
+
 import CopyButton from '~/components/ui/CopyButton'
 import Markdown from '~/components/ui/Markdown'
+import { Button } from '~/components/ui/button'
 import {
   prefetchPopularPackages,
   usePopularPackagesQuery,
@@ -44,7 +45,7 @@ const IndexPage: NextPageWithLayout = ({}) => {
             </a>
           </p>
           <div className="flex flex-col sm:flex-row md:items-center mt-6 gap-4">
-            <Button variant={'default'} asChild>
+            <Button variant="default" asChild>
               <Link href="/installer">Getting started</Link>
             </Button>
             <Button asChild variant="outline">

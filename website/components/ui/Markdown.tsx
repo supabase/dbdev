@@ -92,7 +92,7 @@ const COPYABLE_CODE_COMPONENTS: MarkdownProps['components'] = {
           <CopyButton
             getValue={() => childrenToText(children)}
             className="absolute top-2 right-2"
-            variant="dark"
+            variant="light"
           />
         )}
 
@@ -116,7 +116,7 @@ const Markdown = ({
     remarkPlugins={[remarkGfm, ...remarkPlugins]}
     rehypePlugins={[rehypeHighlight, ...rehypePlugins]}
     linkTarget={linkTarget}
-    className={cn('prose max-w-none', className)}
+    className={cn('prose lg:prose-xl max-w-none', className)}
     components={{
       ...DEFAULT_COMPONENTS,
       ...(copyableCode ? COPYABLE_CODE_COMPONENTS : undefined),

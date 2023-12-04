@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import { toast } from 'react-hot-toast'
 import { useDeleteAccessTokenMutation } from '~/data/access-tokens/delete-access-token'
-import Button from '../ui/Button'
+import { Button } from '../ui/button'
 
 export interface ApiTokenCardProps {
   tokenId: string
@@ -33,7 +33,7 @@ const AccessTokenCard = ({
         ).fromNow()}`}</div>
       </div>
       <Button
-        variant="subtle"
+        variant="secondary"
         onClick={() => deleteAccessToken({ tokenId })}
         disabled={isDeletingAccessToken}
       >
