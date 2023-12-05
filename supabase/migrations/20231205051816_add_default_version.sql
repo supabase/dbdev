@@ -76,6 +76,7 @@ grant update (control_description, control_relocatable, control_requires, defaul
     to authenticated;
 
 -- publish_package accepts an additional `default_version` argument
+drop function public.publish_package(app.valid_name, varchar, bool, text[]);
 create or replace function public.publish_package(
     package_name app.valid_name,
     package_description varchar(1000),
