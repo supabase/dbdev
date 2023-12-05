@@ -43,6 +43,7 @@ set default_version_struct = app.text_to_semver(pp.latest_version)
 from public.packages pp
 where packages.id = pp.id;
 
+-- add new default_version column to the view
 create or replace view public.packages as
     select
         pa.id,
@@ -64,3 +65,45 @@ create or replace view public.packages as
             order by pv.version_struct
             limit 1
         ) newest_ver;
+
+-- publish_package accepts an additional `default_version` argument
+create or replace function public.publish_package(
+    package_name app.valid_name,
+    package_description varchar(1000),
+    relocatable bool default false,
+    requires text[] default '{}',
+    default_version text default null
+)
+    returns void
+    language plpgsql
+as $$
+declare
+    account app.accounts = account from app.accounts account where id = auth.uid();
+    require text;
+begin
+    if account.handle is null then
+        raise exception 'user not logged in';
+    end if;
+
+    foreach require in array requires
+    loop
+        if not exists (
+            select true
+            from app.allowed_extensions
+            where
+                name = require
+        ) then
+            raise exception '`requires` in the control file can''t have `%` in it', require;
+        end if;
+    end loop;
+
+    insert into app.packages(handle, partial_name, control_description, control_relocatable, control_requires, default_version_struct)
+    values (account.handle, package_name, package_description, relocatable, requires, app.text_to_semver(default_version))
+    on conflict on constraint packages_handle_partial_name_key
+    do update
+    set control_description = excluded.control_description,
+        control_relocatable = excluded.control_relocatable,
+        control_requires = excluded.control_requires,
+        default_version_struct = excluded.default_version_struct;
+end;
+$$;
