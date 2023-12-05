@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::path::Path;
 
 use crate::client::{
@@ -21,7 +22,14 @@ pub async fn publish(
         return Err(anyhow::anyhow!("No `README.md` file found"));
     };
 
+    let valid_versions = get_valid_versions(&payload);
     let request = create_publish_package_request(&payload);
+    if !valid_versions.contains(request.default_version) {
+        return Err(anyhow::anyhow!(
+            "default_version in control file should be set to one of the following: {}",
+            valid_versions.into_iter().collect::<Vec<&str>>().join(", ")
+        ));
+    }
     client.publish_package(&jwt, &request).await?;
 
     if payload.install_files.is_empty() {
@@ -78,6 +86,7 @@ fn create_publish_package_request(payload: &Payload) -> PublishPackageRequest {
         package_description: &payload.metadata.comment,
         relocatable: payload.metadata.relocatable,
         requires: &payload.metadata.requires,
+        default_version: &payload.metadata.default_version,
     }
 }
 
@@ -104,4 +113,19 @@ fn create_publich_package_upgrade_request<'a>(
         to_version: &upgrade_file.to_version,
         upgrade_source: &upgrade_file.body,
     }
+}
+
+fn get_valid_versions(payload: &Payload) -> HashSet<&str> {
+    let mut valid_versions: HashSet<&str> = HashSet::new();
+
+    for install_file in &payload.install_files {
+        valid_versions.insert(&install_file.version);
+    }
+
+    for upgrade_file in &payload.upgrade_files {
+        valid_versions.insert(&upgrade_file.from_version);
+        valid_versions.insert(&upgrade_file.to_version);
+    }
+
+    valid_versions
 }
