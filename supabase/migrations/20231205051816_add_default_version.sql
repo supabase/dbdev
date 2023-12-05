@@ -66,6 +66,14 @@ create or replace view public.packages as
             limit 1
         ) newest_ver;
 
+grant insert (partial_name, handle, control_description, control_relocatable, control_requires, default_version_struct)
+    on app.packages
+    to authenticated;
+
+grant update (control_description, control_relocatable, control_requires, default_version_struct)
+    on app.packages
+    to authenticated;
+
 -- publish_package accepts an additional `default_version` argument
 create or replace function public.publish_package(
     package_name app.valid_name,
