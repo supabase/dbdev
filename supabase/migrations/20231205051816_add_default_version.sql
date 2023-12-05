@@ -62,7 +62,7 @@ create or replace view public.packages as
             select *
             from app.package_versions pv
             where pv.package_id = pa.id
-            order by pv.version_struct
+            order by pv.version_struct desc
             limit 1
         ) newest_ver;
 
