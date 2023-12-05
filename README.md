@@ -46,8 +46,8 @@ Requires:
 */
 create extension if not exists http with schema extensions;
 create extension if not exists pg_tle;
-select pgtle.uninstall_extension_if_exists('supabase-dbdev');
 drop extension if exists "supabase-dbdev";
+select pgtle.uninstall_extension_if_exists('supabase-dbdev');
 select
     pgtle.install_extension(
         'supabase-dbdev',
