@@ -6,15 +6,15 @@ $pkg$
 
 create schema dbdev;
 
-create or replace function dbdev.install(package_name text)
+create or replace function dbdev.install(
+    package_name text,
+    base_url text default 'https://api.database.dev/rest/v1/',
+    api_key text default 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhtdXB0cHBsZnZpaWZyYndtbXR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODAxMDczNzIsImV4cCI6MTk5NTY4MzM3Mn0.z2CN0mvO2No8wSi46Gw59DFGCTJrzM0AQKsu_5k134s'
+)
     returns bool
     language plpgsql
 as $$
 declare
-    -- Endpoint
-    base_url text = 'https://api.database.dev/rest/v1/';
-    apikey text = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhtdXB0cHBsZnZpaWZyYndtbXR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODAxMDczNzIsImV4cCI6MTk5NTY4MzM3Mn0.z2CN0mvO2No8wSi46Gw59DFGCTJrzM0AQKsu_5k134s';
-
     http_ext_schema regnamespace = extnamespace::regnamespace from pg_catalog.pg_extension where extname = 'http' limit 1;
     pgtle_is_available bool = true from pg_catalog.pg_extension where extname = 'pg_tle' limit 1;
     -- HTTP respones
@@ -54,7 +54,7 @@ begin
                 $stmt$ || pg_catalog.quote_literal($1) || $stmt$
             ),
             array[
-                ('apiKey', $stmt$ || pg_catalog.quote_literal(apikey) || $stmt$)::http_header
+                ('apiKey', $stmt$ || pg_catalog.quote_literal(api_key) || $stmt$)::http_header
             ],
             null,
             null
@@ -72,7 +72,7 @@ begin
     end if;
 
     if contents is null or json_typeof(contents) <> 'array' or json_array_length(contents) = 0 then
-        raise exception using errcode='22000', message=format('No versions for package named %s', package_name);
+        raise exception using errcode='22000', message=format('No versions found for package named %s', package_name);
     end if;
 
     for rec_package_name, rec_ver, rec_sql, rec_description, rec_requires in select
@@ -121,7 +121,7 @@ begin
                 $stmt$ || pg_catalog.quote_literal($1) || $stmt$
             ),
             array[
-                ('apiKey', $stmt$ || pg_catalog.quote_literal(apikey) || $stmt$)::http_header
+                ('apiKey', $stmt$ || pg_catalog.quote_literal(api_key) || $stmt$)::http_header
             ],
             null,
             null
@@ -176,7 +176,7 @@ begin
                 $stmt$ || pg_catalog.quote_literal($1) || $stmt$
             ),
             array[
-                ('apiKey', $stmt$ || pg_catalog.quote_literal(apikey) || $stmt$)::http_header
+                ('apiKey', $stmt$ || pg_catalog.quote_literal(api_key) || $stmt$)::http_header
             ],
             null,
             null
@@ -221,7 +221,7 @@ begin
                 $stmt$ || pg_catalog.quote_literal(base_url) || $stmt$
             ),
             array[
-                ('apiKey', $stmt$ || pg_catalog.quote_literal(apikey) || $stmt$)::http_header,
+                ('apiKey', $stmt$ || pg_catalog.quote_literal(api_key) || $stmt$)::http_header,
                 ('x-client-info', 'dbdev/0.0.2')::http_header
             ],
             'application/json',
