@@ -205,7 +205,11 @@ begin
             json_array_elements(contents) as r
         loop
 
-        perform pgtle.set_default_version(rec_package_name, rec_default_ver);
+        if rec_default_ver is not null then
+            perform pgtle.set_default_version(rec_package_name, rec_default_ver);
+        else
+            raise notice using errcode='22000', message=format('DBDEV INFO: missing default version');
+        end if;
 
     end loop;
 
