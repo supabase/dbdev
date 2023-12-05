@@ -6,6 +6,7 @@ $pkg$
 
 create schema dbdev;
 
+-- base_url and api_key have been added as arguments with default values to help test locally
 create or replace function dbdev.install(
     package_name text,
     base_url text default 'https://api.database.dev/rest/v1/',
@@ -329,6 +330,7 @@ create extension "handle-package_name"
 $description$
 );
 
+-- set supabase-dbdev package's default_version to 0.0.4
 update app.packages
 set default_version_struct = app.text_to_semver('0.0.4')
 where package_name = 'supabase-dbdev';
