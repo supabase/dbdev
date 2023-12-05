@@ -1,6 +1,6 @@
 -- The original semver domain defined in 20220117141507_semver.sql doesn't allow null
 -- app.semver_struct values, but we need a nullable app.semver column for the new
--- default_version_struct column in the app.packages table (see alter table app.package below).
+-- default_version_struct column in the app.packages table (see alter table app.packages below).
 -- So we modify the `is_valid` function such that it returns true if the input version itself is
 -- null. All the existing tables where app.semver domain is used already have an additional
 -- non null constraint, so their behaviour doesn't change.
@@ -66,6 +66,7 @@ create or replace view public.packages as
             limit 1
         ) newest_ver;
 
+-- grant insert and update permissions to authenticated users on the new default_version_struct column
 grant insert (partial_name, handle, control_description, control_relocatable, control_requires, default_version_struct)
     on app.packages
     to authenticated;
