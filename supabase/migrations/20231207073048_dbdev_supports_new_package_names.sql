@@ -32,6 +32,7 @@ declare
     rec_description text;
     rec_requires text[];
     rec_default_ver text;
+    package_name_col text;
 begin
 
     if http_ext_schema is null then
@@ -42,6 +43,14 @@ begin
         raise exception using errcode='22000', message=format('dbdev requires the pgtle extension and it is not available');
     end if;
 
+    if package_name like '%@%' then
+        package_name_col = 'new_package_name';
+    elsif package_name like '%-%' then
+        package_name_col = 'package_name';
+    else
+        raise exception using errcode='22000', message=format('package name must be either handle@partial_name or handle-partial_name');
+    end if;
+
     -------------------
     -- Base Versions --
     -------------------
@@ -50,9 +59,11 @@ begin
         (
             'GET',
             format(
-                '%spackage_versions?select=package_name,version,sql,control_description,control_requires&limit=50&package_name=eq.%s',
+                '%spackage_versions?select=%s,version,sql,control_description,control_requires&limit=50&%s=eq.%s',
                 $stmt$ || pg_catalog.quote_literal(base_url) || $stmt$,
-                $stmt$ || pg_catalog.quote_literal($1) || $stmt$
+                package_name_col,
+                package_name_col
+                $stmt$ || pg_catalog.quote_literal(package_name) || $stmt$
             ),
             array[
                 ('apiKey', $stmt$ || pg_catalog.quote_literal(api_key) || $stmt$)::http_header
@@ -77,7 +88,7 @@ begin
     end if;
 
     for rec_package_name, rec_ver, rec_sql, rec_description, rec_requires in select
-            (r ->> 'package_name'),
+            (r ->> package_name_col),
             (r ->> 'version'),
             (r ->> 'sql'),
             (r ->> 'control_description'),
@@ -117,9 +128,11 @@ begin
         (
             'GET',
             format(
-                '%spackage_upgrades?select=package_name,from_version,to_version,sql&limit=50&package_name=eq.%s',
+                '%spackage_upgrades?select=%s,from_version,to_version,sql&limit=50&%s=eq.%s',
                 $stmt$ || pg_catalog.quote_literal(base_url) || $stmt$,
-                $stmt$ || pg_catalog.quote_literal($1) || $stmt$
+                package_name_col,
+                package_name_col,
+                $stmt$ || pg_catalog.quote_literal(package_name) || $stmt$
             ),
             array[
                 ('apiKey', $stmt$ || pg_catalog.quote_literal(api_key) || $stmt$)::http_header
@@ -144,7 +157,7 @@ begin
     end if;
 
     for rec_package_name, rec_from_ver, rec_to_ver, rec_sql in select
-            (r ->> 'package_name'),
+            (r ->> package_name_col),
             (r ->> 'from_version'),
             (r ->> 'to_version'),
             (r ->> 'sql')
@@ -172,9 +185,11 @@ begin
         (
             'GET',
             format(
-                '%spackages?select=package_name,default_version&limit=1&package_name=eq.%s',
+                '%spackages?select=%s,default_version&limit=1&%s=eq.%s',
                 $stmt$ || pg_catalog.quote_literal(base_url) || $stmt$,
-                $stmt$ || pg_catalog.quote_literal($1) || $stmt$
+                package_name_col,
+                package_name_col,
+                $stmt$ || pg_catalog.quote_literal(package_name) || $stmt$
             ),
             array[
                 ('apiKey', $stmt$ || pg_catalog.quote_literal(api_key) || $stmt$)::http_header
@@ -199,7 +214,7 @@ begin
     end if;
 
     for rec_package_name, rec_default_ver in select
-            (r ->> 'package_name'),
+            (r ->> package_name_col),
             (r ->> 'default_version')
         from
             json_array_elements(contents) as r
