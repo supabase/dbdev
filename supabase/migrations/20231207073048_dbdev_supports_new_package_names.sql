@@ -259,7 +259,7 @@ $pkg$,
 $description$
 # dbdev
 
-dbdev is the SQL client for database.new and is the primary way end users interact with the package (pglet) registry.
+dbdev is the SQL client for database.new and is the primary way end users interact with the package registry.
 
 dbdev can be used to load packages from the registry. For example:
 
@@ -267,9 +267,9 @@ dbdev can be used to load packages from the registry. For example:
 -- Load the package from the package index
 select dbdev.install('olirice@index_advisor');
 ```
-Where `olirice` is the handle of the author and `index_advisor` is the name of the pglet.
+Where `olirice` is the handle of the author and `index_advisor` is the name of the package.
 
-Once installed, pglets are visible in PostgreSQL as extensions. At that point they can be enabled with standard Postgres commands i.e. the `create extension`
+Once installed, packages are visible in PostgreSQL as extensions. At that point they can be enabled with standard Postgres commands i.e. the `create extension`
 
 To improve reproducibility, we recommend __always__ specifying the package version in your `create extension` statements.
 

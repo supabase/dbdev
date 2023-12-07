@@ -11,15 +11,15 @@ dbdev is a package manager for Postgres [trusted language extensions (TLE)](http
 
 ## Usage
 
-Users primarily interact with the registry using the dbdev SQL client. Once present, pglets can be installed as follows:
+Users primarily interact with the registry using the dbdev SQL client. Once present, packages can be installed as follows:
 
 ```sql
 -- Load the package from the package index
 select dbdev.install('olirice-index_advisor');
 ```
-Where `olirice` is the handle of the publisher and `index_advisor` is the name of the pglet.
+Where `olirice` is the handle of the publisher and `index_advisor` is the name of the package.
 
-Once installed, pglets are visible in PostgreSQL as extensions. At that point they can be enabled with standard Postgres commands i.e. the `create extension`
+Once installed, packages are visible in PostgreSQL as extensions. At that point they can be enabled with standard Postgres commands i.e. the `create extension`
 
 To improve reproducibility, we recommend __always__ specifying the package version in your `create extension` statements.
 
