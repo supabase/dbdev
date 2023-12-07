@@ -5,7 +5,7 @@ import { cn } from '~/lib/utils'
 export interface PackageCardProps {
   pkg: {
     handle: string
-    package_name: string
+    new_package_name: string
     partial_name: string
     latest_version: string
     control_description: string
@@ -16,7 +16,7 @@ export interface PackageCardProps {
 const PackageCard = ({ pkg, className }: PackageCardProps) => {
   return (
     <Link
-      key={pkg.package_name}
+      key={pkg.new_package_name}
       href={`/${pkg.handle}/${pkg.partial_name}`}
       className={cn(
         'col-span-4  from-white via-white to-gray-100 rounded-lg px-6 py-5 transition duration-300 group hover:shadow-md opacity-90 hover:opacity-100 border border-gray-200',

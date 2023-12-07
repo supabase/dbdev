@@ -11,7 +11,7 @@ import { Package } from './package-query'
 
 const SELECTED_COLUMNS = [
   'id',
-  'package_name',
+  'new_package_name',
   'handle',
   'partial_name',
   'latest_version',

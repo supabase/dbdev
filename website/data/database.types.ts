@@ -49,11 +49,11 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: 'accounts_id_fkey'
-            columns: ['id']
-            referencedRelation: 'users'
-            referencedColumns: ['id']
-          },
+            foreignKeyName: "accounts_id_fkey"
+            columns: ["id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
         ]
       }
       download_metrics: {
@@ -66,17 +66,17 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: 'downloads_package_id_fkey'
-            columns: ['package_id']
-            referencedRelation: 'packages'
-            referencedColumns: ['id']
+            foreignKeyName: "downloads_package_id_fkey"
+            columns: ["package_id"]
+            referencedRelation: "packages"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: 'downloads_package_id_fkey'
-            columns: ['package_id']
-            referencedRelation: 'packages'
-            referencedColumns: ['id']
-          },
+            foreignKeyName: "downloads_package_id_fkey"
+            columns: ["package_id"]
+            referencedRelation: "packages"
+            referencedColumns: ["id"]
+          }
         ]
       }
       members: {
@@ -84,45 +84,45 @@ export interface Database {
           account_id: string | null
           created_at: string | null
           organization_id: string | null
-          role: 'maintainer' | null
+          role: "maintainer" | null
         }
         Insert: {
           account_id?: string | null
           created_at?: string | null
           organization_id?: string | null
-          role?: 'maintainer' | null
+          role?: "maintainer" | null
         }
         Update: {
           account_id?: string | null
           created_at?: string | null
           organization_id?: string | null
-          role?: 'maintainer' | null
+          role?: "maintainer" | null
         }
         Relationships: [
           {
-            foreignKeyName: 'members_account_id_fkey'
-            columns: ['account_id']
-            referencedRelation: 'accounts'
-            referencedColumns: ['id']
+            foreignKeyName: "members_account_id_fkey"
+            columns: ["account_id"]
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: 'members_account_id_fkey'
-            columns: ['account_id']
-            referencedRelation: 'accounts'
-            referencedColumns: ['id']
+            foreignKeyName: "members_account_id_fkey"
+            columns: ["account_id"]
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: 'members_organization_id_fkey'
-            columns: ['organization_id']
-            referencedRelation: 'organizations'
-            referencedColumns: ['id']
+            foreignKeyName: "members_organization_id_fkey"
+            columns: ["organization_id"]
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: 'members_organization_id_fkey'
-            columns: ['organization_id']
-            referencedRelation: 'organizations'
-            referencedColumns: ['id']
-          },
+            foreignKeyName: "members_organization_id_fkey"
+            columns: ["organization_id"]
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          }
         ]
       }
       organizations: {
@@ -142,6 +142,7 @@ export interface Database {
           created_at: string | null
           from_version: string | null
           id: string | null
+          new_package_name: string | null
           package_id: string | null
           package_name: string | null
           sql: string | null
@@ -149,17 +150,17 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: 'package_upgrades_package_id_fkey'
-            columns: ['package_id']
-            referencedRelation: 'packages'
-            referencedColumns: ['id']
+            foreignKeyName: "package_upgrades_package_id_fkey"
+            columns: ["package_id"]
+            referencedRelation: "packages"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: 'package_upgrades_package_id_fkey'
-            columns: ['package_id']
-            referencedRelation: 'packages'
-            referencedColumns: ['id']
-          },
+            foreignKeyName: "package_upgrades_package_id_fkey"
+            columns: ["package_id"]
+            referencedRelation: "packages"
+            referencedColumns: ["id"]
+          }
         ]
       }
       package_versions: {
@@ -169,6 +170,7 @@ export interface Database {
           created_at: string | null
           description_md: string | null
           id: string | null
+          new_package_name: string | null
           package_id: string | null
           package_name: string | null
           sql: string | null
@@ -176,17 +178,17 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: 'package_versions_package_id_fkey'
-            columns: ['package_id']
-            referencedRelation: 'packages'
-            referencedColumns: ['id']
+            foreignKeyName: "package_versions_package_id_fkey"
+            columns: ["package_id"]
+            referencedRelation: "packages"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: 'package_versions_package_id_fkey'
-            columns: ['package_id']
-            referencedRelation: 'packages'
-            referencedColumns: ['id']
-          },
+            foreignKeyName: "package_versions_package_id_fkey"
+            columns: ["package_id"]
+            referencedRelation: "packages"
+            referencedColumns: ["id"]
+          }
         ]
       }
       packages: {
@@ -194,20 +196,22 @@ export interface Database {
           control_description: string | null
           control_requires: string[] | null
           created_at: string | null
+          default_version: string | null
           description_md: string | null
           handle: string | null
           id: string | null
           latest_version: string | null
+          new_package_name: string | null
           package_name: string | null
           partial_name: string | null
         }
         Relationships: [
           {
-            foreignKeyName: 'packages_handle_fkey'
-            columns: ['handle']
-            referencedRelation: 'handle_registry'
-            referencedColumns: ['handle']
-          },
+            foreignKeyName: "packages_handle_fkey"
+            columns: ["handle"]
+            referencedRelation: "handle_registry"
+            referencedColumns: ["handle"]
+          }
         ]
       }
     }
@@ -220,7 +224,7 @@ export interface Database {
       }
       download_metrics: {
         Args: {
-          '': unknown
+          "": unknown
         }
         Returns: unknown[]
       }
@@ -240,13 +244,51 @@ export interface Database {
           control_description: string | null
           control_requires: string[] | null
           created_at: string | null
+          default_version: string | null
           description_md: string | null
           handle: string | null
           id: string | null
           latest_version: string | null
+          new_package_name: string | null
           package_name: string | null
           partial_name: string | null
         }[]
+      }
+      publish_package:
+        | {
+            Args: {
+              package_name: unknown
+              package_description: string
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              package_name: unknown
+              package_description: string
+              relocatable?: boolean
+              requires?: string[]
+              default_version?: string
+            }
+            Returns: undefined
+          }
+      publish_package_upgrade: {
+        Args: {
+          package_name: unknown
+          upgrade_source: string
+          from_version: string
+          to_version: string
+        }
+        Returns: string
+      }
+      publish_package_version: {
+        Args: {
+          package_name: unknown
+          version_source: string
+          version_description: string
+          version: string
+        }
+        Returns: string
       }
       redeem_access_token: {
         Args: {
@@ -269,10 +311,12 @@ export interface Database {
           control_description: string | null
           control_requires: string[] | null
           created_at: string | null
+          default_version: string | null
           description_md: string | null
           handle: string | null
           id: string | null
           latest_version: string | null
+          new_package_name: string | null
           package_name: string | null
           partial_name: string | null
         }[]
@@ -304,6 +348,7 @@ export interface Database {
           id: string
           name: string
           owner: string | null
+          owner_id: string | null
           public: boolean | null
           updated_at: string | null
         }
@@ -315,6 +360,7 @@ export interface Database {
           id: string
           name: string
           owner?: string | null
+          owner_id?: string | null
           public?: boolean | null
           updated_at?: string | null
         }
@@ -326,17 +372,11 @@ export interface Database {
           id?: string
           name?: string
           owner?: string | null
+          owner_id?: string | null
           public?: boolean | null
           updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: 'buckets_owner_fkey'
-            columns: ['owner']
-            referencedRelation: 'users'
-            referencedColumns: ['id']
-          },
-        ]
+        Relationships: []
       }
       migrations: {
         Row: {
@@ -368,6 +408,7 @@ export interface Database {
           metadata: Json | null
           name: string | null
           owner: string | null
+          owner_id: string | null
           path_tokens: string[] | null
           updated_at: string | null
           version: string | null
@@ -380,6 +421,7 @@ export interface Database {
           metadata?: Json | null
           name?: string | null
           owner?: string | null
+          owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
           version?: string | null
@@ -392,17 +434,18 @@ export interface Database {
           metadata?: Json | null
           name?: string | null
           owner?: string | null
+          owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
           version?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: 'objects_bucketId_fkey'
-            columns: ['bucket_id']
-            referencedRelation: 'buckets'
-            referencedColumns: ['id']
-          },
+            foreignKeyName: "objects_bucketId_fkey"
+            columns: ["bucket_id"]
+            referencedRelation: "buckets"
+            referencedColumns: ["id"]
+          }
         ]
       }
     }
