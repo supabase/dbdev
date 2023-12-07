@@ -61,8 +61,8 @@ begin
             format(
                 '%spackage_versions?select=%s,version,sql,control_description,control_requires&limit=50&%s=eq.%s',
                 $stmt$ || pg_catalog.quote_literal(base_url) || $stmt$,
-                package_name_col,
-                package_name_col
+                $stmt$ || pg_catalog.quote_literal(package_name_col) || $stmt$,
+                $stmt$ || pg_catalog.quote_literal(package_name_col) || $stmt$,
                 $stmt$ || pg_catalog.quote_literal(package_name) || $stmt$
             ),
             array[
@@ -130,8 +130,8 @@ begin
             format(
                 '%spackage_upgrades?select=%s,from_version,to_version,sql&limit=50&%s=eq.%s',
                 $stmt$ || pg_catalog.quote_literal(base_url) || $stmt$,
-                package_name_col,
-                package_name_col,
+                $stmt$ || pg_catalog.quote_literal(package_name_col) || $stmt$,
+                $stmt$ || pg_catalog.quote_literal(package_name_col) || $stmt$,
                 $stmt$ || pg_catalog.quote_literal(package_name) || $stmt$
             ),
             array[
@@ -187,8 +187,8 @@ begin
             format(
                 '%spackages?select=%s,default_version&limit=1&%s=eq.%s',
                 $stmt$ || pg_catalog.quote_literal(base_url) || $stmt$,
-                package_name_col,
-                package_name_col,
+                $stmt$ || pg_catalog.quote_literal(package_name_col) || $stmt$,
+                $stmt$ || pg_catalog.quote_literal(package_name_col) || $stmt$,
                 $stmt$ || pg_catalog.quote_literal(package_name) || $stmt$
             ),
             array[
