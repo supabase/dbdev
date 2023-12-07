@@ -297,8 +297,9 @@ Requires:
 */
 create extension if not exists http with schema extensions;
 create extension if not exists pg_tle;
--- drop dbdev with older naming schem if present
+-- drop dbdev with older naming scheme if present
 drop extension if exists "supabase-dbdev";
+select pgtle.uninstall_extension_if_exists('supabase-dbdev');
 drop extension if exists "supabase@dbdev";
 select pgtle.uninstall_extension_if_exists('supabase@dbdev');
 select
