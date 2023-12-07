@@ -93,7 +93,7 @@ begin
             where
                 name = rec_package_name
         ) then
-            perform pgtle.install_extension(rec_package_name, rec_ver, rec_package_name, rec_sql, rec_requires);
+            perform pgtle.install_extension(rec_package_name, rec_ver, rec_description, rec_sql, rec_requires);
         end if;
 
         -- Install other available versions
