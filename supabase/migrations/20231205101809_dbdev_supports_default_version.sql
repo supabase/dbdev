@@ -227,7 +227,7 @@ begin
             ),
             array[
                 ('apiKey', $stmt$ || pg_catalog.quote_literal(api_key) || $stmt$)::http_header,
-                ('x-client-info', 'dbdev/0.0.2')::http_header
+                ('x-client-info', 'dbdev/0.0.4')::http_header
             ],
             'application/json',
             json_build_object('package_name', $stmt$ || pg_catalog.quote_literal($1) || $stmt$)::text
