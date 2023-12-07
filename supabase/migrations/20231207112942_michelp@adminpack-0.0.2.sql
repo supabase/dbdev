@@ -1,12 +1,3 @@
-insert into app.packages(
-    handle,
-    partial_name,
-    control_description,
-    control_relocatable,
-    control_requires
-)
-values ('michelp', 'adminpack', 'A bunch of useful queries for DBA to manage and inspect databases', false, '{}');
-
 insert into app.package_versions(package_id, version_struct, sql, description_md)
 values (
 (select id from app.packages where new_package_name = 'michelp@adminpack'),

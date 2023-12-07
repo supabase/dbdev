@@ -1,19 +1,3 @@
-insert into app.packages(
-    handle,
-    partial_name,
-    control_description,
-    control_relocatable,
-    control_requires
-)
-values (
-    'olirice',
-    'read_once',
-    'Send messages that can only be read once',
-    false,
-    '{pg_cron}'
-);
-
-
 insert into app.package_versions(package_id, version_struct, sql, description_md)
 values (
 (select id from app.packages where new_package_name = 'olirice@read_once'),
