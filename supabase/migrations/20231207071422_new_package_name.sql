@@ -65,3 +65,15 @@ create or replace view public.package_upgrades
         app.packages pa
         join app.package_upgrades pu
             on pa.id = pu.package_id;
+
+create or replace function public.register_download(package_name text)
+    returns void
+    language sql
+    security definer
+    as
+$$
+    insert into app.downloads(package_id)
+    select id
+    from app.packages ap
+    where ap.package_name = $1 or ap.new_package_name = $1
+$$;
