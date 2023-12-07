@@ -9,7 +9,7 @@ $$;
 alter table app.packages
 add column new_package_name text not null generated always as (app.to_new_package_name(handle, partial_name)) stored;
 
--- add new_package_name column to the view
+-- add new_package_name column to the views
 create or replace view public.packages as
     select
         pa.id,
@@ -32,3 +32,36 @@ create or replace view public.packages as
             order by pv.version_struct desc
             limit 1
         ) newest_ver;
+
+create or replace view public.package_versions as
+    select
+        pv.id,
+        pv.package_id,
+        pa.package_name,
+        pv.version,
+        pv.sql,
+        pv.description_md,
+        pa.control_description,
+        pa.control_requires,
+        pv.created_at,
+        pa.new_package_name
+    from
+        app.packages pa
+        join app.package_versions pv
+            on pa.id = pv.package_id;
+
+create or replace view public.package_upgrades
+    as
+    select
+        pu.id,
+        pu.package_id,
+        pa.package_name,
+        pu.from_version,
+        pu.to_version,
+        pu.sql,
+        pu.created_at,
+        pa.new_package_name
+    from
+        app.packages pa
+        join app.package_upgrades pu
+            on pa.id = pu.package_id;
