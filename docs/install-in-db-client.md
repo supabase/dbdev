@@ -16,11 +16,14 @@ Run the following SQL to install the client:
 ```sql
 create extension if not exists http with schema extensions;
 create extension if not exists pg_tle;
+-- drop dbdev with older naming scheme if present
 drop extension if exists "supabase-dbdev";
 select pgtle.uninstall_extension_if_exists('supabase-dbdev');
+drop extension if exists "supabase@dbdev";
+select pgtle.uninstall_extension_if_exists('supabase@dbdev');
 select
     pgtle.install_extension(
-        'supabase-dbdev',
+        'supabase@dbdev',
         resp.contents ->> 'version',
         'PostgreSQL package manager',
         resp.contents ->> 'sql'
@@ -30,7 +33,7 @@ from http(
         'GET',
         'https://api.database.dev/rest/v1/'
         || 'package_versions?select=sql,version'
-        || '&package_name=eq.supabase-dbdev'
+        || '&package_name=eq.supabase@dbdev'
         || '&order=version.desc'
         || '&limit=1',
         array[
@@ -44,10 +47,10 @@ lateral (
     select
         ((row_to_json(x) -> 'content') #>> '{}')::json -> 0
 ) resp(contents);
-create extension "supabase-dbdev";
-select dbdev.install('supabase-dbdev');
-drop extension if exists "supabase-dbdev";
-create extension "supabase-dbdev";
+create extension "supabase@dbdev";
+select dbdev.install('supabase@dbdev');
+drop extension if exists "supabase@dbdev";
+create extension "supabase@dbdev";
 ```
 
 ## Use
@@ -64,8 +67,8 @@ create extension <extension_name>
 For example, to install pg_headerkit version 1.0.0 in schema public run:
 
 ```sql
-select dbdev.install('burggraf-pg_headerkit');
-create extension "burggraf-pg_headerkit"
+select dbdev.install('burggraf@pg_headerkit');
+create extension "burggraf@pg_headerkit"
     schema 'public'
     version '1.0.0';
 ```
