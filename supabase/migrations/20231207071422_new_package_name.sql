@@ -1,4 +1,4 @@
-create function app.to_new_package_name(handle app.valid_name, partial_name app.valid_name)
+create or replace function app.to_package_name(handle app.valid_name, partial_name app.valid_name)
     returns text
     immutable
     language sql
@@ -7,7 +7,10 @@ as $$
 $$;
 
 alter table app.packages
-add column new_package_name text not null generated always as (app.to_new_package_name(handle, partial_name)) stored;
+add column new_package_name text null;
+
+update app.packages
+set new_package_name = format('%s-%s', handle, partial_name);
 
 -- add new_package_name column to the views
 create or replace view public.packages as
