@@ -1,6 +1,6 @@
 insert into app.package_versions(package_id, version_struct, sql, description_md)
 values (
-(select id from app.packages where new_package_name = 'langchain@embedding_search'),
+(select id from app.packages where package_alias= 'langchain@embedding_search'),
 (1,1,1),
 $pkg$
 -- Enforce requirements

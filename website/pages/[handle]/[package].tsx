@@ -39,9 +39,9 @@ const PackagePage: NextPageWithLayout = () => {
     })
 
   const installCode = `select dbdev.install('${
-    pkg?.new_package_name ?? 'Loading...'
+    pkg?.package_alias ?? pkg?.package_name ?? 'Loading...'
   }');
-create extension "${pkg?.new_package_name ?? 'Loading...'}"
+create extension "${pkg?.package_alias ?? pkg?.package_name ?? 'Loading...'}"
     version '${pkg?.latest_version ?? '0.0.0'}';`
 
   const downloads30Days = pkg?.download_metrics?.downloads_30_day ?? 0
@@ -59,15 +59,15 @@ create extension "${pkg?.new_package_name ?? 'Loading...'}"
     <>
       <Head>
         <title>
-          {`${pkg ? `${pkg.new_package_name} | ` : ''}The Database Package Manager`}
+          {`${pkg ? `${pkg.package_alias ?? pkg.package_name} | ` : ''}The Database Package Manager`}
         </title>
       </Head>
 
       <div className="flex flex-col w-full gap-8 px-4 mx-auto mb-16 max-w-7xl">
         <div className="flex flex-col gap-2">
           <div className="flex items-end gap-3">
-            <H1>{pkg?.new_package_name ?? 'Loading...'}</H1>
-            {pkg && <CopyButton getValue={() => pkg.new_package_name} />}
+            <H1>{pkg?.package_alias ?? pkg?.package_name ?? 'Loading...'}</H1>
+            {pkg && <CopyButton getValue={() => pkg.package_alias ?? pkg.package_name} />}
           </div>
 
           <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 mt-4">

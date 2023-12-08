@@ -1,6 +1,6 @@
 insert into app.package_versions(package_id, version_struct, sql, description_md)
 values (
-(select id from app.packages where new_package_name = 'supabase@dbdev'),
+(select id from app.packages where package_alias= 'supabase@dbdev'),
 (0,0,5),
 $pkg$
 
@@ -44,7 +44,7 @@ begin
     end if;
 
     if package_name like '%@%' then
-        package_name_col = 'new_package_name';
+        package_name_col = 'package_alias';
     elsif package_name like '%-%' then
         package_name_col = 'package_name';
     else
@@ -314,7 +314,7 @@ from http(
         'GET',
         'https://api.database.dev/rest/v1/'
         || 'package_versions?select=sql,version'
-        || '&new_package_name=eq.supabase@dbdev'
+        || '&package_alias=eq.supabase@dbdev'
         || '&order=version.desc'
         || '&limit=1',
         array[
@@ -355,4 +355,4 @@ $description$
 -- set supabase@dbdev package's default_version to 0.0.5
 update app.packages
 set default_version_struct = app.text_to_semver('0.0.5')
-where new_package_name = 'supabase@dbdev';
+where package_alias = 'supabase@dbdev';

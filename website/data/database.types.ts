@@ -142,7 +142,7 @@ export interface Database {
           created_at: string | null
           from_version: string | null
           id: string | null
-          new_package_name: string | null
+          package_alias: string | null
           package_id: string | null
           package_name: string | null
           sql: string | null
@@ -170,7 +170,7 @@ export interface Database {
           created_at: string | null
           description_md: string | null
           id: string | null
-          new_package_name: string | null
+          package_alias: string | null
           package_id: string | null
           package_name: string | null
           sql: string | null
@@ -201,7 +201,7 @@ export interface Database {
           handle: string | null
           id: string | null
           latest_version: string | null
-          new_package_name: string | null
+          package_alias: string | null
           package_name: string | null
           partial_name: string | null
         }
@@ -249,7 +249,7 @@ export interface Database {
           handle: string | null
           id: string | null
           latest_version: string | null
-          new_package_name: string | null
+          package_alias: string | null
           package_name: string | null
           partial_name: string | null
         }[]
@@ -316,7 +316,7 @@ export interface Database {
           handle: string | null
           id: string | null
           latest_version: string | null
-          new_package_name: string | null
+          package_alias: string | null
           package_name: string | null
           partial_name: string | null
         }[]

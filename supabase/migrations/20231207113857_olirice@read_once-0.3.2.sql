@@ -1,6 +1,6 @@
 insert into app.package_versions(package_id, version_struct, sql, description_md)
 values (
-(select id from app.packages where new_package_name = 'olirice@read_once'),
+(select id from app.packages where package_alias = 'olirice@read_once'),
 (0,3,2),
 $pkg$
 

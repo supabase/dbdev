@@ -1,6 +1,6 @@
 insert into app.package_versions(package_id, version_struct, sql, description_md)
 values (
-(select id from app.packages where new_package_name = 'michelp@adminpack'),
+(select id from app.packages where package_alias = 'michelp@adminpack'),
 (0,0,2),
 $adminpack$
 -- From: https://github.com/ioguix/pgsql-bloat-estimation

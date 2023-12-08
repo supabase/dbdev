@@ -7,12 +7,12 @@ as $$
 $$;
 
 alter table app.packages
-add column new_package_name text null;
+add column package_alias text null;
 
 update app.packages
-set new_package_name = format('%s-%s', handle, partial_name);
+set package_alias = format('%s@%s', handle, partial_name);
 
--- add new_package_name column to the views
+-- add package_alias column to the views
 create or replace view public.packages as
     select
         pa.id,
@@ -25,7 +25,7 @@ create or replace view public.packages as
         pa.control_requires,
         pa.created_at,
         pa.default_version,
-        pa.new_package_name
+        pa.package_alias
     from
         app.packages pa,
         lateral (
@@ -47,7 +47,7 @@ create or replace view public.package_versions as
         pa.control_description,
         pa.control_requires,
         pv.created_at,
-        pa.new_package_name
+        pa.package_alias
     from
         app.packages pa
         join app.package_versions pv
@@ -63,7 +63,7 @@ create or replace view public.package_upgrades
         pu.to_version,
         pu.sql,
         pu.created_at,
-        pa.new_package_name
+        pa.package_alias
     from
         app.packages pa
         join app.package_upgrades pu
@@ -78,5 +78,5 @@ $$
     insert into app.downloads(package_id)
     select id
     from app.packages ap
-    where ap.package_name = $1 or ap.new_package_name = $1
+    where ap.package_name = $1 or ap.package_alias = $1
 $$;

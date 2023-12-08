@@ -63,7 +63,7 @@ from http(
         'GET',
         'https://api.database.dev/rest/v1/'
         || 'package_versions?select=sql,version'
-        || '&new_package_name=eq.supabase@dbdev'
+        || '&package_alias=eq.supabase@dbdev'
         || '&order=version.desc'
         || '&limit=1',
         array[
