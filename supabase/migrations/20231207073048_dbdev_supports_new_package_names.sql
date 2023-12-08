@@ -28,11 +28,9 @@ declare
     rec_ver text;
     rec_from_ver text;
     rec_to_ver text;
-    rec_package_name text;
     rec_description text;
     rec_requires text[];
     rec_default_ver text;
-    package_name_col text;
 begin
 
     if http_ext_schema is null then
@@ -43,14 +41,6 @@ begin
         raise exception using errcode='22000', message=format('dbdev requires the pgtle extension and it is not available');
     end if;
 
-    if package_name like '%@%' then
-        package_name_col = 'package_alias';
-    elsif package_name like '%-%' then
-        package_name_col = 'package_name';
-    else
-        raise exception using errcode='22000', message=format('package name must be either handle@partial_name or handle-partial_name');
-    end if;
-
     -------------------
     -- Base Versions --
     -------------------
@@ -59,10 +49,9 @@ begin
         (
             'GET',
             format(
-                '%spackage_versions?select=%s,version,sql,control_description,control_requires&limit=50&%s=eq.%s',
+                '%spackage_versions?select=version,sql,control_description,control_requires&limit=50&or=(package_name.eq.%s,package_alias.eq.%s)',
                 $stmt$ || pg_catalog.quote_literal(base_url) || $stmt$,
-                $stmt$ || pg_catalog.quote_literal(package_name_col) || $stmt$,
-                $stmt$ || pg_catalog.quote_literal(package_name_col) || $stmt$,
+                $stmt$ || pg_catalog.quote_literal(package_name) || $stmt$,
                 $stmt$ || pg_catalog.quote_literal(package_name) || $stmt$
             ),
             array[
@@ -87,8 +76,7 @@ begin
         raise exception using errcode='22000', message=format('No versions found for package named %s', package_name);
     end if;
 
-    for rec_package_name, rec_ver, rec_sql, rec_description, rec_requires in select
-            (r ->> package_name_col),
+    for rec_ver, rec_sql, rec_description, rec_requires in select
             (r ->> 'version'),
             (r ->> 'sql'),
             (r ->> 'control_description'),
@@ -102,9 +90,9 @@ begin
             select true
             from pgtle.available_extensions()
             where
-                name = rec_package_name
+                name = package_name
         ) then
-            perform pgtle.install_extension(rec_package_name, rec_ver, rec_description, rec_sql, rec_requires);
+            perform pgtle.install_extension(package_name, rec_ver, rec_description, rec_sql, rec_requires);
         end if;
 
         -- Install other available versions
@@ -112,10 +100,10 @@ begin
             select true
             from pgtle.available_extension_versions()
             where
-                name = rec_package_name
+                name = package_name
                 and version = rec_ver
         ) then
-            perform pgtle.install_extension_version_sql(rec_package_name, rec_ver, rec_sql);
+            perform pgtle.install_extension_version_sql(package_name, rec_ver, rec_sql);
         end if;
 
     end loop;
@@ -128,10 +116,9 @@ begin
         (
             'GET',
             format(
-                '%spackage_upgrades?select=%s,from_version,to_version,sql&limit=50&%s=eq.%s',
+                '%spackage_upgrades?select=from_version,to_version,sql&limit=50&or=(package_name.eq.%s,package_alias.eq.%s)',
                 $stmt$ || pg_catalog.quote_literal(base_url) || $stmt$,
-                $stmt$ || pg_catalog.quote_literal(package_name_col) || $stmt$,
-                $stmt$ || pg_catalog.quote_literal(package_name_col) || $stmt$,
+                $stmt$ || pg_catalog.quote_literal(package_name) || $stmt$,
                 $stmt$ || pg_catalog.quote_literal(package_name) || $stmt$
             ),
             array[
@@ -156,8 +143,7 @@ begin
         raise exception using errcode='22000', message=format('Invalid response from dbdev upgrade paths');
     end if;
 
-    for rec_package_name, rec_from_ver, rec_to_ver, rec_sql in select
-            (r ->> package_name_col),
+    for rec_from_ver, rec_to_ver, rec_sql in select
             (r ->> 'from_version'),
             (r ->> 'to_version'),
             (r ->> 'sql')
@@ -167,13 +153,13 @@ begin
 
         if not exists (
             select true
-            from pgtle.extension_update_paths(rec_package_name)
+            from pgtle.extension_update_paths(package_name)
             where
                 source = rec_from_ver
                 and target = rec_to_ver
                 and path is not null
         ) then
-            perform pgtle.install_update_path(rec_package_name, rec_from_ver, rec_to_ver, rec_sql);
+            perform pgtle.install_update_path(package_name, rec_from_ver, rec_to_ver, rec_sql);
         end if;
     end loop;
 
@@ -185,10 +171,9 @@ begin
         (
             'GET',
             format(
-                '%spackages?select=%s,default_version&limit=1&%s=eq.%s',
+                '%spackages?select=default_version&limit=1&or=(package_name.eq.%s,package_alias.eq.%s)',
                 $stmt$ || pg_catalog.quote_literal(base_url) || $stmt$,
-                $stmt$ || pg_catalog.quote_literal(package_name_col) || $stmt$,
-                $stmt$ || pg_catalog.quote_literal(package_name_col) || $stmt$,
+                $stmt$ || pg_catalog.quote_literal(package_name) || $stmt$,
                 $stmt$ || pg_catalog.quote_literal(package_name) || $stmt$
             ),
             array[
@@ -213,15 +198,14 @@ begin
         raise exception using errcode='22000', message=format('No package named %s found', package_name);
     end if;
 
-    for rec_package_name, rec_default_ver in select
-            (r ->> package_name_col),
+    for rec_default_ver in select
             (r ->> 'default_version')
         from
             json_array_elements(contents) as r
         loop
 
         if rec_default_ver is not null then
-            perform pgtle.set_default_version(rec_package_name, rec_default_ver);
+            perform pgtle.set_default_version(package_name, rec_default_ver);
         else
             raise notice using errcode='22000', message=format('DBDEV INFO: missing default version');
         end if;
@@ -245,7 +229,7 @@ begin
                 ('x-client-info', 'dbdev/0.0.5')::http_header
             ],
             'application/json',
-            json_build_object('package_name', $stmt$ || pg_catalog.quote_literal($1) || $stmt$)::text
+            json_build_object('package_name', $stmt$ || pg_catalog.quote_literal(package_name) || $stmt$)::text
         )
     ) x
     limit 1; $stmt$
