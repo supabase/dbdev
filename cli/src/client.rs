@@ -165,6 +165,7 @@ pub struct PublishPackageRequest<'a> {
     pub package_description: &'a Option<String>,
     pub relocatable: bool,
     pub requires: &'a [String],
+    pub default_version: &'a str,
 }
 
 #[derive(Serialize)]
