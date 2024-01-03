@@ -1,39 +1,7 @@
--- The original semver domain defined in 20220117141507_semver.sql doesn't allow null
--- app.semver_struct values, but we need a nullable app.semver column for the new
--- default_version_struct column in the app.packages table (see alter table app.packages below).
--- So we modify the `is_valid` function such that it returns true if the input version itself is
--- null. All the existing tables where app.semver domain is used already have an additional
--- non null constraint, so their behaviour doesn't change.
-create or replace function app.is_valid(version app.semver_struct)
-    returns boolean
-    immutable
-    language sql
-as $$
-    select (
-        version is null or (
-            version.major is not null
-            and version.minor is not null
-            and version.patch is not null
-        )
-    )
-$$;
-
--- same definition as the original function defined in 20220117141507_semver.sql with the only
--- difference being that this is marked strict. This is done so that the function returns null
--- on null input instead of `..`
-create or replace function app.semver_to_text(version app.semver)
-    returns text
-    immutable
-    strict
-    language sql
-as $$
-    select
-        format('%s.%s.%s', version.major, version.minor, version.patch)
-$$;
-
--- default version columns are nullable for backward compatibility with older clients
+-- default_version column has a default value '0.0.0' only temporarily because the column is not null.
+-- It will be removed below.
 alter table app.packages
-add column default_version_struct app.semver,
+add column default_version_struct app.semver not null default app.text_to_semver('0.0.0'),
 add column default_version text generated always as (app.semver_to_text(default_version_struct)) stored;
 
 -- for now we set the default version to current latest version
@@ -42,6 +10,10 @@ update app.packages
 set default_version_struct = app.text_to_semver(pp.latest_version)
 from public.packages pp
 where packages.id = pp.id;
+
+-- now that every row has a valid default_version, remove the default value of '0.0.0'
+alter table app.packages
+alter column default_version_struct drop default;
 
 -- add new default_version column to the view
 create or replace view public.packages as
@@ -93,6 +65,10 @@ declare
 begin
     if account.handle is null then
         raise exception 'user not logged in';
+    end if;
+
+    if default_version is null then
+        raise exception 'default_version is required. If you are on `dbdev` CLI version 0.1.5 or older upgrade to the latest version.';
     end if;
 
     foreach require in array requires
