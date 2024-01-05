@@ -59,7 +59,9 @@ create extension "${pkg?.package_alias ?? pkg?.package_name ?? 'Loading...'}"
     <>
       <Head>
         <title>
-          {`${pkg ? `${pkg.package_alias ?? pkg.package_name} | ` : ''}The Database Package Manager`}
+          {`${
+            pkg ? `${pkg.package_alias ?? pkg.package_name} | ` : ''
+          }The Database Package Manager`}
         </title>
       </Head>
 
@@ -67,7 +69,11 @@ create extension "${pkg?.package_alias ?? pkg?.package_name ?? 'Loading...'}"
         <div className="flex flex-col gap-2">
           <div className="flex items-end gap-3">
             <H1>{pkg?.package_alias ?? pkg?.package_name ?? 'Loading...'}</H1>
-            {pkg && <CopyButton getValue={() => pkg.package_alias ?? pkg.package_name} />}
+            {pkg && (
+              <CopyButton
+                getValue={() => pkg.package_alias ?? pkg.package_name}
+              />
+            )}
           </div>
 
           <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 mt-4">

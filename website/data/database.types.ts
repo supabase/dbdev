@@ -49,11 +49,11 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "accounts_id_fkey"
-            columns: ["id"]
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
+            foreignKeyName: 'accounts_id_fkey'
+            columns: ['id']
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
         ]
       }
       download_metrics: {
@@ -66,17 +66,17 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "downloads_package_id_fkey"
-            columns: ["package_id"]
-            referencedRelation: "packages"
-            referencedColumns: ["id"]
+            foreignKeyName: 'downloads_package_id_fkey'
+            columns: ['package_id']
+            referencedRelation: 'packages'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "downloads_package_id_fkey"
-            columns: ["package_id"]
-            referencedRelation: "packages"
-            referencedColumns: ["id"]
-          }
+            foreignKeyName: 'downloads_package_id_fkey'
+            columns: ['package_id']
+            referencedRelation: 'packages'
+            referencedColumns: ['id']
+          },
         ]
       }
       members: {
@@ -84,45 +84,45 @@ export interface Database {
           account_id: string | null
           created_at: string | null
           organization_id: string | null
-          role: "maintainer" | null
+          role: 'maintainer' | null
         }
         Insert: {
           account_id?: string | null
           created_at?: string | null
           organization_id?: string | null
-          role?: "maintainer" | null
+          role?: 'maintainer' | null
         }
         Update: {
           account_id?: string | null
           created_at?: string | null
           organization_id?: string | null
-          role?: "maintainer" | null
+          role?: 'maintainer' | null
         }
         Relationships: [
           {
-            foreignKeyName: "members_account_id_fkey"
-            columns: ["account_id"]
-            referencedRelation: "accounts"
-            referencedColumns: ["id"]
+            foreignKeyName: 'members_account_id_fkey'
+            columns: ['account_id']
+            referencedRelation: 'accounts'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "members_account_id_fkey"
-            columns: ["account_id"]
-            referencedRelation: "accounts"
-            referencedColumns: ["id"]
+            foreignKeyName: 'members_account_id_fkey'
+            columns: ['account_id']
+            referencedRelation: 'accounts'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "members_organization_id_fkey"
-            columns: ["organization_id"]
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
+            foreignKeyName: 'members_organization_id_fkey'
+            columns: ['organization_id']
+            referencedRelation: 'organizations'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "members_organization_id_fkey"
-            columns: ["organization_id"]
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          }
+            foreignKeyName: 'members_organization_id_fkey'
+            columns: ['organization_id']
+            referencedRelation: 'organizations'
+            referencedColumns: ['id']
+          },
         ]
       }
       organizations: {
@@ -150,17 +150,17 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "package_upgrades_package_id_fkey"
-            columns: ["package_id"]
-            referencedRelation: "packages"
-            referencedColumns: ["id"]
+            foreignKeyName: 'package_upgrades_package_id_fkey'
+            columns: ['package_id']
+            referencedRelation: 'packages'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "package_upgrades_package_id_fkey"
-            columns: ["package_id"]
-            referencedRelation: "packages"
-            referencedColumns: ["id"]
-          }
+            foreignKeyName: 'package_upgrades_package_id_fkey'
+            columns: ['package_id']
+            referencedRelation: 'packages'
+            referencedColumns: ['id']
+          },
         ]
       }
       package_versions: {
@@ -178,17 +178,17 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "package_versions_package_id_fkey"
-            columns: ["package_id"]
-            referencedRelation: "packages"
-            referencedColumns: ["id"]
+            foreignKeyName: 'package_versions_package_id_fkey'
+            columns: ['package_id']
+            referencedRelation: 'packages'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "package_versions_package_id_fkey"
-            columns: ["package_id"]
-            referencedRelation: "packages"
-            referencedColumns: ["id"]
-          }
+            foreignKeyName: 'package_versions_package_id_fkey'
+            columns: ['package_id']
+            referencedRelation: 'packages'
+            referencedColumns: ['id']
+          },
         ]
       }
       packages: {
@@ -207,11 +207,11 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "packages_handle_fkey"
-            columns: ["handle"]
-            referencedRelation: "handle_registry"
-            referencedColumns: ["handle"]
-          }
+            foreignKeyName: 'packages_handle_fkey'
+            columns: ['handle']
+            referencedRelation: 'handle_registry'
+            referencedColumns: ['handle']
+          },
         ]
       }
     }
@@ -224,7 +224,7 @@ export interface Database {
       }
       download_metrics: {
         Args: {
-          "": unknown
+          '': unknown
         }
         Returns: unknown[]
       }
@@ -441,11 +441,11 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "objects_bucketId_fkey"
-            columns: ["bucket_id"]
-            referencedRelation: "buckets"
-            referencedColumns: ["id"]
-          }
+            foreignKeyName: 'objects_bucketId_fkey'
+            columns: ['bucket_id']
+            referencedRelation: 'buckets'
+            referencedColumns: ['id']
+          },
         ]
       }
     }
