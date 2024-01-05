@@ -40,7 +40,9 @@ export async function getPackageVersions(
   let query = supabase
     .from('package_versions')
     .select(SELECTED_COLUMNS.join(','))
-    .eq('package_name', `${handle}-${partialName}`)
+    .or(
+      `package_name.eq.${handle}-${partialName},package_alias.eq.${handle}@${partialName}`
+    )
     .order('created_at', { ascending: false })
 
   if (signal) {

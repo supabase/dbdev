@@ -79,7 +79,7 @@ const IndexPage: NextPageWithLayout = ({}) => {
                         <div className="w-12 h-[1px] bg-slate-500 -rotate-45 absolute left-12"></div>
                       </div>
                     </span>
-                    <span className="text-red-500">-</span>
+                    <span className="text-red-500">@</span>
                     <span className="bg-slate-100 dark:bg-slate-700 rounded-sm p-1 relative">
                       <span className="text-red-500">index_advisor</span>
                       <div className="hidden md:block bg-slate-50 absolute right-32 -bottom-6">

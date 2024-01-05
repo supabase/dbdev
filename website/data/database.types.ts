@@ -142,6 +142,7 @@ export interface Database {
           created_at: string | null
           from_version: string | null
           id: string | null
+          package_alias: string | null
           package_id: string | null
           package_name: string | null
           sql: string | null
@@ -169,6 +170,7 @@ export interface Database {
           created_at: string | null
           description_md: string | null
           id: string | null
+          package_alias: string | null
           package_id: string | null
           package_name: string | null
           sql: string | null
@@ -194,10 +196,12 @@ export interface Database {
           control_description: string | null
           control_requires: string[] | null
           created_at: string | null
+          default_version: string | null
           description_md: string | null
           handle: string | null
           id: string | null
           latest_version: string | null
+          package_alias: string | null
           package_name: string | null
           partial_name: string | null
         }
@@ -240,13 +244,51 @@ export interface Database {
           control_description: string | null
           control_requires: string[] | null
           created_at: string | null
+          default_version: string | null
           description_md: string | null
           handle: string | null
           id: string | null
           latest_version: string | null
+          package_alias: string | null
           package_name: string | null
           partial_name: string | null
         }[]
+      }
+      publish_package:
+        | {
+            Args: {
+              package_name: unknown
+              package_description: string
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              package_name: unknown
+              package_description: string
+              relocatable?: boolean
+              requires?: string[]
+              default_version?: string
+            }
+            Returns: undefined
+          }
+      publish_package_upgrade: {
+        Args: {
+          package_name: unknown
+          upgrade_source: string
+          from_version: string
+          to_version: string
+        }
+        Returns: string
+      }
+      publish_package_version: {
+        Args: {
+          package_name: unknown
+          version_source: string
+          version_description: string
+          version: string
+        }
+        Returns: string
       }
       redeem_access_token: {
         Args: {
@@ -269,10 +311,12 @@ export interface Database {
           control_description: string | null
           control_requires: string[] | null
           created_at: string | null
+          default_version: string | null
           description_md: string | null
           handle: string | null
           id: string | null
           latest_version: string | null
+          package_alias: string | null
           package_name: string | null
           partial_name: string | null
         }[]
@@ -304,6 +348,7 @@ export interface Database {
           id: string
           name: string
           owner: string | null
+          owner_id: string | null
           public: boolean | null
           updated_at: string | null
         }
@@ -315,6 +360,7 @@ export interface Database {
           id: string
           name: string
           owner?: string | null
+          owner_id?: string | null
           public?: boolean | null
           updated_at?: string | null
         }
@@ -326,17 +372,11 @@ export interface Database {
           id?: string
           name?: string
           owner?: string | null
+          owner_id?: string | null
           public?: boolean | null
           updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: 'buckets_owner_fkey'
-            columns: ['owner']
-            referencedRelation: 'users'
-            referencedColumns: ['id']
-          },
-        ]
+        Relationships: []
       }
       migrations: {
         Row: {
@@ -368,6 +408,7 @@ export interface Database {
           metadata: Json | null
           name: string | null
           owner: string | null
+          owner_id: string | null
           path_tokens: string[] | null
           updated_at: string | null
           version: string | null
@@ -380,6 +421,7 @@ export interface Database {
           metadata?: Json | null
           name?: string | null
           owner?: string | null
+          owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
           version?: string | null
@@ -392,6 +434,7 @@ export interface Database {
           metadata?: Json | null
           name?: string | null
           owner?: string | null
+          owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
           version?: string | null

@@ -11,15 +11,15 @@ dbdev is a package manager for Postgres [trusted language extensions (TLE)](http
 
 ## Usage
 
-Users primarily interact with the registry using the dbdev SQL client. Once present, pglets can be installed as follows:
+Users primarily interact with the registry using the dbdev SQL client. Once present, packages can be installed as follows:
 
 ```sql
 -- Load the package from the package index
 select dbdev.install('olirice-index_advisor');
 ```
-Where `olirice` is the handle of the publisher and `index_advisor` is the name of the pglet.
+Where `olirice` is the handle of the publisher and `index_advisor` is the name of the package.
 
-Once installed, pglets are visible in PostgreSQL as extensions. At that point they can be enabled with standard Postgres commands i.e. the `create extension`
+Once installed, packages are visible in PostgreSQL as extensions. At that point they can be enabled with standard Postgres commands i.e. the `create extension`
 
 To improve reproducibility, we recommend __always__ specifying the package version in your `create extension` statements.
 
@@ -46,11 +46,14 @@ Requires:
 */
 create extension if not exists http with schema extensions;
 create extension if not exists pg_tle;
+-- drop dbdev with older naming scheme if present
 drop extension if exists "supabase-dbdev";
 select pgtle.uninstall_extension_if_exists('supabase-dbdev');
+drop extension if exists "supabase@dbdev";
+select pgtle.uninstall_extension_if_exists('supabase@dbdev');
 select
     pgtle.install_extension(
-        'supabase-dbdev',
+        'supabase@dbdev',
         resp.contents ->> 'version',
         'PostgreSQL package manager',
         resp.contents ->> 'sql'
@@ -60,7 +63,7 @@ from http(
         'GET',
         'https://api.database.dev/rest/v1/'
         || 'package_versions?select=sql,version'
-        || '&package_name=eq.supabase-dbdev'
+        || '&package_alias=eq.supabase@dbdev'
         || '&order=version.desc'
         || '&limit=1',
         array[
@@ -74,16 +77,16 @@ lateral (
     select
         ((row_to_json(x) -> 'content') #>> '{}')::json -> 0
 ) resp(contents);
-create extension "supabase-dbdev";
-select dbdev.install('supabase-dbdev');
-drop extension if exists "supabase-dbdev";
-create extension "supabase-dbdev";
+create extension "supabase@dbdev";
+select dbdev.install('supabase@dbdev');
+drop extension if exists "supabase@dbdev";
+create extension "supabase@dbdev";
 ```
 
 With the client ready, search for packages on [database.dev](database.dev) and install them
 ```sql
-select dbdev.install('handle-package_name');
-create extension "handle-package_name"
+select dbdev.install('handle@package_name');
+create extension "handle@package_name"
     schema 'public'
     version '1.2.3';
 ```
