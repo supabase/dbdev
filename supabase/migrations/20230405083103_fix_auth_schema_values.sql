@@ -11,6 +11,7 @@ set
 insert into
   auth.identities (
     id,
+    provider_id,
     provider,
     user_id,
     identity_data,
@@ -18,7 +19,8 @@ insert into
     updated_at
   )
 select
-  id,
+  gen_random_uuid(),
+  email,
   'email' as provider,
   id as user_id,
   jsonb_build_object('sub', id, 'email', email) as identity_data,
