@@ -431,6 +431,10 @@
 </ul>
 <p>If you want to publish your own TLE, you will need the dbdev CLI. Follow its <a href="cli/#installation">installation instructions</a> to get started.</p>
 <p>If you want to install an extension from the registry, you will need the SQL dbdev client. Follow its <a href="https://database.dev/installer">installation instructions</a> to enable it in your database.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Restoring a logical backup of a database with a TLE installed can fail. For this reason, dbdev should only be used with databases with physical backups enabled.</p>
+</div>
 
 
 
