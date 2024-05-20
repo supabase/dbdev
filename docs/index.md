@@ -27,3 +27,7 @@ dbdev is a package manager for Postgres [trusted language extensions](https://gi
 If you want to publish your own TLE, you will need the dbdev CLI. Follow its [installation instructions](cli.md#installation) to get started.
 
 If you want to install an extension from the registry, you will need the SQL dbdev client. Follow its [installation instructions](https://database.dev/installer) to enable it in your database.
+
+!!! warning
+
+    Restoring a logical backup of a database with a TLE installed can fail. For this reason, dbdev should only be used with databases with physical backups enabled.
