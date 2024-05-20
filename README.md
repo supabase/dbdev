@@ -9,6 +9,9 @@ dbdev is a package manager for Postgres [trusted language extensions (TLE)](http
 - Publish your own Extension: [supabase.github.io/dbdev/publish-extension/](https://supabase.github.io/dbdev/publish-extension/)
 - Read the dbdev [release blog post](https://supabase.com/blog/dbdev)
 
+### Warning
+
+Restoring a logical backup of a database with a TLE installed can fail. For this reason, dbdev should only be used with databases with physical backups enabled.
 ## Usage
 
 Users primarily interact with the registry using the dbdev SQL client. Once present, packages can be installed as follows:
