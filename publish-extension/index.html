@@ -75,7 +75,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#login-to-databasedev" class="md-skip">
+        <a href="#create-your-package" class="md-skip">
           Skip to content
         </a>
       
@@ -304,6 +304,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#create-your-package" class="md-nav__link">
+    Create your package
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#login-to-databasedev" class="md-nav__link">
     Login to database.dev
   </a>
@@ -311,9 +318,36 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#publish-your-first-extension" class="md-nav__link">
-    Publish Your First Extension
+  <a href="#publish-your-extension" class="md-nav__link">
+    Publish your extension
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tips" class="md-nav__link">
+    Tips
+  </a>
+  
+    <nav class="md-nav" aria-label="Tips">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dont-hardcode-schemas" class="md-nav__link">
+    Don't hardcode schemas
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relocatable-schemas" class="md-nav__link">
+    Relocatable schemas
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -388,6 +422,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#create-your-package" class="md-nav__link">
+    Create your package
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#login-to-databasedev" class="md-nav__link">
     Login to database.dev
   </a>
@@ -395,9 +436,36 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#publish-your-first-extension" class="md-nav__link">
-    Publish Your First Extension
+  <a href="#publish-your-extension" class="md-nav__link">
+    Publish your extension
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tips" class="md-nav__link">
+    Tips
+  </a>
+  
+    <nav class="md-nav" aria-label="Tips">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dont-hardcode-schemas" class="md-nav__link">
+    Don't hardcode schemas
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relocatable-schemas" class="md-nav__link">
+    Relocatable schemas
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -421,9 +489,39 @@
 
   <h1>Publish a Package</h1>
 
-<p>Before you can publish your extension, you need to authenticate with <a href="https://database.dev/">database.dev</a>.</p>
-<h3 id="login-to-databasedev">Login to database.dev</h3>
-<p>If you don't have an account, <a href="https://database.dev/sign-up">sign-up for one</a> on the website. Then follow the steps below:</p>
+<p>Let's create your first Trusted Language Extension for <a href="https://database.dev">database.dev</a>.</p>
+<h2 id="create-your-package">Create your package</h2>
+<p>Create a folder which will contain the extension:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code>mkdir my_first_tle
+cd my_first_tle
+</code></pre></div></td></tr></table></div>
+<p>Next create a <code>hello_world--0.0.1.sql</code> file, which will contain your extension's SQL objects. Add the following function definition to this file:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">create</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="n">greet</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="nb">text</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="s1">&#39;world&#39;</span><span class="p">)</span>
+<span class="k">returns</span><span class="w"> </span><span class="nb">text</span>
+<span class="k">language</span><span class="w"> </span><span class="k">sql</span>
+<span class="k">as</span><span class="w"> </span><span class="err">$$</span>
+<span class="w">  </span><span class="k">select</span><span class="w"> </span><span class="s1">&#39;hello, &#39;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+<span class="err">$$</span><span class="p">;</span>
+</code></pre></div></td></tr></table></div>
+<p>Let's also add some docs about this extension. Create a <code>README.md</code> file and add the following content to it:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>The <span class="sb">`hello_world`</span> extension provides a <span class="sb">`greet`</span> function, which returns a greeting.
+</code></pre></div></td></tr></table></div>
+<p>Lastly, add a <code>hello_world.control</code> file with the following key-value pairs:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code>default_version = 0.0.1
+comment = &#39;An extension to generate greetings&#39;
+relocatable = true
+</code></pre></div></td></tr></table></div>
+<p>Your extension is ready to publish. Its name is <code>hello_world</code> and version is <code>0.0.1</code>. For details about what constitutes a valid extension, read about the <a href="../extension_structure/">Structure of an Extension</a>.</p>
+<h2 id="login-to-databasedev">Login to database.dev</h2>
+<p>Before you can publish your extension, you need to authenticate with <a href="https://database.dev/">database.dev</a>. If you don't have an account, <a href="https://database.dev/sign-up">sign-up for one</a> on the website. Then follow the steps below:</p>
 <ol>
 <li>Make sure you are logged into the <code>database.dev</code> website.</li>
 <li>Navigate to the <strong>Access Tokens</strong> page from the account drop-down at top right.</li>
@@ -433,33 +531,47 @@
 <li>On the terminal, run the <code>dbdev login</code> command.</li>
 <li>Paste the token you copied.</li>
 </ol>
-<p>You are now logged into <code>database.dev</code>.</p>
-<h3 id="publish-your-first-extension">Publish Your First Extension</h3>
-<p>Let's create your first extension. Create a folder which will contain the extension:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code>mkdir my_first_tle
-cd my_first_tle
-</code></pre></div></td></tr></table></div>
-<p>Next create a <code>hello_world--0.0.1.sql</code> file, which will contain your extension's SQL objects. Add the following function definition to this file:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">create</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="n">greet</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="nb">text</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="s1">&#39;world&#39;</span><span class="p">)</span>
-<span class="w">  </span><span class="k">returns</span><span class="w"> </span><span class="nb">text</span><span class="w"> </span><span class="k">language</span><span class="w"> </span><span class="k">sql</span>
-<span class="k">as</span><span class="w"> </span><span class="err">$$</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="s1">&#39;hello, &#39;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w"> </span><span class="err">$$</span><span class="p">;</span>
-</code></pre></div></td></tr></table></div>
-<p>Let's also add some docs about this extension. Create a <code>README.md</code> file and add the following content to it:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>The `hello_world` extension provides a `greet` function, which returns a greeting.
-</code></pre></div></td></tr></table></div>
-<p>Lastly, add a <code>hello_world.control</code> file with the following key-value pairs:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code>default_version = 0.0.1
-comment = &#39;An extension to generate greetings&#39;
-</code></pre></div></td></tr></table></div>
-<p>Your extension is ready to publish. Its name is <code>hello_world</code> and version is <code>0.0.1</code>. For details about what constitutes a valid extension, read about the <a href="../extension_structure/">Structure of an Extension</a>.</p>
+<h2 id="publish-your-extension">Publish your extension</h2>
 <p>Now run the <code>dbdev publish</code> command to publish it.</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>dbdev publish
 </code></pre></div></td></tr></table></div>
 <p>Your extension is now published to <code>database.dev</code> and visible under your account profile. You can visit your account profile from the account drop-down at the top right. Users can now install your extension using the <a href="../install-in-db-client/">dbdev in-database client</a>.</p>
+<h2 id="tips">Tips</h2>
+<p>Here are a few useful tips for creating extensions.</p>
+<h3 id="dont-hardcode-schemas">Don't hardcode schemas</h3>
+<p>It's common to hardcode <code>public</code> into your SQL files, but this isn't a great practice. Remove all hard-coded schema references so that the user can choose to install the extension in other schemas.</p>
+<h3 id="relocatable-schemas">Relocatable schemas</h3>
+<p>You can define a schema to be <code>relocatable</code> in the <code>.control</code> file:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code>default_version = 0.0.1
+comment = &#39;An basic extension.&#39;
+relocatable = true
+</code></pre></div></td></tr></table></div>
+<p>If this is <code>true</code>, users can choose where to install their schema:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">create</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="o">&lt;</span><span class="n">extension_name</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="k">schema</span><span class="w"> </span><span class="o">&lt;</span><span class="k">schema</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="k">version</span><span class="w"> </span><span class="o">&lt;</span><span class="k">version</span><span class="o">&gt;</span><span class="p">;</span>
+</code></pre></div></td></tr></table></div>
+<p>If you need to reference the schema in your SQL files, you can use the <code>@extschema@</code> parameter:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">create</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="o">@</span><span class="n">extschema</span><span class="o">@</span><span class="p">.</span><span class="n">my_function</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+<span class="k">returns</span><span class="w"> </span><span class="n">return_type</span>
+<span class="k">language</span><span class="w"> </span><span class="n">plpgsql</span>
+<span class="k">as</span><span class="w"> </span><span class="err">$$</span>
+<span class="k">begin</span>
+<span class="w">    </span><span class="c1">-- function body</span>
+<span class="k">end</span><span class="p">;</span>
+<span class="err">$$</span><span class="p">;</span>
+</code></pre></div></td></tr></table></div>
 
 
 
