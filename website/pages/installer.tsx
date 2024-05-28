@@ -8,8 +8,8 @@ const InstallerPage: NextPageWithLayout = () => {
 export async function getServerSideProps() {
   return {
     redirect: {
-      destination: '/supabase/dbdev',
-      permanent: true,
+      destination: 'https://supabase.github.io/dbdev/install-in-db-client',
+      permanent: false,
     },
   }
 }

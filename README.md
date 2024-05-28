@@ -12,6 +12,7 @@ dbdev is a package manager for Postgres [trusted language extensions (TLE)](http
 ### Warning
 
 Restoring a logical backup of a database with a TLE installed can fail. For this reason, dbdev should only be used with databases with physical backups enabled.
+
 ## Usage
 
 Users primarily interact with the registry using the dbdev SQL client. Once present, packages can be installed as follows:
