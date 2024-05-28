@@ -11,6 +11,10 @@ Before you can install the dbdev extension into your database, ensure you have t
 
     If you database is running on Supabase, the above dependencies are already installed.
 
+!!! warning
+
+    Restoring a logical backup of a database with a TLE installed can fail. For this reason, dbdev should only be used with databases with physical backups enabled.
+
 Run the following SQL to install the client:
 
 ```sql
