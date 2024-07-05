@@ -21,7 +21,6 @@ export const SignUpSchema = z.object({
 export const UpdateProfileSchema = z.object({
   displayName,
   handle,
-  contactEmail: email.or(z.literal('')),
   bio: z.string().max(255),
 })
 
