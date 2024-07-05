@@ -49,7 +49,6 @@ const EditAccountPage: NextPageWithLayout = () => {
     bio: profile?.bio ?? '',
     handle: profile?.handle ?? '',
     displayName: profile?.display_name ?? '',
-    contactEmail: profile?.contact_email ?? '',
   }
 
   useEffect(() => {
@@ -152,14 +151,6 @@ const EditAccountPage: NextPageWithLayout = () => {
             </div>
             <div className="space-y-4">
               <FormInput disabled name="handle" label="Handle" type="text" />
-              {initialValues.contactEmail && (
-                <FormInput
-                  disabled
-                  name="contactEmail"
-                  label="Email"
-                  type="text"
-                />
-              )}
               <FormInput name="displayName" label="Display name" type="text" />
               <FormInput
                 name="bio"
