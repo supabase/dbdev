@@ -56,7 +56,7 @@ create extension "supabase-dbdev";
 
 ## Use
 
-Once the client is installed, you an install a TLE available on database.dev by running SQL that looks like the following:
+Once the client is installed, you can install a TLE available on database.dev by running SQL that looks like the following:
 
 ```sql
 select dbdev.install(<extension_name>);
