@@ -1,11 +1,11 @@
 use anyhow::Context;
-use sqlx::postgres::PgConnection;
+use sqlx::postgres::{PgConnection, PgRow};
 use sqlx::Row;
 
 pub async fn uninstall(extension_name: &str, mut conn: PgConnection) -> anyhow::Result<()> {
     let quoted_extension_name: String = sqlx::query("select quote_ident($1) as ident")
         .bind(extension_name)
-        .map(|row| row.get("ident"))
+        .map(|row: PgRow| row.get("ident"))
         .fetch_one(&mut conn)
         .await
         .context("Failed to get quoted identifier")?;
