@@ -9,7 +9,7 @@ Before you can install the dbdev extension into your database, ensure you have t
 
 !!! note
 
-    If you database is running on Supabase, the above dependencies are already installed.
+    If your database is running on Supabase, the above dependencies are already installed.
 
 !!! warning
 
