@@ -31,7 +31,7 @@
     "eslint-config-next": "13.1.6",
     "final-form": "^4.20.9",
     "lucide-react": "^0.288.0",
-    "next": "14.2.10",
+    "next": "14.2.15",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-final-form": "^6.5.9",
