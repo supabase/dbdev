@@ -22,8 +22,8 @@ const nextConfig = {
           },
           {
             key: 'X-Frame-Options',
-            value: 'SAMEORIGIN'
-          }
+            value: 'SAMEORIGIN',
+          },
         ],
       },
     ]
