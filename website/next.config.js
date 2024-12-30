@@ -1,9 +1,9 @@
 /** @type {import('next').NextConfig} */
 
 const cspHeader = `
-  default-src 'self' https://api.database.dev/;
+  default-src 'self' ${process.env.NEXT_PUBLIC_SUPABASE_URL};
   style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://fonts.google.com/;
-  img-src 'self' data: https://api.database.dev/storage/;
+  img-src 'self' data: ${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/;
   object-src 'none';
   base-uri 'none';
   frame-ancestors 'none';
