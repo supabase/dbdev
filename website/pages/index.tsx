@@ -5,16 +5,15 @@ import Link from 'next/link'
 import Layout from '~/components/layouts/Layout'
 import PackageCard from '~/components/packages/PackageCard'
 
-import CopyButton from '~/components/ui/CopyButton'
-import Markdown from '~/components/ui/Markdown'
 import { Button } from '~/components/ui/Button'
+import CopyButton from '~/components/ui/CopyButton'
 import {
   prefetchPopularPackages,
   usePopularPackagesQuery,
 } from '~/data/packages/popular-packages-query'
 import { NextPageWithLayout } from '~/lib/types'
 
-const IndexPage: NextPageWithLayout = ({ }) => {
+const IndexPage: NextPageWithLayout = ({}) => {
   const { data } = usePopularPackagesQuery()
 
   return (
