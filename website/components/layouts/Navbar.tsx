@@ -100,64 +100,67 @@ const Navbar = () => {
 
         <div className="flex items-center justify-end gap-2 sm:gap-6 sm:min-w-[160px]">
           <div className="flex items-center ml-1 sm:ml-4">
+            <Button variant="link" asChild>
+              <Link href="https://supabase.github.io/dbdev/" target="blank">
+                Docs
+              </Link>
+            </Button>
+
             {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger>
-                  <AvatarWrapper size="md" />
-                </DropdownMenuTrigger>
+              <div className="flex items-center ml-1 sm:ml-4">
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    <AvatarWrapper size="md" />
+                  </DropdownMenuTrigger>
 
-                <DropdownMenuContent>
-                  <DropdownMenuLabel>Logged in as</DropdownMenuLabel>
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href={`/${user?.user_metadata.handle}`}
-                      className="flex items-center cursor-pointer"
-                    >
-                      {displayName}
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href={`/${user?.user_metadata.handle}/_/access-tokens`}
-                      className="flex items-center cursor-pointer"
-                    >
-                      Access Tokens
-                    </Link>
-                  </DropdownMenuItem>
+                  <DropdownMenuContent>
+                    <DropdownMenuLabel>Logged in as</DropdownMenuLabel>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href={`/${user?.user_metadata.handle}`}
+                        className="flex items-center cursor-pointer"
+                      >
+                        {displayName}
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href={`/${user?.user_metadata.handle}/_/access-tokens`}
+                        className="flex items-center cursor-pointer"
+                      >
+                        Access Tokens
+                      </Link>
+                    </DropdownMenuItem>
 
-                  {isOrganizationsSuccess && organizations.length > 0 && (
-                    <DropdownMenuLabel>Organizations</DropdownMenuLabel>
-                  )}
-                  {isOrganizationsSuccess &&
-                    organizations.map((org) => (
-                      <DropdownMenuItem key={org.id} asChild>
-                        <Link
-                          href={`/${org.handle}`}
-                          className="cursor-pointer"
-                        >
-                          {org.display_name} ({org.handle})
-                        </Link>
-                      </DropdownMenuItem>
-                    ))}
+                    {isOrganizationsSuccess && organizations.length > 0 && (
+                      <DropdownMenuLabel>Organizations</DropdownMenuLabel>
+                    )}
+                    {isOrganizationsSuccess &&
+                      organizations.map((org) => (
+                        <DropdownMenuItem key={org.id} asChild>
+                          <Link
+                            href={`/${org.handle}`}
+                            className="cursor-pointer"
+                          >
+                            {org.display_name} ({org.handle})
+                          </Link>
+                        </DropdownMenuItem>
+                      ))}
 
-                  <DropdownMenuItem asChild>
-                    <button
-                      onClick={handleSignOut}
-                      className="w-full cursor-pointer"
-                    >
-                      Sign out
-                    </button>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                    <DropdownMenuItem asChild>
+                      <button
+                        onClick={handleSignOut}
+                        className="w-full cursor-pointer"
+                      >
+                        Sign out
+                      </button>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             ) : (
-              <div className="flex items-center ">
-                <Button variant="link" asChild>
-                  <Link href="https://supabase.github.io/dbdev/" target="blank">
-                    Docs
-                  </Link>
-                </Button>
+              <div className="flex items-center">
                 <Button variant="link" asChild>
                   <Link href="/sign-in">Login</Link>
                 </Button>

@@ -6,7 +6,6 @@ import Layout from '~/components/layouts/Layout'
 import PackageCard from '~/components/packages/PackageCard'
 
 import CopyButton from '~/components/ui/CopyButton'
-import Markdown from '~/components/ui/Markdown'
 import { Button } from '~/components/ui/Button'
 import {
   prefetchPopularPackages,
@@ -14,7 +13,7 @@ import {
 } from '~/data/packages/popular-packages-query'
 import { NextPageWithLayout } from '~/lib/types'
 
-const IndexPage: NextPageWithLayout = ({}) => {
+const IndexPage: NextPageWithLayout = () => {
   const { data } = usePopularPackagesQuery()
 
   return (
@@ -56,8 +55,8 @@ const IndexPage: NextPageWithLayout = ({}) => {
           </div>
         </div>
         <div className="mt-4 md:mt-12 lg:-mt-16 lg:flex-shrink-0 md:text-center lg:text-left">
-          <div className="relative border inline-block px-4 pt-4 pb-4 md:pb-24 rounded-md justify-end">
-            <div className="inline-block">
+          <div className="relative border px-4 pt-4 pb-4 md:pb-24 rounded-md justify-end">
+            <div>
               <div>
                 <h3 className="text-lg font-bold">Download and install</h3>
                 <p className="text-xs text-muted-foreground">
@@ -65,7 +64,7 @@ const IndexPage: NextPageWithLayout = ({}) => {
                 </p>
               </div>
               <div className="mt-4 relative">
-                <code>
+                <code className="block md:inline overflow-scroll py-2">
                   <span className="text-muted-foreground">
                     select dbdev.install(
                   </span>
