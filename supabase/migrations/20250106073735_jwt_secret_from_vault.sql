@@ -1,5 +1,6 @@
 -- app.settings.jwt_secret has been removed, see https://github.com/orgs/supabase/discussions/30606
--- now we fetch the secret from vault
+-- now we fetch the secret from vault. The redeem_access_token function is the same as before
+-- (see file 20230906110845_access_token.sql) except the part where we fetch the jwt_secret.
 create or replace function public.redeem_access_token(
     access_token text
 )
@@ -47,6 +48,7 @@ begin
     issued_at := date_part('epoch', now);
     expiry_at := date_part('epoch', one_hour_from_now);
 
+    -- read the jwt secret from vault
     select decrypted_secret
     into jwt_secret
     from vault.decrypted_secrets
