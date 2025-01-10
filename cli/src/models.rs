@@ -10,6 +10,7 @@ pub struct ControlFileRef {
     pub contents: String,
 }
 
+#[derive(Debug)]
 pub struct Metadata {
     pub extension_name: String,
     pub default_version: String,
@@ -30,12 +31,14 @@ impl Metadata {
     }
 }
 
+#[derive(Debug)]
 pub struct InstallFile {
     pub filename: String,
     pub version: String,
     pub body: String,
 }
 
+#[derive(Debug)]
 pub struct UpgradeFile {
     pub filename: String,
     pub from_version: String,
@@ -59,6 +62,7 @@ impl HasFilename for UpgradeFile {
     }
 }
 
+#[derive(Debug)]
 pub struct ReadmeFile {
     pub body: String,
 }
@@ -79,6 +83,18 @@ impl ReadmeFile {
     }
 }
 
+#[derive(sqlx::FromRow)]
+pub(crate) struct ExtensionVersion {
+    pub(crate) version: String,
+}
+
+#[derive(sqlx::FromRow, PartialEq, Eq, Hash)]
+pub(crate) struct UpdatePath {
+    pub(crate) source: String,
+    pub(crate) target: String,
+}
+
+#[derive(Debug)]
 pub struct Payload {
     /// Absolute path to extension directory
     pub abs_path: Option<PathBuf>,
@@ -145,6 +161,7 @@ impl Payload {
         let control_file = ControlFileRef::from_pathbuf(&control_file_path)?;
 
         let extension_name = control_file.extension_name()?;
+        println!("{}", extension_name);
 
         if !util::is_valid_extension_name(&extension_name) {
             return Err(anyhow::anyhow!(

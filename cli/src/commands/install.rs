@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::models::Payload;
+use crate::{models::Payload, util::extension_versions};
 use anyhow::Context;
 use futures::TryStreamExt;
 use sqlx::postgres::PgConnection;
@@ -89,29 +89,6 @@ pub async fn install(payload: &Payload, mut conn: PgConnection) -> anyhow::Resul
     }
 
     Ok(())
-}
-
-#[derive(sqlx::FromRow)]
-struct ExtensionVersion {
-    version: String,
-}
-
-async fn extension_versions(
-    conn: &mut PgConnection,
-    extension_name: &str,
-) -> anyhow::Result<HashSet<String>> {
-    let mut rows = sqlx::query_as::<_, ExtensionVersion>(
-        "select version from pgtle.available_extension_versions() where name = $1",
-    )
-    .bind(extension_name)
-    .fetch(conn);
-
-    let mut versions = HashSet::new();
-    while let Some(installed_version) = rows.try_next().await? {
-        versions.insert(installed_version.version);
-    }
-
-    Ok(versions)
 }
 
 #[derive(sqlx::FromRow, PartialEq, Eq, Hash)]
