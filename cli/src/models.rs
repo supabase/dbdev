@@ -15,6 +15,7 @@ pub struct Metadata {
     pub extension_name: String,
     pub default_version: String,
     pub comment: Option<String>,
+    pub schema: Option<String>,
     pub relocatable: bool,
     pub requires: Vec<String>,
 }
@@ -27,6 +28,7 @@ impl Metadata {
             comment: control_file_ref.comment()?.clone(),
             relocatable: control_file_ref.relocatable()?,
             requires: control_file_ref.requires()?.clone(),
+            schema: control_file_ref.schema()?.clone(),
         })
     }
 }
@@ -161,7 +163,6 @@ impl Payload {
         let control_file = ControlFileRef::from_pathbuf(&control_file_path)?;
 
         let extension_name = control_file.extension_name()?;
-        println!("{}", extension_name);
 
         if !util::is_valid_extension_name(&extension_name) {
             return Err(anyhow::anyhow!(
@@ -290,6 +291,17 @@ impl ControlFileRef {
             }
         }
         Ok(vec![])
+    }
+
+    // The schema the extension wants to be installed in, if any
+    fn schema(&self) -> anyhow::Result<Option<String>> {
+        for line in self.contents.lines() {
+            if line.starts_with("schema") {
+                let value = self.read_control_line_value(line)?;
+                return Ok(Some(value.trim().to_string()));
+            }
+        }
+        Ok(None)
     }
 
     fn relocatable(&self) -> anyhow::Result<bool> {
