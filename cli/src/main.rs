@@ -166,7 +166,7 @@ async fn main() -> anyhow::Result<()> {
             let payload = models::Payload::from_path(extension_dir)?;
             let conn = util::get_connection(connection).await?;
 
-            commands::add::add(&payload, &output_path, conn).await?;
+            commands::add::add(&payload, output_path, conn).await?;
 
             Ok(())
         }
