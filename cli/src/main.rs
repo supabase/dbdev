@@ -34,6 +34,20 @@ enum Commands {
         install_args: InstallArgs,
     },
 
+    /// Generate a migration file that installs a package to a database
+    Add {
+        /// PostgreSQL connection string
+        #[arg(short, long)]
+        connection: String,
+
+        /// Location to create the migration SQL file
+        #[arg(short, long, value_parser)]
+        output_path: PathBuf,
+
+        #[clap(flatten)]
+        install_args: InstallArgs,
+    },
+
     /// Uninstall a package from a database
     Uninstall {
         /// PostgreSQL connection string
@@ -132,6 +146,27 @@ async fn main() -> anyhow::Result<()> {
             let conn = util::get_connection(connection).await?;
 
             commands::install::install(&payload, conn).await?;
+
+            Ok(())
+        }
+
+        Commands::Add {
+            connection,
+            output_path,
+            install_args: InstallArgs { path, package },
+        } => {
+            if let Some(_package) = package {
+                return Err(anyhow::anyhow!(
+                    "Generating migrations from packages is not yet supported"
+                ));
+            }
+
+            let current_dir = env::current_dir()?;
+            let extension_dir = path.as_ref().unwrap_or(&current_dir);
+            let payload = models::Payload::from_path(extension_dir)?;
+            let conn = util::get_connection(connection).await?;
+
+            commands::add::add(&payload, &output_path, conn).await?;
 
             Ok(())
         }

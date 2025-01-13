@@ -1,9 +1,13 @@
 use anyhow::Context;
+use futures::TryStreamExt;
 use regex::Regex;
 use sqlx::postgres::PgConnection;
 use sqlx::Connection;
+use std::collections::HashSet;
 use std::fs::{File, OpenOptions};
 use std::path::Path;
+
+use crate::models::{ExtensionVersion, UpdatePath};
 
 pub async fn get_connection(connection_str: &str) -> anyhow::Result<PgConnection> {
     PgConnection::connect(connection_str)
@@ -34,6 +38,42 @@ pub fn is_valid_version(version: &str) -> bool {
     }
 
     true
+}
+
+pub async fn extension_versions(
+    conn: &mut PgConnection,
+    extension_name: &str,
+) -> anyhow::Result<HashSet<String>> {
+    let mut rows = sqlx::query_as::<_, ExtensionVersion>(
+        "select version from pgtle.available_extension_versions() where name = $1",
+    )
+    .bind(extension_name)
+    .fetch(conn);
+
+    let mut versions = HashSet::new();
+    while let Some(installed_version) = rows.try_next().await? {
+        versions.insert(installed_version.version);
+    }
+
+    Ok(versions)
+}
+
+pub(crate) async fn update_paths(
+    conn: &mut PgConnection,
+    extension_name: &str,
+) -> anyhow::Result<HashSet<UpdatePath>> {
+    let mut rows = sqlx::query_as::<_, UpdatePath>(
+        "select source, target from pgtle.extension_update_paths($1) where path is not null;",
+    )
+    .bind(extension_name)
+    .fetch(conn);
+
+    let mut paths = HashSet::new();
+    while let Some(update_path) = rows.try_next().await? {
+        paths.insert(update_path);
+    }
+
+    Ok(paths)
 }
 
 #[cfg(target_family = "unix")]

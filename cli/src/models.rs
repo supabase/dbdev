@@ -10,10 +10,12 @@ pub struct ControlFileRef {
     pub contents: String,
 }
 
+#[derive(Debug)]
 pub struct Metadata {
     pub extension_name: String,
     pub default_version: String,
     pub comment: Option<String>,
+    pub schema: Option<String>,
     pub relocatable: bool,
     pub requires: Vec<String>,
 }
@@ -26,16 +28,19 @@ impl Metadata {
             comment: control_file_ref.comment()?.clone(),
             relocatable: control_file_ref.relocatable()?,
             requires: control_file_ref.requires()?.clone(),
+            schema: control_file_ref.schema()?.clone(),
         })
     }
 }
 
+#[derive(Debug)]
 pub struct InstallFile {
     pub filename: String,
     pub version: String,
     pub body: String,
 }
 
+#[derive(Debug)]
 pub struct UpgradeFile {
     pub filename: String,
     pub from_version: String,
@@ -59,6 +64,7 @@ impl HasFilename for UpgradeFile {
     }
 }
 
+#[derive(Debug)]
 pub struct ReadmeFile {
     pub body: String,
 }
@@ -79,6 +85,18 @@ impl ReadmeFile {
     }
 }
 
+#[derive(sqlx::FromRow)]
+pub(crate) struct ExtensionVersion {
+    pub(crate) version: String,
+}
+
+#[derive(sqlx::FromRow, PartialEq, Eq, Hash)]
+pub(crate) struct UpdatePath {
+    pub(crate) source: String,
+    pub(crate) target: String,
+}
+
+#[derive(Debug)]
 pub struct Payload {
     /// Absolute path to extension directory
     pub abs_path: Option<PathBuf>,
@@ -273,6 +291,17 @@ impl ControlFileRef {
             }
         }
         Ok(vec![])
+    }
+
+    // The schema the extension wants to be installed in, if any
+    fn schema(&self) -> anyhow::Result<Option<String>> {
+        for line in self.contents.lines() {
+            if line.starts_with("schema") {
+                let value = self.read_control_line_value(line)?;
+                return Ok(Some(value.trim().to_string()));
+            }
+        }
+        Ok(None)
     }
 
     fn relocatable(&self) -> anyhow::Result<bool> {
