@@ -1,4 +1,4 @@
-use std::{collections::HashSet, path::PathBuf};
+use std::{collections::HashSet, path::Path};
 
 use sqlx::{types::chrono::Utc, PgConnection};
 use tokio::fs;
@@ -10,7 +10,7 @@ use crate::{
 
 pub async fn add(
     payload: &Payload,
-    output_path: &PathBuf,
+    output_path: &Path,
     mut conn: PgConnection,
 ) -> anyhow::Result<()> {
     let existing_versions = extension_versions(&mut conn, &payload.metadata.extension_name).await?;
@@ -35,7 +35,7 @@ pub async fn add(
 
     if let Some(comment) = &payload.metadata.comment {
         migration_content.push_str("-- Comment:");
-        migration_content.push_str(&comment);
+        migration_content.push_str(comment);
         migration_content.push('\n');
     }
 
@@ -86,7 +86,7 @@ pub async fn add(
                 migration_content.push_str("', '");
                 migration_content.push_str(&install_file.version);
                 migration_content.push_str("', $COMMENT$");
-                migration_content.push_str(&payload.metadata.comment.as_deref().unwrap_or(""));
+                migration_content.push_str(payload.metadata.comment.as_deref().unwrap_or(""));
                 migration_content.push_str("$COMMENT$, $SQL$");
                 migration_content.push_str(&install_file.body);
                 migration_content.push_str("$SQL$, ARRAY[");
@@ -100,10 +100,7 @@ pub async fn add(
     }
 
     let existing_update_paths =
-        match update_paths(&mut conn, &payload.metadata.extension_name).await {
-            Ok(paths) => paths,
-            Err(_) => HashSet::new(),
-        };
+        (update_paths(&mut conn, &payload.metadata.extension_name).await).unwrap_or_default();
 
     for upgrade_file in &payload.upgrade_files {
         let update_path = UpdatePath {
