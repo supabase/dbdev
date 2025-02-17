@@ -28,12 +28,8 @@ export async function getProfile(
     throw new Error('handle is required')
   }
 
-  let accountQuery = supabase.from('accounts').select('*').eq('handle', handle)
-
-  let organizationQuery = supabase
-    .from('organizations')
-    .select('*')
-    .eq('handle', handle)
+  let accountQuery = supabase.rpc('get_account', { handle })
+  let organizationQuery = supabase.rpc('get_organization', { handle })
 
   if (signal) {
     accountQuery = accountQuery.abortSignal(signal)
@@ -43,10 +39,7 @@ export async function getProfile(
   const [
     { data: account, error: accountError },
     { data: organization, error: organizationError },
-  ] = await Promise.all([
-    accountQuery.maybeSingle<ProfileResponse>(),
-    organizationQuery.maybeSingle<ProfileResponse>(),
-  ])
+  ] = await Promise.all([accountQuery, organizationQuery])
 
   if (accountError) {
     throw accountError
@@ -56,16 +49,16 @@ export async function getProfile(
     throw organizationError
   }
 
-  if (organization) {
-    const avatar_url = getAvatarUrl(organization.avatar_path)
+  if (organization && organization.length > 0) {
+    const avatar_url = getAvatarUrl(organization[0].avatar_path)
 
-    return { ...organization, type: 'organization' as const, avatar_url }
+    return { ...organization[0], type: 'organization' as const, avatar_url }
   }
 
-  if (account) {
-    const avatar_url = getAvatarUrl(account.avatar_path)
+  if (account && account.length > 0) {
+    const avatar_url = getAvatarUrl(account[0].avatar_path)
 
-    return { ...account, type: 'account' as const, avatar_url }
+    return { ...account[0], type: 'account' as const, avatar_url }
   }
 
   throw new NotFoundError('Account or organization not found')
