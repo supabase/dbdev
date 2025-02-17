@@ -16,10 +16,6 @@ export type ProfileVariables = {
   handle?: string
 }
 
-export type ProfileResponse =
-  | NonNullableObject<Database['public']['Views']['accounts']['Row']>
-  | NonNullableObject<Database['public']['Views']['organizations']['Row']>
-
 export async function getProfile(
   { handle }: ProfileVariables,
   signal?: AbortSignal
@@ -39,7 +35,10 @@ export async function getProfile(
   const [
     { data: account, error: accountError },
     { data: organization, error: organizationError },
-  ] = await Promise.all([accountQuery, organizationQuery])
+  ] = await Promise.all([
+    accountQuery.maybeSingle(),
+    organizationQuery.maybeSingle(),
+  ])
 
   if (accountError) {
     throw accountError
@@ -49,16 +48,16 @@ export async function getProfile(
     throw organizationError
   }
 
-  if (organization && organization.length > 0) {
-    const avatar_url = getAvatarUrl(organization[0].avatar_path)
+  if (organization) {
+    const avatar_url = getAvatarUrl(organization.avatar_path)
 
-    return { ...organization[0], type: 'organization' as const, avatar_url }
+    return { ...organization, type: 'organization' as const, avatar_url }
   }
 
-  if (account && account.length > 0) {
-    const avatar_url = getAvatarUrl(account[0].avatar_path)
+  if (account) {
+    const avatar_url = getAvatarUrl(account.avatar_path)
 
-    return { ...account[0], type: 'account' as const, avatar_url }
+    return { ...account, type: 'account' as const, avatar_url }
   }
 
   throw new NotFoundError('Account or organization not found')
