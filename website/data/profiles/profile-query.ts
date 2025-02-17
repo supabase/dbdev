@@ -8,8 +8,6 @@ import {
 import { useCallback } from 'react'
 import { getAvatarUrl } from '~/lib/avatars'
 import supabase from '~/lib/supabase'
-import { NonNullableObject } from '~/lib/types'
-import { Database } from '../database.types'
 import { NotFoundError } from '../utils'
 
 export type ProfileVariables = {

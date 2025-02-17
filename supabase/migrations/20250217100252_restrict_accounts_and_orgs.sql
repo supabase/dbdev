@@ -39,3 +39,11 @@ as $$
     where o.handle = get_organization.handle
     and auth.uid() is not null;
 $$;
+
+-- Allow service role to read all accounts and organizations.
+grant select on app.accounts to service_role;
+grant select on app.organizations to service_role;
+
+-- Allow service role to read all packages.
+grant select on app.packages to service_role;
+grant select on app.package_versions to service_role;
