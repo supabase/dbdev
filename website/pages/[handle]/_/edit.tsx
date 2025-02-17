@@ -79,7 +79,7 @@ const EditAccountPage: NextPageWithLayout = () => {
     displayName: string
     bio: string
   }) => {
-    if (!profile?.id) return console.error('Profile is required')
+    if (!profile?.handle) return console.error('A profile handle is required')
 
     try {
       if (uploadedFile) {

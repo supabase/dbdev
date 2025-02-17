@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 
 const cspHeader = `
-  default-src 'self' ${process.env.NEXT_PUBLIC_SUPABASE_URL};
+  default-src 'self' 'unsafe-eval' ${process.env.NEXT_PUBLIC_SUPABASE_URL};
   style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://fonts.google.com/;
   img-src 'self' data: ${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/;
   object-src 'none';

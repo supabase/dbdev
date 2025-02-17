@@ -8,17 +8,11 @@ import {
 import { useCallback } from 'react'
 import { getAvatarUrl } from '~/lib/avatars'
 import supabase from '~/lib/supabase'
-import { NonNullableObject } from '~/lib/types'
-import { Database } from '../database.types'
 import { NotFoundError } from '../utils'
 
 export type ProfileVariables = {
   handle?: string
 }
-
-export type ProfileResponse =
-  | NonNullableObject<Database['public']['Views']['accounts']['Row']>
-  | NonNullableObject<Database['public']['Views']['organizations']['Row']>
 
 export async function getProfile(
   { handle }: ProfileVariables,
@@ -28,12 +22,8 @@ export async function getProfile(
     throw new Error('handle is required')
   }
 
-  let accountQuery = supabase.from('accounts').select('*').eq('handle', handle)
-
-  let organizationQuery = supabase
-    .from('organizations')
-    .select('*')
-    .eq('handle', handle)
+  let accountQuery = supabase.rpc('get_account', { handle })
+  let organizationQuery = supabase.rpc('get_organization', { handle })
 
   if (signal) {
     accountQuery = accountQuery.abortSignal(signal)
@@ -44,8 +34,8 @@ export async function getProfile(
     { data: account, error: accountError },
     { data: organization, error: organizationError },
   ] = await Promise.all([
-    accountQuery.maybeSingle<ProfileResponse>(),
-    organizationQuery.maybeSingle<ProfileResponse>(),
+    accountQuery.maybeSingle(),
+    organizationQuery.maybeSingle(),
   ])
 
   if (accountError) {
