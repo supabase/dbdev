@@ -11,9 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Read CLI version
-        uses: SebRollen/toml-action@v1.0.2
+        uses: SebRollen/toml-action@v1.2.0
         id: read_cli_version
         with:
           file: './cli/Cargo.toml'
@@ -46,7 +46,7 @@ jobs:
     strategy:
       matrix:
         box:
-          - { runner: ubuntu-20.04, arch: amd64 }
+          - { runner: ubuntu-24.04, arch: amd64 }
           - { runner: arm-runner, arch: arm64 }
     runs-on: ${{ matrix.box.runner }}
     timeout-minutes: 45
