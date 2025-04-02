@@ -62,7 +62,7 @@ jobs:
           profile: minimal
           toolchain: stable
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Build and Package
         run: |
           cd cli
@@ -128,7 +128,7 @@ jobs:
           profile: minimal
           toolchain: stable
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Build and Package
         run: |
           cd cli
@@ -159,7 +159,7 @@ jobs:
           profile: minimal
           toolchain: stable
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Build and Package
         run: |
           cd cli
