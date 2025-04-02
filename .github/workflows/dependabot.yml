@@ -4,9 +4,9 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    target-branch: "main"
+    target-branch: "master"
   - package-ecosystem: "cargo"
     directory: "/"
     schedule:
       interval: "daily"
-    target-branch: "main"
+    target-branch: "master"
