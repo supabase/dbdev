@@ -20,21 +20,21 @@ jobs:
         ref: 'main'
         token:  ${{ secrets.homebrew_tap_rw }}
     - name: Download Linux AMD64 package
-      uses: robinraju/release-downloader@v1.8
+      uses: robinraju/release-downloader@v1.12
       with:
         repository: "supabase/dbdev"
         tag: ${{ inputs.tag }}
         fileName: "dbdev-${{ inputs.tag }}-linux-amd64.tar.gz"
 
     - name: Download Linux ARM64 package
-      uses: robinraju/release-downloader@v1.8
+      uses: robinraju/release-downloader@v1.12
       with:
         repository: "supabase/dbdev"
         tag: ${{ inputs.tag }}
         fileName: "dbdev-${{ inputs.tag }}-linux-arm64.tar.gz"
 
     - name: Download macOS AMD64 package
-      uses: robinraju/release-downloader@v1.8
+      uses: robinraju/release-downloader@v1.12
       with:
         repository: "supabase/dbdev"
         tag: ${{ inputs.tag }}
