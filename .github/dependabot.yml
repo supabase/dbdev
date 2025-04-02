@@ -6,7 +6,7 @@ updates:
       interval: "daily"
     target-branch: "master"
   - package-ecosystem: "cargo"
-    directory: "/"
+    directory: "/cli/"
     schedule:
       interval: "daily"
     target-branch: "master"
