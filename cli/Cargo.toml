@@ -23,7 +23,7 @@ sqlx = { version = "0.8.1", features = [
     "uuid",
     "runtime-tokio-rustls",
 ] }
-thiserror = "1.0.38"
+thiserror = "1.0.65"
 tokio = { version = "1", features = ["full"] }
 toml = { version = "0.8.20", features = ["preserve_order"] }
 url = { version = "2.5.4", features = ["serde"] }
