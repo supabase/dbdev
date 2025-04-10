@@ -5,6 +5,9 @@ on:
     tags:
       - "v*"
 
+permissions:
+  contents: write
+
 jobs:
   create-release:
     name: Create Release
@@ -73,16 +76,16 @@ jobs:
           cd ../..
 
           # Build debian package
-          package_dir=dbdev-${{ github.ref_name }}-linux-${{ matrix.box.arch }}
-          mkdir -p ${package_dir}/usr/local/bin
-          cp ./target/release/dbdev ${package_dir}/usr/local/bin/dbdev
+          package_dir="dbdev-${{ github.ref_name }}-linux-${{ matrix.box.arch }}"
+          mkdir -p "${package_dir}/usr/local/bin"
+          cp ./target/release/dbdev "${package_dir}/usr/local/bin/dbdev"
 
-          extension_version=${{ github.ref_name }}
+          extension_version="${{ github.ref_name }}"
           # strip the leading v
-          deb_version=${extension_version:1}
+          deb_version="${extension_version:1}"
 
-          mkdir -p ${package_dir}/DEBIAN
-          touch ${package_dir}/DEBIAN/control
+          mkdir -p "${package_dir}/DEBIAN"
+          touch "${package_dir}/DEBIAN/control"
           echo 'Package: dbdev' >> ${package_dir}/DEBIAN/control
           echo 'Version:' ${deb_version} >> ${package_dir}/DEBIAN/control
           echo 'Architecture: ${{ matrix.box.arch }}' >> ${package_dir}/DEBIAN/control
@@ -90,8 +93,8 @@ jobs:
           echo 'Description: CLI for publishing to database.dev' >> ${package_dir}/DEBIAN/control
 
           # Create deb package
-          sudo chmod -R 00755 ${package_dir}
-          sudo dpkg-deb --build ${package_dir}
+          sudo chmod -R 00755 "${package_dir}"
+          sudo dpkg-deb --build "${package_dir}"
 
       - name: Upload gzip Package
         uses: actions/upload-release-asset@v1
