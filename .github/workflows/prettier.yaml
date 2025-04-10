@@ -5,6 +5,9 @@ on:
     branches:
       - 'master'
 
+permissions:
+  contents: read
+
 jobs:
   check-prettier:
     runs-on: ubuntu-latest

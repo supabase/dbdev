@@ -10,6 +10,9 @@ on:
       homebrew_tap_rw:
         required: true
 
+permissions:
+  contents: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -46,9 +49,9 @@ jobs:
         linux_arm64_hash=`shasum -a 256 dbdev-${{ inputs.tag }}-linux-arm64.tar.gz | cut -d" " -f1`
         macos_amd64_hash=`shasum -a 256 dbdev-${{ inputs.tag }}-macos-amd64.tar.gz | cut -d" " -f1`
 
-        tag=${{ inputs.tag }}
+        tag="${{ inputs.tag }}"
         # strip the leading v
-        version=${tag:1}
+        version="${tag:1}"
 
         # update dbdev.rb file
         echo '# typed: false' > dbdev.rb
