@@ -7,7 +7,7 @@ authors = ["supabase"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.97"
+anyhow = "1.0.98"
 clap = { version = "4.5.35", features = ["derive"] }
 dirs = "5.0.1"
 futures = "0.3"
