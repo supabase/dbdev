@@ -17,7 +17,7 @@ reqwest = { version = "0.12.5", features = ["json", "native-tls-vendored"] }
 rpassword = "7.2.0"
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
-sqlx = { version = "0.8.3", features = [
+sqlx = { version = "0.8.4", features = [
     "postgres",
     "chrono",
     "uuid",
