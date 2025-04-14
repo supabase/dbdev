@@ -8,7 +8,7 @@ authors = ["supabase"]
 
 [dependencies]
 anyhow = "1.0.98"
-clap = { version = "4.5.35", features = ["derive"] }
+clap = { version = "4.5.36", features = ["derive"] }
 dirs = "5.0.1"
 futures = "0.3"
 postgrest = "1.5.0"
