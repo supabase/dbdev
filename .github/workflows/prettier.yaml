@@ -17,7 +17,7 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
       - name: Run Prettier
-        uses: creyD/prettier_action@v4.3
+        uses: creyD/prettier_action@v4.5
         with:
           # Prettier CLI arguments
           prettier_options: '--config ./website/.prettierrc --ignore-path ./website/.prettierignore --check ./website'
