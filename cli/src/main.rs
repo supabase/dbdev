@@ -90,13 +90,21 @@ enum Commands {
 pub struct RegistryArgs {
     #[command(subcommand)]
     pub source: RegistrySource,
+
+    /// Schema in the database
+    #[arg(short, long)]
+    schema: Option<String>,
+
+    /// Version of the extension
+    #[arg(short, long)]
+    version: Option<String>,
 }
 
 #[derive(Debug, clap::Subcommand)]
 pub enum RegistrySource {
     /// A package name on a remote registry accessible over a REST API
     Package {
-        /// Package name in the registry in handle/package form
+        /// Package name in the registry in handle@package form
         #[arg(short, long)]
         name: String,
 
@@ -146,15 +154,12 @@ async fn main() -> anyhow::Result<()> {
 
         Commands::Install {
             connection,
-            registry_args: RegistryArgs { source },
+            registry_args: RegistryArgs { source, .. },
         } => {
             match source {
-                RegistrySource::Package {
-                    name,
-                    registry_name: _,
-                } => {
+                RegistrySource::Package { .. } => {
                     return Err(anyhow::anyhow!(
-                        "Remote package {name} installing not yet supported"
+                        "Remote package installation is not yet supported"
                     ));
                 }
                 RegistrySource::Path { directory } => {
@@ -173,7 +178,12 @@ async fn main() -> anyhow::Result<()> {
         Commands::Add {
             connection,
             output_path,
-            registry_args: RegistryArgs { source },
+            registry_args:
+                RegistryArgs {
+                    source,
+                    schema,
+                    version,
+                },
         } => {
             match source {
                 RegistrySource::Package {
@@ -189,7 +199,7 @@ async fn main() -> anyhow::Result<()> {
                     let payload = commands::add::payload_from_package(client, name).await?;
                     let conn = util::get_connection(connection).await?;
 
-                    commands::add::add(&payload, output_path, conn).await?;
+                    commands::add::add(&payload, output_path, conn, schema, version).await?;
                 }
                 RegistrySource::Path { directory } => {
                     let current_dir = env::current_dir()?;
@@ -197,7 +207,7 @@ async fn main() -> anyhow::Result<()> {
                     let payload = models::Payload::from_path(extension_dir)?;
                     let conn = util::get_connection(connection).await?;
 
-                    commands::add::add(&payload, output_path, conn).await?;
+                    commands::add::add(&payload, output_path, conn, schema, version).await?;
                 }
             }
 

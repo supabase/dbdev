@@ -98,6 +98,8 @@ pub async fn add(
     payload: &Payload,
     output_path: &Path,
     mut conn: PgConnection,
+    schema: &Option<String>,
+    version: &Option<String>,
 ) -> anyhow::Result<()> {
     let existing_versions = extension_versions(&mut conn, &payload.metadata.extension_name).await?;
     let mut installed_extension_once = !existing_versions.is_empty();
@@ -210,20 +212,23 @@ pub async fn add(
 
     // Create the extension
     migration_content.push_str("-- Create the extension\n");
-    match &payload.metadata.schema {
-        Some(schema) => {
-            migration_content.push_str("create extension if not exists ");
-            migration_content.push_str(&payload.metadata.extension_name);
-            migration_content.push_str(" schema ");
-            migration_content.push_str(schema);
-            migration_content.push_str(";\n");
-        }
-        None => {
-            migration_content.push_str("create extension if not exists ");
-            migration_content.push_str(&payload.metadata.extension_name);
-            migration_content.push_str(";\n");
-        }
+
+    // add schema if specified
+    let schema = schema.as_ref().or(payload.metadata.schema.as_ref());
+    migration_content.push_str("create extension if not exists ");
+    migration_content.push_str(&payload.metadata.extension_name);
+    if let Some(schema) = schema {
+        migration_content.push_str(" schema ");
+        migration_content.push_str(schema);
     }
+
+    // add version if specified
+    if let Some(version) = version {
+        migration_content.push_str(" version ");
+        migration_content.push_str(version);
+    }
+
+    migration_content.push_str(";\n");
 
     // Set default version
     migration_content.push_str("-- Setting default version to:");
