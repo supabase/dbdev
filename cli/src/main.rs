@@ -31,7 +31,7 @@ enum Commands {
         connection: String,
 
         #[clap(flatten)]
-        install_args: InstallArgs,
+        registry_args: RegistryArgs,
     },
 
     /// Generate a migration file that installs a package to a database
@@ -45,7 +45,7 @@ enum Commands {
         output_path: PathBuf,
 
         #[clap(flatten)]
-        install_args: InstallArgs,
+        registry_args: RegistryArgs,
     },
 
     /// Uninstall a package from a database
@@ -87,15 +87,29 @@ enum Commands {
 }
 
 #[derive(Debug, clap::Args)]
-#[group(required = false, multiple = false)]
-pub struct InstallArgs {
-    #[arg(short, long)]
-    /// Package name on database.dev in handle/package form
-    package: Option<String>,
+pub struct RegistryArgs {
+    #[command(subcommand)]
+    pub source: RegistrySource,
+}
 
-    /// Path of the local directory containing the package
-    #[arg(long)]
-    path: Option<PathBuf>,
+#[derive(Debug, clap::Subcommand)]
+pub enum RegistrySource {
+    /// A package name on a remote registry accessible over a REST API
+    Package {
+        /// Package name in the registry in handle/package form
+        #[arg(short, long)]
+        name: String,
+
+        /// Name of the registry to fetch package details from
+        #[arg(long)]
+        registry_name: Option<String>,
+    },
+    /// A local directory which contains a package
+    Path {
+        /// Path of the local directory containing the package (defaults to current directory)
+        #[arg(long)]
+        directory: Option<PathBuf>,
+    },
 }
 
 #[tokio::main]
@@ -114,7 +128,7 @@ async fn main() -> anyhow::Result<()> {
                 .as_ref()
                 .unwrap_or(&config.default_registry.name);
             let registry = config.get_registry(registry_name)?;
-            let client = client::APIClient::from_registry(registry)?;
+            let client = client::ApiClient::from_registry(registry)?;
             let current_dir = env::current_dir()?;
             let extension_dir = path.as_ref().unwrap_or(&current_dir);
             commands::publish::publish(&client, extension_dir, registry_name).await?;
@@ -132,20 +146,26 @@ async fn main() -> anyhow::Result<()> {
 
         Commands::Install {
             connection,
-            install_args: InstallArgs { package, path },
+            registry_args: RegistryArgs { source },
         } => {
-            if let Some(package) = package {
-                return Err(anyhow::anyhow!(
-                    "Remote package {package} installing not yet supported"
-                ));
+            match source {
+                RegistrySource::Package {
+                    name,
+                    registry_name: _,
+                } => {
+                    return Err(anyhow::anyhow!(
+                        "Remote package {name} installing not yet supported"
+                    ));
+                }
+                RegistrySource::Path { directory } => {
+                    let current_dir = env::current_dir()?;
+                    let extension_dir = directory.as_ref().unwrap_or(&current_dir);
+                    let payload = models::Payload::from_path(extension_dir)?;
+                    let conn = util::get_connection(connection).await?;
+
+                    commands::install::install(&payload, conn).await?;
+                }
             }
-
-            let current_dir = env::current_dir()?;
-            let extension_dir = path.as_ref().unwrap_or(&current_dir);
-            let payload = models::Payload::from_path(extension_dir)?;
-            let conn = util::get_connection(connection).await?;
-
-            commands::install::install(&payload, conn).await?;
 
             Ok(())
         }
@@ -153,20 +173,33 @@ async fn main() -> anyhow::Result<()> {
         Commands::Add {
             connection,
             output_path,
-            install_args: InstallArgs { path, package },
+            registry_args: RegistryArgs { source },
         } => {
-            if let Some(_package) = package {
-                return Err(anyhow::anyhow!(
-                    "Generating migrations from packages is not yet supported"
-                ));
+            match source {
+                RegistrySource::Package {
+                    name,
+                    registry_name,
+                } => {
+                    let config = Config::read_from_default_file()?;
+                    let registry_name = registry_name
+                        .as_ref()
+                        .unwrap_or(&config.default_registry.name);
+                    let registry = config.get_registry(registry_name)?;
+                    let client = client::ApiClient::from_registry(registry)?;
+                    let payload = commands::add::payload_from_package(client, name).await?;
+                    let conn = util::get_connection(connection).await?;
+
+                    commands::add::add(&payload, output_path, conn).await?;
+                }
+                RegistrySource::Path { directory } => {
+                    let current_dir = env::current_dir()?;
+                    let extension_dir = directory.as_ref().unwrap_or(&current_dir);
+                    let payload = models::Payload::from_path(extension_dir)?;
+                    let conn = util::get_connection(connection).await?;
+
+                    commands::add::add(&payload, output_path, conn).await?;
+                }
             }
-
-            let current_dir = env::current_dir()?;
-            let extension_dir = path.as_ref().unwrap_or(&current_dir);
-            let payload = models::Payload::from_path(extension_dir)?;
-            let conn = util::get_connection(connection).await?;
-
-            commands::add::add(&payload, output_path, conn).await?;
 
             Ok(())
         }

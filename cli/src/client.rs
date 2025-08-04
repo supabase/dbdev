@@ -4,16 +4,17 @@ use url::Url;
 
 use crate::{config::Registry, secret::Secret};
 
-pub struct APIClient<'a> {
+pub struct ApiClient<'a> {
     base_url: &'a Url,
     api_key: &'a str,
     http_client: reqwest::Client,
 }
 
-impl<'a> APIClient<'a> {
+impl<'a> ApiClient<'a> {
     pub(crate) fn from_registry(registry: &'a Registry) -> anyhow::Result<Self> {
         Ok(Self::new(&registry.base_url, &registry.api_key))
     }
+
     fn new(base_url: &'a Url, api_key: &'a str) -> Self {
         Self {
             base_url,
@@ -125,32 +126,50 @@ impl<'a> APIClient<'a> {
 
         Ok(upgrade_id)
     }
-}
 
-#[derive(Serialize, Debug)]
-struct User {
-    email: String,
-    password: String,
-    data: UserMetadata,
+    pub async fn get_latest_package_version(
+        &self,
+        package_name: &str,
+    ) -> anyhow::Result<Vec<GetLatestPackageVersionResponse>> {
+        let url = format!("{}/rest/v1/package_versions", self.base_url);
+        let response = self
+            .http_client
+            .get(url)
+            .query(&[
+                (
+                    "select",
+                    "package_name,version,sql,control_description,control_requires",
+                ),
+                (
+                    "or",
+                    &format!("(package_name.eq.{package_name},package_alias.eq.{package_name})"),
+                ),
+                ("order", "version.desc"),
+                ("limit", "1"),
+            ])
+            .header("apiKey", self.api_key)
+            .send()
+            .await
+            .context("failed to get package version")?;
+
+        let status = response.status();
+
+        if !status.is_success() {
+            return Err(anyhow::anyhow!(response.text().await?));
+        }
+
+        let latest_version = response
+            .json::<Vec<GetLatestPackageVersionResponse>>()
+            .await
+            .context("Failed to parse latest version response")?;
+
+        Ok(latest_version)
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct UserMetadata {
     handle: String,
-}
-
-#[derive(Deserialize, Debug)]
-pub struct SignupResponse {
-    pub access_token: String,
-    pub refresh_token: String,
-    pub user: SignupResponseUser,
-}
-
-#[derive(Deserialize, Debug)]
-pub struct SignupResponseUser {
-    pub email: String,
-    pub id: uuid::Uuid,
-    pub user_metadata: UserMetadata,
 }
 
 #[derive(Deserialize, Debug)]
@@ -182,4 +201,13 @@ pub struct PublishPackageUpgradeRequest<'a> {
     pub from_version: &'a str,
     pub to_version: &'a str,
     pub upgrade_source: &'a str,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct GetLatestPackageVersionResponse {
+    pub package_name: String,
+    pub version: String,
+    pub sql: String,
+    pub control_description: String,
+    pub control_requires: Vec<String>,
 }

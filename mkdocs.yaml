@@ -9,7 +9,7 @@ nav:
     - Welcome: 'index.md'
     - Using the CLI: 'cli.md'
     - Publish a Package: 'publish-extension.md'
-    - Install a Package: 'install-in-db-client.md'
+    - Install a Package: 'install-a-package.md'
     - Structure of a Postgres Extension: 'extension_structure.md'
 
 theme:

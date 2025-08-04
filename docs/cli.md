@@ -1,7 +1,7 @@
 The `dbdev` CLI can be used for:
 
-- Installing TLEs from [database.dev] or your local machine.
-- Updating TLEs from [database.dev] or your local machine.
+- Installing TLEs from [database.dev](https://database.dev/) or your local machine.
+- Updating TLEs from [database.dev](https://database.dev/) or your local machine.
 - Publishing TLEs to [database.dev](https://database.dev/).
 
 ## Installation

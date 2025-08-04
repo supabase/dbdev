@@ -58,7 +58,7 @@ Now run the `dbdev publish` command to publish it.
 dbdev publish
 ```
 
-Your extension is now published to `database.dev` and visible under your account profile. You can visit your account profile from the account drop-down at the top right. Users can now install your extension using the [dbdev in-database client](install-in-db-client.md).
+Your extension is now published to `database.dev` and visible under your account profile. You can visit your account profile from the account drop-down at the top right. Users can now [install your extension](install-a-package.md) by using the `dbdev add` command.
 
 
 ## Tips

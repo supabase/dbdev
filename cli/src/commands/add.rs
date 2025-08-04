@@ -1,12 +1,89 @@
-use std::{collections::HashSet, path::Path};
+use std::{
+    collections::HashSet,
+    io::{BufWriter, Write},
+    path::Path,
+};
 
 use sqlx::{types::chrono::Utc, PgConnection};
+use tempfile::tempdir;
 use tokio::fs;
 
 use crate::{
+    client::{ApiClient, GetLatestPackageVersionResponse},
     models::{Payload, UpdatePath},
-    util::{extension_versions, update_paths},
+    util::{create_file, extension_versions, update_paths},
 };
+
+pub async fn payload_from_package(
+    client: ApiClient<'_>,
+    package_name: &str,
+) -> anyhow::Result<Payload> {
+    let package_dir = tempdir()?;
+    let package_dir_path = package_dir.path();
+
+    let response = client.get_latest_package_version(package_name).await?;
+    if response.len() != 1 {
+        return Err(anyhow::anyhow!(
+            "Invalid number of package versions returned: {}",
+            response.len()
+        ));
+    }
+    let response = &response[0];
+
+    write_control_file(package_dir_path, response).await?;
+    write_sql_file(package_dir_path, response).await?;
+
+    let payload = Payload::from_path(package_dir_path)?;
+    Ok(payload)
+}
+
+fn get_partial_name(package_name: &str) -> anyhow::Result<&str> {
+    Ok(if let Some(index) = package_name.find('@') {
+        &package_name[index + 1..]
+    } else if let Some(index) = package_name.find('-') {
+        &package_name[index + 1..]
+    } else {
+        return Err(anyhow::anyhow!("Invalid package name: {package_name}"));
+    })
+}
+
+async fn write_control_file(
+    package_dir_path: &Path,
+    package: &GetLatestPackageVersionResponse,
+) -> anyhow::Result<()> {
+    let partial_name = get_partial_name(&package.package_name)?;
+    let file_name = format!("{partial_name}.control");
+    let file_path = package_dir_path.join(file_name);
+    let file = create_file(&file_path)?;
+    let mut writer = BufWriter::new(file);
+
+    writeln!(writer, "# {partial_name} extension")?;
+    writeln!(writer, "comment = '{}'", package.control_description)?;
+    writeln!(writer, "default_version = '{}'", package.version)?;
+    writeln!(writer, "superuser = false")?;
+
+    if !package.control_requires.is_empty() {
+        let requires = package.control_requires.join(", ");
+        writeln!(writer, "requires = {requires}")?;
+    }
+
+    Ok(())
+}
+
+async fn write_sql_file(
+    package_dir_path: &Path,
+    package: &GetLatestPackageVersionResponse,
+) -> anyhow::Result<()> {
+    let partial_name = get_partial_name(&package.package_name)?;
+    let file_name = format!("{partial_name}--{}.sql", package.version);
+    let file_path = package_dir_path.join(file_name);
+    let file = create_file(&file_path)?;
+    let mut writer = BufWriter::new(file);
+
+    write!(writer, "{}", package.sql)?;
+
+    Ok(())
+}
 
 pub async fn add(
     payload: &Payload,
@@ -77,7 +154,7 @@ pub async fn add(
                     .metadata
                     .requires
                     .iter()
-                    .map(|r| format!("'{}'", r))
+                    .map(|r| format!("'{r}'"))
                     .collect::<Vec<_>>()
                     .join(",");
 

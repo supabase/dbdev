@@ -51,8 +51,7 @@ impl Credentials {
         match self.tokens.get(registry_name) {
             Some(token) => Ok(token),
             None => Err(FindTokenError::NotFound(format!(
-                "token for registry `{}` not found",
-                registry_name
+                "token for registry `{registry_name}` not found"
             ))),
         }
     }
