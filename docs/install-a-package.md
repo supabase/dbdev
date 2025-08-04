@@ -21,14 +21,15 @@ create extension if not exists pg_tle;
 Once the prerequisites are met, you can create a migration file to install a TLE available on database.dev by running the following dbdev command:
 
 ```bash
-dbdev add -c <postgres_connection_string> -o <output_file> <extension_name>
+dbdev add -c <postgres_connection_string> -o <migration_folder_path> package -n <package_name>
 ```
 
-For example, to install pg_headerkit version 1.0.0 in schema public run:
+For example, to install `kiwicopple@pg_idkit` version 4.0.0 in `extensions` schema run:
 
-```sql
-select dbdev.install('burggraf-pg_headerkit');
-create extension "burggraf-pg_headerkit"
-    schema 'public'
-    version '1.0.0';
+```bash
+dbdev add -c "postgresql://postgres:[YOUR-PASSWORD]@[YOUR-HOST]:5432/postgres" -o "./migrations/" -v 4.0.0 -s extensions package -n kiwicopple@pg_idkit
 ```
+
+!!! warning
+
+    Ensure that before running the `dbdev add` command, all existing migrations in the `migrations` folder have been applied to the database. The `dbdev add` command looks for existing installed extensions in the database and generates a migration file that will install the TLE if it is not already installed.
