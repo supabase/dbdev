@@ -127,25 +127,64 @@ impl<'a> ApiClient<'a> {
         Ok(upgrade_id)
     }
 
-    pub async fn get_latest_package_version(
-        &self,
-        package_name: &str,
-    ) -> anyhow::Result<Vec<GetLatestPackageVersionResponse>> {
-        let url = format!("{}/rest/v1/package_versions", self.base_url);
+    pub async fn get_package(&self, package_name: &str) -> anyhow::Result<GetPackageResponse> {
+        let url = format!("{}/rest/v1/packages", self.base_url);
         let response = self
             .http_client
             .get(url)
             .query(&[
                 (
                     "select",
-                    "package_name,version,sql,control_description,control_requires",
+                    "partial_name,control_description,control_requires,default_version",
                 ),
                 (
                     "or",
                     &format!("(package_name.eq.{package_name},package_alias.eq.{package_name})"),
                 ),
-                ("order", "version.desc"),
-                ("limit", "1"),
+            ])
+            .header("apiKey", self.api_key)
+            .send()
+            .await
+            .context("failed to get package")?;
+
+        let status = response.status();
+
+        if !status.is_success() {
+            return Err(anyhow::anyhow!(response.text().await?));
+        }
+
+        let packages = response
+            .json::<Vec<GetPackageResponse>>()
+            .await
+            .context("Failed to parse get package response")?;
+
+        if packages.len() != 1 {
+            return Err(anyhow::anyhow!(
+                "Expected to get one package, but found {}",
+                packages.len()
+            ));
+        }
+
+        Ok(packages
+            .into_iter()
+            .next()
+            .expect("Packages contains exactly one value as tested above"))
+    }
+
+    pub async fn get_package_versions(
+        &self,
+        package_name: &str,
+    ) -> anyhow::Result<Vec<GetPackageVersionsResponse>> {
+        let url = format!("{}/rest/v1/package_versions", self.base_url);
+        let response = self
+            .http_client
+            .get(url)
+            .query(&[
+                ("select", "version,sql"),
+                (
+                    "or",
+                    &format!("(package_name.eq.{package_name},package_alias.eq.{package_name})"),
+                ),
             ])
             .header("apiKey", self.api_key)
             .send()
@@ -158,12 +197,46 @@ impl<'a> ApiClient<'a> {
             return Err(anyhow::anyhow!(response.text().await?));
         }
 
-        let latest_version = response
-            .json::<Vec<GetLatestPackageVersionResponse>>()
+        let versions = response
+            .json::<Vec<GetPackageVersionsResponse>>()
             .await
-            .context("Failed to parse latest version response")?;
+            .context("Failed to parse get package versions response")?;
 
-        Ok(latest_version)
+        Ok(versions)
+    }
+
+    pub async fn get_package_upgrades(
+        &self,
+        package_name: &str,
+    ) -> anyhow::Result<Vec<GetPackageUpgradesResponse>> {
+        let url = format!("{}/rest/v1/package_upgrades", self.base_url);
+        let response = self
+            .http_client
+            .get(url)
+            .query(&[
+                ("select", "from_version,to_version,sql"),
+                (
+                    "or",
+                    &format!("(package_name.eq.{package_name},package_alias.eq.{package_name})"),
+                ),
+            ])
+            .header("apiKey", self.api_key)
+            .send()
+            .await
+            .context("failed to get package upgrades")?;
+
+        let status = response.status();
+
+        if !status.is_success() {
+            return Err(anyhow::anyhow!(response.text().await?));
+        }
+
+        let upgrades = response
+            .json::<Vec<GetPackageUpgradesResponse>>()
+            .await
+            .context("Failed to parse get package upgrades response")?;
+
+        Ok(upgrades)
     }
 }
 
@@ -204,10 +277,22 @@ pub struct PublishPackageUpgradeRequest<'a> {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct GetLatestPackageVersionResponse {
-    pub package_name: String,
-    pub version: String,
-    pub sql: String,
+pub struct GetPackageResponse {
+    pub partial_name: String,
     pub control_description: String,
     pub control_requires: Vec<String>,
+    pub default_version: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct GetPackageVersionsResponse {
+    pub version: String,
+    pub sql: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct GetPackageUpgradesResponse {
+    pub from_version: String,
+    pub to_version: String,
+    pub sql: String,
 }

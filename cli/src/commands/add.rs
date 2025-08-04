@@ -9,7 +9,9 @@ use tempfile::tempdir;
 use tokio::fs;
 
 use crate::{
-    client::{ApiClient, GetLatestPackageVersionResponse},
+    client::{
+        ApiClient, GetPackageResponse, GetPackageUpgradesResponse, GetPackageVersionsResponse,
+    },
     models::{Payload, UpdatePath},
     util::{create_file, extension_versions, update_paths},
 };
@@ -21,45 +23,30 @@ pub async fn payload_from_package(
     let package_dir = tempdir()?;
     let package_dir_path = package_dir.path();
 
-    let response = client.get_latest_package_version(package_name).await?;
-    if response.len() != 1 {
-        return Err(anyhow::anyhow!(
-            "Invalid number of package versions returned: {}",
-            response.len()
-        ));
-    }
-    let response = &response[0];
+    let package = client.get_package(package_name).await?;
+    let versions = client.get_package_versions(package_name).await?;
+    let upgrades = client.get_package_upgrades(package_name).await?;
 
-    write_control_file(package_dir_path, response).await?;
-    write_sql_file(package_dir_path, response).await?;
+    write_control_file(package_dir_path, &package).await?;
+    write_version_files(package_dir_path, &package.partial_name, &versions).await?;
+    write_upgrade_files(package_dir_path, &package.partial_name, &upgrades).await?;
 
     let payload = Payload::from_path(package_dir_path)?;
     Ok(payload)
 }
 
-fn get_partial_name(package_name: &str) -> anyhow::Result<&str> {
-    Ok(if let Some(index) = package_name.find('@') {
-        &package_name[index + 1..]
-    } else if let Some(index) = package_name.find('-') {
-        &package_name[index + 1..]
-    } else {
-        return Err(anyhow::anyhow!("Invalid package name: {package_name}"));
-    })
-}
-
 async fn write_control_file(
     package_dir_path: &Path,
-    package: &GetLatestPackageVersionResponse,
+    package: &GetPackageResponse,
 ) -> anyhow::Result<()> {
-    let partial_name = get_partial_name(&package.package_name)?;
-    let file_name = format!("{partial_name}.control");
+    let file_name = format!("{}.control", package.partial_name);
     let file_path = package_dir_path.join(file_name);
     let file = create_file(&file_path)?;
     let mut writer = BufWriter::new(file);
 
-    writeln!(writer, "# {partial_name} extension")?;
+    writeln!(writer, "# {} extension", package.partial_name)?;
     writeln!(writer, "comment = '{}'", package.control_description)?;
-    writeln!(writer, "default_version = '{}'", package.version)?;
+    writeln!(writer, "default_version = '{}'", package.default_version)?;
     writeln!(writer, "superuser = false")?;
 
     if !package.control_requires.is_empty() {
@@ -70,17 +57,39 @@ async fn write_control_file(
     Ok(())
 }
 
-async fn write_sql_file(
+async fn write_version_files(
     package_dir_path: &Path,
-    package: &GetLatestPackageVersionResponse,
+    partial_name: &str,
+    versions: &[GetPackageVersionsResponse],
 ) -> anyhow::Result<()> {
-    let partial_name = get_partial_name(&package.package_name)?;
-    let file_name = format!("{partial_name}--{}.sql", package.version);
-    let file_path = package_dir_path.join(file_name);
-    let file = create_file(&file_path)?;
-    let mut writer = BufWriter::new(file);
+    for version in versions {
+        let file_name = format!("{partial_name}--{}.sql", version.version);
+        let file_path = package_dir_path.join(file_name);
+        let file = create_file(&file_path)?;
+        let mut writer = BufWriter::new(file);
 
-    write!(writer, "{}", package.sql)?;
+        write!(writer, "{}", version.sql)?;
+    }
+
+    Ok(())
+}
+
+async fn write_upgrade_files(
+    package_dir_path: &Path,
+    partial_name: &str,
+    upgrades: &[GetPackageUpgradesResponse],
+) -> anyhow::Result<()> {
+    for upgrade in upgrades {
+        let file_name = format!(
+            "{partial_name}--{}--{}.sql",
+            upgrade.from_version, upgrade.to_version
+        );
+        let file_path = package_dir_path.join(file_name);
+        let file = create_file(&file_path)?;
+        let mut writer = BufWriter::new(file);
+
+        write!(writer, "{}", upgrade.sql)?;
+    }
 
     Ok(())
 }
@@ -116,6 +125,8 @@ pub async fn add(
         migration_content.push('\n');
     }
 
+    migration_content.push_str("------------------------------------");
+
     // Add prerequisites first
     if !&payload.metadata.requires.is_empty() {
         migration_content.push_str("-- Install prerequisites\n");
@@ -131,7 +142,7 @@ pub async fn add(
         if !existing_versions.contains(&install_file.version) {
             if installed_extension_once {
                 // For subsequent versions
-                migration_content.push_str("-- Installing version ");
+                migration_content.push_str("-- Install version ");
                 migration_content.push_str(&install_file.version);
                 migration_content.push('\n');
 
