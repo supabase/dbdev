@@ -122,7 +122,9 @@ select dbdev.install('olirice-index_advisor');
           <p className="text-muted-foreground">Trending on database.dev</p>
 
           <div className="grid sm:grid-cols-8 md:grid-cols-12 gap-4">
-            {data?.map((pkg: any) => <PackageCard key={pkg.id} pkg={pkg} />)}
+            {data?.map((pkg: any) => (
+              <PackageCard key={pkg.id} pkg={pkg} />
+            ))}
           </div>
         </div>
       </div>
