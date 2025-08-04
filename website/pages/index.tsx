@@ -57,18 +57,20 @@ const IndexPage: NextPageWithLayout = () => {
           </div>
         </div>
         <div className="mt-4 md:mt-12 lg:-mt-16 lg:flex-shrink-0 md:text-center lg:text-left">
-          <div className="relative border px-4 pt-4 pb-4 md:pb-24 rounded-md justify-end">
+          <div className="relative border px-4 pt-4 pb-4 md:pb-24 rounded-md justify-end max-w-md lg:max-w-lg">
             <div>
               <div>
                 <h3 className="text-lg font-bold">Download and install</h3>
                 <p className="text-xs text-muted-foreground">
-                  Install extensions via a SQL command
+                  Create a migration file
                 </p>
               </div>
               <div className="mt-4 relative">
-                <code className="block md:inline overflow-scroll py-2">
+                <code className="block py-2 text-sm whitespace-pre-wrap break-words">
                   <span className="text-muted-foreground">
-                    select dbdev.install(
+                    dbdev add -c
+                    &quot;postgresql://postgres:[YOUR-PASSWORD]@[YOUR-HOST]:5432/postgres&quot;
+                    -o ./migrations -s extensions -v 0.2.1 package -n &quot;
                   </span>
                   <span>
                     <span className="bg-slate-100 rounded-sm p-1 dark:bg-slate-700 relative">
@@ -90,13 +92,13 @@ const IndexPage: NextPageWithLayout = () => {
                         <div className="w-12 h-[1px] bg-slate-500 rotate-45 absolute left-12"></div>
                       </div>
                     </span>
-                    <span className="text-muted-foreground">);</span>
+                    <span className="text-muted-foreground">&quot;</span>
                   </span>
                 </code>
               </div>
               <CopyButton
                 getValue={() =>
-                  `select dbdev.install('olirice-index_advisor');`
+                  `dbdev add -c "postgresql://postgres:[YOUR-PASSWORD]@[YOUR-HOST]:5432/postgres" -o ./migrations -s extensions -v 0.2.1 package -n "olirice@index_advisor"`
                 }
                 className="absolute top-2 right-2 p-1"
                 variant="light"
