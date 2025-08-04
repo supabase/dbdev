@@ -131,7 +131,7 @@ pub async fn add(
     if !&payload.metadata.requires.is_empty() {
         migration_content.push_str("-- Install prerequisites\n");
         for req in &payload.metadata.requires {
-            migration_content.push_str("CREATE EXTENSION IF NOT EXISTS ");
+            migration_content.push_str("create extension if not exists ");
             migration_content.push_str(req);
             migration_content.push_str(";\n");
         }
@@ -146,13 +146,13 @@ pub async fn add(
                 migration_content.push_str(&install_file.version);
                 migration_content.push('\n');
 
-                migration_content.push_str("SELECT pgtle.install_extension_version_sql('");
+                migration_content.push_str("select pgtle.install_extension_version_sql('");
                 migration_content.push_str(&payload.metadata.extension_name);
                 migration_content.push_str("', '");
                 migration_content.push_str(&install_file.version);
-                migration_content.push_str("', $SQL$");
+                migration_content.push_str("', $sql$");
                 migration_content.push_str(&install_file.body);
-                migration_content.push_str("$SQL$);\n\n");
+                migration_content.push_str("$sql$);\n\n");
 
                 versions_installed_now.insert(install_file.version.clone());
             } else {
@@ -169,15 +169,15 @@ pub async fn add(
                     .collect::<Vec<_>>()
                     .join(",");
 
-                migration_content.push_str("SELECT pgtle.install_extension('");
+                migration_content.push_str("select pgtle.install_extension('");
                 migration_content.push_str(&payload.metadata.extension_name);
                 migration_content.push_str("', '");
                 migration_content.push_str(&install_file.version);
-                migration_content.push_str("', $COMMENT$");
+                migration_content.push_str("', $comment$");
                 migration_content.push_str(payload.metadata.comment.as_deref().unwrap_or(""));
-                migration_content.push_str("$COMMENT$, $SQL$");
+                migration_content.push_str("$comment$, $sql$");
                 migration_content.push_str(&install_file.body);
-                migration_content.push_str("$SQL$, ARRAY[");
+                migration_content.push_str("$sql$, array[");
                 migration_content.push_str(&requirements);
                 migration_content.push_str("]::text[] );\n\n");
 
@@ -196,15 +196,15 @@ pub async fn add(
             target: upgrade_file.to_version.clone(),
         };
         if !existing_update_paths.contains(&update_path) {
-            migration_content.push_str("SELECT pgtle.install_update_path('");
+            migration_content.push_str("select pgtle.install_update_path('");
             migration_content.push_str(&payload.metadata.extension_name);
             migration_content.push_str("', '");
             migration_content.push_str(&upgrade_file.from_version);
             migration_content.push_str("', '");
             migration_content.push_str(&upgrade_file.to_version);
-            migration_content.push_str("', $SQL$");
+            migration_content.push_str("', $sql$");
             migration_content.push_str(&upgrade_file.body);
-            migration_content.push_str("$SQL$);\n\n");
+            migration_content.push_str("$sql$);\n\n");
         }
     }
 
@@ -212,14 +212,14 @@ pub async fn add(
     migration_content.push_str("-- Create the extension\n");
     match &payload.metadata.schema {
         Some(schema) => {
-            migration_content.push_str("CREATE EXTENSION IF NOT EXISTS ");
+            migration_content.push_str("create extension if not exists ");
             migration_content.push_str(&payload.metadata.extension_name);
-            migration_content.push_str(" SCHEMA ");
+            migration_content.push_str(" schema ");
             migration_content.push_str(schema);
             migration_content.push_str(";\n");
         }
         None => {
-            migration_content.push_str("CREATE EXTENSION IF NOT EXISTS ");
+            migration_content.push_str("create extension if not exists ");
             migration_content.push_str(&payload.metadata.extension_name);
             migration_content.push_str(";\n");
         }
@@ -230,7 +230,7 @@ pub async fn add(
     migration_content.push_str(&payload.metadata.default_version);
     migration_content.push('\n');
 
-    migration_content.push_str("SELECT pgtle.set_default_version('");
+    migration_content.push_str("select pgtle.set_default_version('");
     migration_content.push_str(&payload.metadata.extension_name);
     migration_content.push_str("', '");
     migration_content.push_str(&payload.metadata.default_version);
