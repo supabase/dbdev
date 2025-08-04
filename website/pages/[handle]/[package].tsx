@@ -140,7 +140,7 @@ const PackagePage: NextPageWithLayout = () => {
 
                 <ol role="list" className="list-decimal list-inside">
                   <li className="dark:text-white">
-                    <Link href="https://supabase.github.io/dbdev/cli/">
+                    <Link href="https://supabase.github.io/dbdev/cli/#installation">
                       Install the <code>dbdev</code> CLI
                     </Link>
                   </li>
