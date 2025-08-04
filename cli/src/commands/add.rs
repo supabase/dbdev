@@ -19,7 +19,7 @@ use crate::{
 pub async fn payload_from_package(
     client: ApiClient<'_>,
     package_name: &str,
-) -> anyhow::Result<Payload> {
+) -> anyhow::Result<(Payload, String)> {
     let package_dir = tempdir()?;
     let package_dir_path = package_dir.path();
 
@@ -32,7 +32,7 @@ pub async fn payload_from_package(
     write_upgrade_files(package_dir_path, &package.partial_name, &upgrades).await?;
 
     let payload = Payload::from_path(package_dir_path)?;
-    Ok(payload)
+    Ok((payload, package.handle))
 }
 
 async fn write_control_file(
@@ -100,8 +100,15 @@ pub async fn add(
     mut conn: PgConnection,
     schema: &Option<String>,
     version: &Option<String>,
+    handle: &Option<String>,
 ) -> anyhow::Result<()> {
-    let existing_versions = extension_versions(&mut conn, &payload.metadata.extension_name).await?;
+    let extension_name = if let Some(handle) = handle {
+        format!("{handle}@{}", payload.metadata.extension_name)
+    } else {
+        payload.metadata.extension_name.clone()
+    };
+
+    let existing_versions = extension_versions(&mut conn, &extension_name).await?;
     let mut installed_extension_once = !existing_versions.is_empty();
     let mut versions_installed_now = HashSet::new();
 
@@ -114,7 +121,7 @@ pub async fn add(
     migration_content.push('\n');
 
     migration_content.push_str("-- Extension: ");
-    migration_content.push_str(&payload.metadata.extension_name);
+    migration_content.push_str(&extension_name);
     migration_content.push('\n');
 
     migration_content.push_str("-- Default version: ");
@@ -149,7 +156,7 @@ pub async fn add(
                 migration_content.push('\n');
 
                 migration_content.push_str("select pgtle.install_extension_version_sql('");
-                migration_content.push_str(&payload.metadata.extension_name);
+                migration_content.push_str(&extension_name);
                 migration_content.push_str("', '");
                 migration_content.push_str(&install_file.version);
                 migration_content.push_str("', $sql$");
@@ -172,7 +179,7 @@ pub async fn add(
                     .join(",");
 
                 migration_content.push_str("select pgtle.install_extension('");
-                migration_content.push_str(&payload.metadata.extension_name);
+                migration_content.push_str(&extension_name);
                 migration_content.push_str("', '");
                 migration_content.push_str(&install_file.version);
                 migration_content.push_str("', $comment$");
@@ -190,7 +197,7 @@ pub async fn add(
     }
 
     let existing_update_paths =
-        (update_paths(&mut conn, &payload.metadata.extension_name).await).unwrap_or_default();
+        (update_paths(&mut conn, &extension_name).await).unwrap_or_default();
 
     for upgrade_file in &payload.upgrade_files {
         let update_path = UpdatePath {
@@ -199,7 +206,7 @@ pub async fn add(
         };
         if !existing_update_paths.contains(&update_path) {
             migration_content.push_str("select pgtle.install_update_path('");
-            migration_content.push_str(&payload.metadata.extension_name);
+            migration_content.push_str(&extension_name);
             migration_content.push_str("', '");
             migration_content.push_str(&upgrade_file.from_version);
             migration_content.push_str("', '");
@@ -213,10 +220,12 @@ pub async fn add(
     // Create the extension
     migration_content.push_str("-- Create the extension\n");
 
-    // add schema if specified
     let schema = schema.as_ref().or(payload.metadata.schema.as_ref());
-    migration_content.push_str("create extension if not exists ");
-    migration_content.push_str(&payload.metadata.extension_name);
+    migration_content.push_str(r#"create extension if not exists ""#);
+    migration_content.push_str(&extension_name);
+    migration_content.push('"');
+
+    // add schema if specified
     if let Some(schema) = schema {
         migration_content.push_str(" schema ");
         migration_content.push_str(schema);
@@ -236,7 +245,7 @@ pub async fn add(
     migration_content.push('\n');
 
     migration_content.push_str("select pgtle.set_default_version('");
-    migration_content.push_str(&payload.metadata.extension_name);
+    migration_content.push_str(&extension_name);
     migration_content.push_str("', '");
     migration_content.push_str(&payload.metadata.default_version);
     migration_content.push_str("');\n");
@@ -245,7 +254,7 @@ pub async fn add(
     let mut filename = String::new();
     filename.push_str(&timestamp.to_string());
     filename.push('_');
-    filename.push_str(&payload.metadata.extension_name);
+    filename.push_str(&extension_name);
     filename.push_str("_install.sql");
 
     let file_path = output_path.join(filename);

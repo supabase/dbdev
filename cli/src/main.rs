@@ -196,10 +196,12 @@ async fn main() -> anyhow::Result<()> {
                         .unwrap_or(&config.default_registry.name);
                     let registry = config.get_registry(registry_name)?;
                     let client = client::ApiClient::from_registry(registry)?;
-                    let payload = commands::add::payload_from_package(client, name).await?;
+                    let (payload, handle) =
+                        commands::add::payload_from_package(client, name).await?;
                     let conn = util::get_connection(connection).await?;
 
-                    commands::add::add(&payload, output_path, conn, schema, version).await?;
+                    commands::add::add(&payload, output_path, conn, schema, version, &Some(handle))
+                        .await?;
                 }
                 RegistrySource::Path { directory } => {
                     let current_dir = env::current_dir()?;
@@ -207,7 +209,7 @@ async fn main() -> anyhow::Result<()> {
                     let payload = models::Payload::from_path(extension_dir)?;
                     let conn = util::get_connection(connection).await?;
 
-                    commands::add::add(&payload, output_path, conn, schema, version).await?;
+                    commands::add::add(&payload, output_path, conn, schema, version, &None).await?;
                 }
             }
 

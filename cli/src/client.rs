@@ -135,7 +135,7 @@ impl<'a> ApiClient<'a> {
             .query(&[
                 (
                     "select",
-                    "partial_name,control_description,control_requires,default_version",
+                    "handle,partial_name,control_description,control_requires,default_version",
                 ),
                 (
                     "or",
@@ -278,6 +278,7 @@ pub struct PublishPackageUpgradeRequest<'a> {
 
 #[derive(Debug, Deserialize)]
 pub struct GetPackageResponse {
+    pub handle: String,
     pub partial_name: String,
     pub control_description: String,
     pub control_requires: Vec<String>,
