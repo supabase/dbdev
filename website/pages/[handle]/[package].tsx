@@ -38,11 +38,9 @@ const PackagePage: NextPageWithLayout = () => {
       partialName: partialPackageName,
     })
 
-  const installCode = `select dbdev.install('${
-    pkg?.package_alias ?? pkg?.package_name ?? 'Loading...'
-  }');
-create extension "${pkg?.package_alias ?? pkg?.package_name ?? 'Loading...'}"
-    version '${pkg?.latest_version ?? '0.0.0'}';`
+  const packageName = pkg?.package_alias ?? pkg?.package_name ?? 'Loading...'
+  const packageVersion = pkg?.latest_version ?? '0.0.0'
+  const addCommand = `dbdev add -o ./migrations -s extensions -v ${packageVersion} package -n "${packageName}"`
 
   const downloads30Days = pkg?.download_metrics?.downloads_30_day ?? 0
   const downloads90Days = pkg?.download_metrics?.downloads_90_days ?? 0
@@ -137,21 +135,21 @@ create extension "${pkg?.package_alias ?? pkg?.package_name ?? 'Loading...'}"
                     <ArrowDownTrayIcon className="w-5 h-5" /> Install
                   </H2>
 
-                  {pkg && <CopyButton getValue={() => installCode} />}
+                  {pkg && <CopyButton getValue={() => addCommand} />}
                 </div>
 
                 <ol role="list" className="list-decimal list-inside">
                   <li className="dark:text-white">
-                    <Link href="/installer">
-                      Install the <code>dbdev</code> package manager
+                    <Link href="https://supabase.github.io/dbdev/cli/#installation">
+                      Install the <code>dbdev</code> CLI
                     </Link>
                   </li>
-                  <li className="dark:text-white">Install the package:</li>
+                  <li className="dark:text-white">Generate migration:</li>
                 </ol>
 
                 <Markdown copyableCode={false}>
-                  {`\`\`\`sql
-${installCode}
+                  {`\`\`\`bash
+${addCommand}
 \`\`\``}
                 </Markdown>
               </div>

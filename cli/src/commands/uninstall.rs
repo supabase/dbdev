@@ -13,13 +13,13 @@ pub async fn uninstall(extension_name: &str, mut conn: PgConnection) -> anyhow::
     sqlx::query(&format!("drop extension if exists {quoted_extension_name}"))
         .execute(&mut conn)
         .await
-        .context(format!("failed to drop extension {}", extension_name))?;
+        .context(format!("failed to drop extension {extension_name}"))?;
 
     sqlx::query("select 1 from pgtle.uninstall_extension($1)")
         .bind(extension_name)
         .execute(&mut conn)
         .await
-        .context(format!("failed to uninstall extension {}", extension_name))?;
+        .context(format!("failed to uninstall extension {extension_name}"))?;
 
     Ok(())
 }

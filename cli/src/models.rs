@@ -48,22 +48,6 @@ pub struct UpgradeFile {
     pub body: String,
 }
 
-pub trait HasFilename {
-    fn filename(&self) -> String;
-}
-
-impl HasFilename for InstallFile {
-    fn filename(&self) -> String {
-        self.filename.clone()
-    }
-}
-
-impl HasFilename for UpgradeFile {
-    fn filename(&self) -> String {
-        self.filename.clone()
-    }
-}
-
 #[derive(Debug)]
 pub struct ReadmeFile {
     pub body: String,
@@ -98,8 +82,6 @@ pub(crate) struct UpdatePath {
 
 #[derive(Debug)]
 pub struct Payload {
-    /// Absolute path to extension directory
-    pub abs_path: Option<PathBuf>,
     pub metadata: Metadata,
     pub install_files: Vec<InstallFile>,
     pub upgrade_files: Vec<UpgradeFile>,
@@ -232,7 +214,6 @@ impl Payload {
         }
 
         let payload = Payload {
-            abs_path: Some(abs_path),
             metadata: Metadata::from_control_file_ref(&control_file)?,
             install_files,
             upgrade_files,

@@ -8,7 +8,7 @@ use crate::credential_store::Credentials;
 use crate::models::{self, InstallFile, Payload, ReadmeFile, UpgradeFile};
 
 pub async fn publish(
-    client: &client::APIClient<'_>,
+    client: &client::ApiClient<'_>,
     package_foler_path: &Path,
     registry_name: &str,
 ) -> anyhow::Result<()> {

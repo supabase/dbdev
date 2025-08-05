@@ -13,8 +13,7 @@ select results_eq(
         ('michelp-adminpack'),
         ('olirice-asciiplot'),
         ('olirice-index_advisor'),
-        ('olirice-read_once'),
-        ('supabase-dbdev')
+        ('olirice-read_once')
     $$,
     'Anon can view popular packages'
 );

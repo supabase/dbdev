@@ -1,19 +1,127 @@
-use std::{collections::HashSet, path::Path};
+use std::{
+    collections::HashSet,
+    io::{BufWriter, Write},
+    path::Path,
+};
 
+use rand::{distr::Alphanumeric, Rng};
 use sqlx::{types::chrono::Utc, PgConnection};
+use tempfile::tempdir;
 use tokio::fs;
 
 use crate::{
+    client::{
+        ApiClient, GetPackageResponse, GetPackageUpgradesResponse, GetPackageVersionsResponse,
+    },
     models::{Payload, UpdatePath},
-    util::{extension_versions, update_paths},
+    util::{create_file, extension_versions, update_paths},
 };
+
+pub async fn payload_from_package(
+    client: ApiClient<'_>,
+    package_name: &str,
+) -> anyhow::Result<(Payload, String)> {
+    let package_dir = tempdir()?;
+    let package_dir_path = package_dir.path();
+
+    let package = client.get_package(package_name).await?;
+    let versions = client.get_package_versions(package_name).await?;
+    let upgrades = client.get_package_upgrades(package_name).await?;
+
+    write_control_file(package_dir_path, &package).await?;
+    write_version_files(package_dir_path, &package.partial_name, &versions).await?;
+    write_upgrade_files(package_dir_path, &package.partial_name, &upgrades).await?;
+
+    let payload = Payload::from_path(package_dir_path)?;
+    Ok((payload, package.handle))
+}
+
+async fn write_control_file(
+    package_dir_path: &Path,
+    package: &GetPackageResponse,
+) -> anyhow::Result<()> {
+    let file_name = format!("{}.control", package.partial_name);
+    let file_path = package_dir_path.join(file_name);
+    let file = create_file(&file_path)?;
+    let mut writer = BufWriter::new(file);
+
+    writeln!(writer, "# {} extension", package.partial_name)?;
+    writeln!(writer, "comment = '{}'", package.control_description)?;
+    writeln!(writer, "default_version = '{}'", package.default_version)?;
+    writeln!(writer, "superuser = false")?;
+
+    if !package.control_requires.is_empty() {
+        let requires = package.control_requires.join(", ");
+        writeln!(writer, "requires = {requires}")?;
+    }
+
+    Ok(())
+}
+
+async fn write_version_files(
+    package_dir_path: &Path,
+    partial_name: &str,
+    versions: &[GetPackageVersionsResponse],
+) -> anyhow::Result<()> {
+    for version in versions {
+        let file_name = format!("{partial_name}--{}.sql", version.version);
+        let file_path = package_dir_path.join(file_name);
+        let file = create_file(&file_path)?;
+        let mut writer = BufWriter::new(file);
+
+        write!(writer, "{}", version.sql)?;
+    }
+
+    Ok(())
+}
+
+async fn write_upgrade_files(
+    package_dir_path: &Path,
+    partial_name: &str,
+    upgrades: &[GetPackageUpgradesResponse],
+) -> anyhow::Result<()> {
+    for upgrade in upgrades {
+        let file_name = format!(
+            "{partial_name}--{}--{}.sql",
+            upgrade.from_version, upgrade.to_version
+        );
+        let file_path = package_dir_path.join(file_name);
+        let file = create_file(&file_path)?;
+        let mut writer = BufWriter::new(file);
+
+        write!(writer, "{}", upgrade.sql)?;
+    }
+
+    Ok(())
+}
+
+fn generate_random_ascii_string(length: usize) -> String {
+    let rng = rand::rng();
+    rng.sample_iter(Alphanumeric)
+        .take(length)
+        .map(char::from)
+        .collect()
+}
 
 pub async fn add(
     payload: &Payload,
     output_path: &Path,
-    mut conn: PgConnection,
+    mut conn: Option<PgConnection>,
+    schema: &Option<String>,
+    version: &Option<String>,
+    handle: &Option<String>,
 ) -> anyhow::Result<()> {
-    let existing_versions = extension_versions(&mut conn, &payload.metadata.extension_name).await?;
+    let extension_name = if let Some(handle) = handle {
+        format!("{handle}@{}", payload.metadata.extension_name)
+    } else {
+        payload.metadata.extension_name.clone()
+    };
+
+    let existing_versions = match conn {
+        Some(ref mut conn) => extension_versions(conn, &extension_name).await?,
+        None => HashSet::new(),
+    };
+
     let mut installed_extension_once = !existing_versions.is_empty();
     let mut versions_installed_now = HashSet::new();
 
@@ -26,7 +134,7 @@ pub async fn add(
     migration_content.push('\n');
 
     migration_content.push_str("-- Extension: ");
-    migration_content.push_str(&payload.metadata.extension_name);
+    migration_content.push_str(&extension_name);
     migration_content.push('\n');
 
     migration_content.push_str("-- Default version: ");
@@ -39,32 +147,37 @@ pub async fn add(
         migration_content.push('\n');
     }
 
+    migration_content.push_str("------------------------------------");
+
     // Add prerequisites first
     if !&payload.metadata.requires.is_empty() {
         migration_content.push_str("-- Install prerequisites\n");
         for req in &payload.metadata.requires {
-            migration_content.push_str("CREATE EXTENSION IF NOT EXISTS ");
+            migration_content.push_str("create extension if not exists ");
             migration_content.push_str(req);
             migration_content.push_str(";\n");
         }
         migration_content.push('\n');
     }
 
+    let random_string = generate_random_ascii_string(16); // 16 bytes = 128 bits entropy
+    let sql_separator = format!("$sql_{random_string}$");
+    let comment_separator = format!("$comment_{random_string}$");
     for install_file in &payload.install_files {
         if !existing_versions.contains(&install_file.version) {
             if installed_extension_once {
                 // For subsequent versions
-                migration_content.push_str("-- Installing version ");
+                migration_content.push_str("-- Install version ");
                 migration_content.push_str(&install_file.version);
                 migration_content.push('\n');
 
-                migration_content.push_str("SELECT pgtle.install_extension_version_sql('");
-                migration_content.push_str(&payload.metadata.extension_name);
+                migration_content.push_str("select pgtle.install_extension_version_sql('");
+                migration_content.push_str(&extension_name);
                 migration_content.push_str("', '");
                 migration_content.push_str(&install_file.version);
-                migration_content.push_str("', $SQL$");
+                migration_content.push_str(&format!("', {sql_separator}"));
                 migration_content.push_str(&install_file.body);
-                migration_content.push_str("$SQL$);\n\n");
+                migration_content.push_str(&format!("{sql_separator});\n\n"));
 
                 versions_installed_now.insert(install_file.version.clone());
             } else {
@@ -77,19 +190,19 @@ pub async fn add(
                     .metadata
                     .requires
                     .iter()
-                    .map(|r| format!("'{}'", r))
+                    .map(|r| format!("'{r}'"))
                     .collect::<Vec<_>>()
                     .join(",");
 
-                migration_content.push_str("SELECT pgtle.install_extension('");
-                migration_content.push_str(&payload.metadata.extension_name);
+                migration_content.push_str("select pgtle.install_extension('");
+                migration_content.push_str(&extension_name);
                 migration_content.push_str("', '");
                 migration_content.push_str(&install_file.version);
-                migration_content.push_str("', $COMMENT$");
+                migration_content.push_str(&format!("', {comment_separator}"));
                 migration_content.push_str(payload.metadata.comment.as_deref().unwrap_or(""));
-                migration_content.push_str("$COMMENT$, $SQL$");
+                migration_content.push_str(&format!("{comment_separator}, {sql_separator}"));
                 migration_content.push_str(&install_file.body);
-                migration_content.push_str("$SQL$, ARRAY[");
+                migration_content.push_str(&format!("{sql_separator}, array["));
                 migration_content.push_str(&requirements);
                 migration_content.push_str("]::text[] );\n\n");
 
@@ -99,8 +212,10 @@ pub async fn add(
         }
     }
 
-    let existing_update_paths =
-        (update_paths(&mut conn, &payload.metadata.extension_name).await).unwrap_or_default();
+    let existing_update_paths = match conn {
+        Some(ref mut conn) => (update_paths(conn, &extension_name).await).unwrap_or_default(),
+        None => HashSet::new(),
+    };
 
     for upgrade_file in &payload.upgrade_files {
         let update_path = UpdatePath {
@@ -108,53 +223,63 @@ pub async fn add(
             target: upgrade_file.to_version.clone(),
         };
         if !existing_update_paths.contains(&update_path) {
-            migration_content.push_str("SELECT pgtle.install_update_path('");
-            migration_content.push_str(&payload.metadata.extension_name);
+            migration_content.push_str("select pgtle.install_update_path('");
+            migration_content.push_str(&extension_name);
             migration_content.push_str("', '");
             migration_content.push_str(&upgrade_file.from_version);
             migration_content.push_str("', '");
             migration_content.push_str(&upgrade_file.to_version);
-            migration_content.push_str("', $SQL$");
+            migration_content.push_str(&format!("', {sql_separator}"));
             migration_content.push_str(&upgrade_file.body);
-            migration_content.push_str("$SQL$);\n\n");
+            migration_content.push_str(&format!("{sql_separator});\n\n"));
         }
     }
 
+    // Delete old extension
+    migration_content.push_str("\n-- Delete existing extension if installed\n");
+    migration_content.push_str(r#"drop extension if exists ""#);
+    migration_content.push_str(&extension_name);
+    migration_content.push('"');
+    migration_content.push_str(";\n");
+
     // Create the extension
     migration_content.push_str("-- Create the extension\n");
-    match &payload.metadata.schema {
-        Some(schema) => {
-            migration_content.push_str("CREATE EXTENSION IF NOT EXISTS ");
-            migration_content.push_str(&payload.metadata.extension_name);
-            migration_content.push_str(" SCHEMA ");
-            migration_content.push_str(schema);
-            migration_content.push_str(";\n");
-        }
-        None => {
-            migration_content.push_str("CREATE EXTENSION IF NOT EXISTS ");
-            migration_content.push_str(&payload.metadata.extension_name);
-            migration_content.push_str(";\n");
-        }
+
+    migration_content.push_str(r#"create extension ""#);
+    migration_content.push_str(&extension_name);
+    migration_content.push('"');
+
+    // add schema if specified
+    let schema = schema.as_ref().or(payload.metadata.schema.as_ref());
+    if let Some(schema) = schema {
+        migration_content.push_str(r#" schema ""#);
+        migration_content.push_str(schema);
+        migration_content.push('"');
     }
+
+    // add version if specified
+    let version = version
+        .as_ref()
+        .unwrap_or(&payload.metadata.default_version);
+    migration_content.push_str(" version '");
+    migration_content.push_str(version);
+    migration_content.push('\'');
+
+    migration_content.push_str(";\n");
 
     // Set default version
     migration_content.push_str("-- Setting default version to:");
     migration_content.push_str(&payload.metadata.default_version);
     migration_content.push('\n');
 
-    migration_content.push_str("SELECT pgtle.set_default_version('");
-    migration_content.push_str(&payload.metadata.extension_name);
+    migration_content.push_str("select pgtle.set_default_version('");
+    migration_content.push_str(&extension_name);
     migration_content.push_str("', '");
     migration_content.push_str(&payload.metadata.default_version);
     migration_content.push_str("');\n");
 
     // Write to file
-    let mut filename = String::new();
-    filename.push_str(&timestamp.to_string());
-    filename.push('_');
-    filename.push_str(&payload.metadata.extension_name);
-    filename.push_str("_install.sql");
-
+    let filename = format!("{timestamp}_{extension_name}_{version}_install.sql");
     let file_path = output_path.join(filename);
 
     fs::write(&file_path, migration_content).await?;
