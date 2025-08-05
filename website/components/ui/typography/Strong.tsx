@@ -3,7 +3,7 @@ import { cn } from '~/lib/utils'
 
 export interface StrongProps extends ComponentPropsWithoutRef<'strong'> {}
 
-const Strong = forwardRef<HTMLHeadingElement, StrongProps>(
+const Strong = forwardRef<HTMLElement, StrongProps>(
   ({ className, children, ...props }, ref) => (
     <strong
       className={cn('tracking-tight dark:text-white', className)}
