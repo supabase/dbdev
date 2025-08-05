@@ -40,7 +40,7 @@ const PackagePage: NextPageWithLayout = () => {
 
   const packageName = pkg?.package_alias ?? pkg?.package_name ?? 'Loading...'
   const packageVersion = pkg?.latest_version ?? '0.0.0'
-  const addCommand = `dbdev add -c "postgresql://postgres:[YOUR-PASSWORD]@[YOUR-HOST]:5432/postgres" -o ./migrations -s extensions -v ${packageVersion} package -n "${packageName}"`
+  const addCommand = `dbdev add -o ./migrations -s extensions -v ${packageVersion} package -n "${packageName}"`
 
   const downloads30Days = pkg?.download_metrics?.downloads_30_day ?? 0
   const downloads90Days = pkg?.download_metrics?.downloads_90_days ?? 0

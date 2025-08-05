@@ -57,7 +57,7 @@ const IndexPage: NextPageWithLayout = () => {
           </div>
         </div>
         <div className="mt-4 md:mt-12 lg:-mt-16 lg:flex-shrink-0 md:text-center lg:text-left">
-          <div className="relative border px-4 pt-4 pb-4 md:pb-24 rounded-md justify-end max-w-md lg:max-w-lg">
+          <div className="relative border px-4 pt-4 pb-4 md:pb-24 rounded-md justify-end">
             <div>
               <div>
                 <h3 className="text-lg font-bold">Download and install</h3>
@@ -68,9 +68,7 @@ const IndexPage: NextPageWithLayout = () => {
               <div className="mt-4 relative">
                 <code className="block py-2 text-sm whitespace-pre-wrap break-words">
                   <span className="text-muted-foreground">
-                    dbdev add -c
-                    &quot;postgresql://postgres:[YOUR-PASSWORD]@[YOUR-HOST]:5432/postgres&quot;
-                    -o ./migrations -s extensions -v 0.2.1 package -n &quot;
+                    dbdev add -o . package -n &quot;
                   </span>
                   <span>
                     <span className="bg-slate-100 rounded-sm p-1 dark:bg-slate-700 relative">
@@ -98,7 +96,7 @@ const IndexPage: NextPageWithLayout = () => {
               </div>
               <CopyButton
                 getValue={() =>
-                  `dbdev add -c "postgresql://postgres:[YOUR-PASSWORD]@[YOUR-HOST]:5432/postgres" -o ./migrations -s extensions -v 0.2.1 package -n "olirice@index_advisor"`
+                  `dbdev add -o . package -n "olirice@index_advisor"`
                 }
                 className="absolute top-2 right-2 p-1"
                 variant="light"
