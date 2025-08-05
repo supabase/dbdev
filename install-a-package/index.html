@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://supabase.github.io/dbdev/install-in-db-client/">
+        <link rel="canonical" href="https://supabase.github.io/dbdev/install-a-package/">
       
       
         <link rel="prev" href="../publish-extension/">
@@ -75,7 +75,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#installation" class="md-skip">
+        <a href="#pre-requisites" class="md-skip">
           Skip to content
         </a>
       
@@ -323,8 +323,8 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
+  <a href="#pre-requisites" class="md-nav__link">
+    Pre-requisites
   </a>
   
 </li>
@@ -388,8 +388,8 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
+  <a href="#pre-requisites" class="md-nav__link">
+    Pre-requisites
   </a>
   
 </li>
@@ -421,109 +421,36 @@
 
   <h1>Install a Package</h1>
 
-<p>You can install extensions available on the database.dev registry using the dbdev in-database client. The dbdev client is itself an extension which you can install by following the instructions below.</p>
-<h2 id="installation">Installation</h2>
-<p>Before you can install the dbdev extension into your database, ensure you have the following dependencies already installed:</p>
-<ul>
-<li><a href="https://github.com/aws/pg_tle">pg_tle</a></li>
-<li><a href="https://github.com/pramsey/pgsql-http">pgsql-http</a></li>
-</ul>
+<p>You can install extensions available on the database.dev registry using the dbdev CLI's <code>add</code> command. The dbdev client is itself an extension which you can install by following the instructions below.</p>
+<h2 id="pre-requisites">Pre-requisites</h2>
+<p>Before you can install a package, ensure you have the <code>pg_tle</code> extension installed in your database.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If you database is running on Supabase, the above dependencies are already installed.</p>
+<p>If your database is running on Supabase, <code>pg_tle</code> is already installed.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Restoring a logical backup of a database with a TLE installed can fail. For this reason, dbdev should only be used with databases with physical backups enabled.</p>
 </div>
-<p>Run the following SQL to install the client:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">create</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">exists</span><span class="w"> </span><span class="n">http</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="k">schema</span><span class="w"> </span><span class="n">extensions</span><span class="p">;</span>
-<span class="k">create</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">exists</span><span class="w"> </span><span class="n">pg_tle</span><span class="p">;</span>
-<span class="k">drop</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="k">exists</span><span class="w"> </span><span class="ss">&quot;supabase-dbdev&quot;</span><span class="p">;</span>
-<span class="k">select</span><span class="w"> </span><span class="n">pgtle</span><span class="p">.</span><span class="n">uninstall_extension_if_exists</span><span class="p">(</span><span class="s1">&#39;supabase-dbdev&#39;</span><span class="p">);</span>
-<span class="k">select</span>
-<span class="w">    </span><span class="n">pgtle</span><span class="p">.</span><span class="n">install_extension</span><span class="p">(</span>
-<span class="w">        </span><span class="s1">&#39;supabase-dbdev&#39;</span><span class="p">,</span>
-<span class="w">        </span><span class="n">resp</span><span class="p">.</span><span class="n">contents</span><span class="w"> </span><span class="o">-&gt;&gt;</span><span class="w"> </span><span class="s1">&#39;version&#39;</span><span class="p">,</span>
-<span class="w">        </span><span class="s1">&#39;PostgreSQL package manager&#39;</span><span class="p">,</span>
-<span class="w">        </span><span class="n">resp</span><span class="p">.</span><span class="n">contents</span><span class="w"> </span><span class="o">-&gt;&gt;</span><span class="w"> </span><span class="s1">&#39;sql&#39;</span>
-<span class="w">    </span><span class="p">)</span>
-<span class="k">from</span><span class="w"> </span><span class="n">http</span><span class="p">(</span>
-<span class="w">    </span><span class="p">(</span>
-<span class="w">        </span><span class="s1">&#39;GET&#39;</span><span class="p">,</span>
-<span class="w">        </span><span class="s1">&#39;https://api.database.dev/rest/v1/&#39;</span>
-<span class="w">        </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;package_versions?select=sql,version&#39;</span>
-<span class="w">        </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;&amp;package_name=eq.supabase-dbdev&#39;</span>
-<span class="w">        </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;&amp;order=version.desc&#39;</span>
-<span class="w">        </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;&amp;limit=1&#39;</span><span class="p">,</span>
-<span class="w">        </span><span class="nb">array</span><span class="p">[</span>
-<span class="w">            </span><span class="p">(</span><span class="s1">&#39;apiKey&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhtdXB0cHBsZnZpaWZyYndtbXR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODAxMDczNzIsImV4cCI6MTk5NTY4MzM3Mn0.z2CN0mvO2No8wSi46Gw59DFGCTJrzM0AQKsu_5k134s&#39;</span><span class="p">)::</span><span class="n">http_header</span>
-<span class="w">        </span><span class="p">],</span>
-<span class="w">        </span><span class="k">null</span><span class="p">,</span>
-<span class="w">        </span><span class="k">null</span>
-<span class="w">    </span><span class="p">)</span>
-<span class="p">)</span><span class="w"> </span><span class="n">x</span><span class="p">,</span>
-<span class="k">lateral</span><span class="w"> </span><span class="p">(</span>
-<span class="w">    </span><span class="k">select</span>
-<span class="w">        </span><span class="p">((</span><span class="n">row_to_json</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="s1">&#39;content&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">#&gt;&gt;</span><span class="w"> </span><span class="s1">&#39;{}&#39;</span><span class="p">)::</span><span class="n">json</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">0</span>
-<span class="p">)</span><span class="w"> </span><span class="n">resp</span><span class="p">(</span><span class="n">contents</span><span class="p">);</span>
-<span class="k">create</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="ss">&quot;supabase-dbdev&quot;</span><span class="p">;</span>
-<span class="k">select</span><span class="w"> </span><span class="n">dbdev</span><span class="p">.</span><span class="n">install</span><span class="p">(</span><span class="s1">&#39;supabase-dbdev&#39;</span><span class="p">);</span>
-<span class="k">drop</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="k">exists</span><span class="w"> </span><span class="ss">&quot;supabase-dbdev&quot;</span><span class="p">;</span>
-<span class="k">create</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="ss">&quot;supabase-dbdev&quot;</span><span class="p">;</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">create</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">exists</span><span class="w"> </span><span class="n">pg_tle</span><span class="p">;</span>
 </code></pre></div></td></tr></table></div>
 <h2 id="use">Use</h2>
-<p>Once the client is installed, you an install a TLE available on database.dev by running SQL that looks like the following:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">select</span><span class="w"> </span><span class="n">dbdev</span><span class="p">.</span><span class="n">install</span><span class="p">(</span><span class="o">&lt;</span><span class="n">extension_name</span><span class="o">&gt;</span><span class="p">);</span>
-<span class="k">create</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="o">&lt;</span><span class="n">extension_name</span><span class="o">&gt;</span>
-<span class="w">    </span><span class="k">schema</span><span class="w"> </span><span class="o">&lt;</span><span class="k">schema</span><span class="o">&gt;</span>
-<span class="w">    </span><span class="k">version</span><span class="w"> </span><span class="o">&lt;</span><span class="k">version</span><span class="o">&gt;</span><span class="p">;</span>
+<p>Once the prerequisites are met, you can create a migration file to install a TLE available on database.dev by running the following dbdev command:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>dbdev<span class="w"> </span>add<span class="w"> </span>-o<span class="w"> </span>&lt;migration_folder_path&gt;<span class="w"> </span>-v<span class="w"> </span>&lt;version&gt;<span class="w"> </span>-s<span class="w"> </span>&lt;schema&gt;<span class="w"> </span>package<span class="w"> </span>-n<span class="w"> </span>&lt;package_name&gt;
 </code></pre></div></td></tr></table></div>
-<p>For example, to install pg_headerkit version 1.0.0 in schema public run:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">select</span><span class="w"> </span><span class="n">dbdev</span><span class="p">.</span><span class="n">install</span><span class="p">(</span><span class="s1">&#39;burggraf-pg_headerkit&#39;</span><span class="p">);</span>
-<span class="k">create</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="ss">&quot;burggraf-pg_headerkit&quot;</span>
-<span class="w">    </span><span class="k">schema</span><span class="w"> </span><span class="s1">&#39;public&#39;</span>
-<span class="w">    </span><span class="k">version</span><span class="w"> </span><span class="s1">&#39;1.0.0&#39;</span><span class="p">;</span>
+<p>For example, to install <code>kiwicopple@pg_idkit</code> version 0.0.4 in <code>extensions</code> schema run:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>dbdev<span class="w"> </span>add<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;./migrations/&quot;</span><span class="w"> </span>-v<span class="w"> </span><span class="m">0</span>.0.4<span class="w"> </span>-s<span class="w"> </span>extensions<span class="w"> </span>package<span class="w"> </span>-n<span class="w"> </span>kiwicopple@pg_idkit
 </code></pre></div></td></tr></table></div>
+<p>To create a migration file to update to the latest version of a package, you need to specify the <code>-c</code> flag with the connection string to your database. The connection is used to check the current version of the package installed in the database and generate a migration file that will update it to the latest version available on database.dev.</p>
+<p><div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>dbdev<span class="w"> </span>add<span class="w"> </span>-c<span class="w"> </span>&lt;postgres_connection_string&gt;<span class="w"> </span>-o<span class="w"> </span>&lt;migration_folder_path&gt;<span class="w"> </span>package<span class="w"> </span>-n<span class="w"> </span>&lt;package_name&gt;
+</code></pre></div></td></tr></table></div>
+To update the <code>kiwicopple@pg_idkit</code> package to the latest version, you can run:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>dbdev<span class="w"> </span>add<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;postgresql://postgres:[YOUR-PASSWORD]@[YOUR-HOST]:5432/postgres&quot;</span><span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;./migrations/&quot;</span><span class="w"> </span>package<span class="w"> </span>-n<span class="w"> </span>kiwicopple@pg_idkit
+</code></pre></div></td></tr></table></div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>To generate a correct update migration file, ensure that before running the <code>dbdev add</code> command, all existing migrations in the <code>migrations</code> folder have been applied to the database. The <code>dbdev add</code> command looks for existing installed extensions in the database and generates a migration file that will install the TLE if it is not already installed.</p>
+</div>
 
 
 
