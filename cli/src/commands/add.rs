@@ -223,15 +223,22 @@ pub async fn add(
         }
     }
 
+    // Delete old extension
+    migration_content.push_str("\n-- Delete existing extension if installed\n");
+    migration_content.push_str(r#"drop extension if exists ""#);
+    migration_content.push_str(&extension_name);
+    migration_content.push('"');
+    migration_content.push_str(";\n");
+
     // Create the extension
     migration_content.push_str("-- Create the extension\n");
 
-    let schema = schema.as_ref().or(payload.metadata.schema.as_ref());
-    migration_content.push_str(r#"create extension if not exists ""#);
+    migration_content.push_str(r#"create extension ""#);
     migration_content.push_str(&extension_name);
     migration_content.push('"');
 
     // add schema if specified
+    let schema = schema.as_ref().or(payload.metadata.schema.as_ref());
     if let Some(schema) = schema {
         migration_content.push_str(r#" schema ""#);
         migration_content.push_str(schema);
@@ -239,11 +246,12 @@ pub async fn add(
     }
 
     // add version if specified
-    if let Some(version) = version {
-        migration_content.push_str(" version '");
-        migration_content.push_str(version);
-        migration_content.push('\'');
-    }
+    let version = version
+        .as_ref()
+        .unwrap_or(&payload.metadata.default_version);
+    migration_content.push_str(" version '");
+    migration_content.push_str(version);
+    migration_content.push('\'');
 
     migration_content.push_str(";\n");
 
@@ -259,12 +267,7 @@ pub async fn add(
     migration_content.push_str("');\n");
 
     // Write to file
-    let mut filename = String::new();
-    filename.push_str(&timestamp.to_string());
-    filename.push('_');
-    filename.push_str(&extension_name);
-    filename.push_str("_install.sql");
-
+    let filename = format!("{timestamp}_{extension_name}_{version}_install.sql");
     let file_path = output_path.join(filename);
 
     fs::write(&file_path, migration_content).await?;
