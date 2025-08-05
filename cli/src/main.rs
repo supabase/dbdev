@@ -38,7 +38,7 @@ enum Commands {
     Add {
         /// PostgreSQL connection string
         #[arg(short, long)]
-        connection: String,
+        connection: Option<String>,
 
         /// Location to create the migration SQL file
         #[arg(short, long, value_parser)]
@@ -198,7 +198,11 @@ async fn main() -> anyhow::Result<()> {
                     let client = client::ApiClient::from_registry(registry)?;
                     let (payload, handle) =
                         commands::add::payload_from_package(client, name).await?;
-                    let conn = util::get_connection(connection).await?;
+
+                    let conn = match connection {
+                        Some(connection) => Some(util::get_connection(connection).await?),
+                        None => None,
+                    };
 
                     commands::add::add(&payload, output_path, conn, schema, version, &Some(handle))
                         .await?;
@@ -207,7 +211,10 @@ async fn main() -> anyhow::Result<()> {
                     let current_dir = env::current_dir()?;
                     let extension_dir = directory.as_ref().unwrap_or(&current_dir);
                     let payload = models::Payload::from_path(extension_dir)?;
-                    let conn = util::get_connection(connection).await?;
+                    let conn = match connection {
+                        Some(connection) => Some(util::get_connection(connection).await?),
+                        None => None,
+                    };
 
                     commands::add::add(&payload, output_path, conn, schema, version, &None).await?;
                 }

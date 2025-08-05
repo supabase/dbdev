@@ -97,7 +97,7 @@ async fn write_upgrade_files(
 pub async fn add(
     payload: &Payload,
     output_path: &Path,
-    mut conn: PgConnection,
+    mut conn: Option<PgConnection>,
     schema: &Option<String>,
     version: &Option<String>,
     handle: &Option<String>,
@@ -108,7 +108,11 @@ pub async fn add(
         payload.metadata.extension_name.clone()
     };
 
-    let existing_versions = extension_versions(&mut conn, &extension_name).await?;
+    let existing_versions = match conn {
+        Some(ref mut conn) => extension_versions(conn, &extension_name).await?,
+        None => HashSet::new(),
+    };
+
     let mut installed_extension_once = !existing_versions.is_empty();
     let mut versions_installed_now = HashSet::new();
 
@@ -196,8 +200,10 @@ pub async fn add(
         }
     }
 
-    let existing_update_paths =
-        (update_paths(&mut conn, &extension_name).await).unwrap_or_default();
+    let existing_update_paths = match conn {
+        Some(ref mut conn) => (update_paths(conn, &extension_name).await).unwrap_or_default(),
+        None => HashSet::new(),
+    };
 
     for upgrade_file in &payload.upgrade_files {
         let update_path = UpdatePath {
@@ -227,14 +233,16 @@ pub async fn add(
 
     // add schema if specified
     if let Some(schema) = schema {
-        migration_content.push_str(" schema ");
+        migration_content.push_str(r#" schema ""#);
         migration_content.push_str(schema);
+        migration_content.push('"');
     }
 
     // add version if specified
     if let Some(version) = version {
-        migration_content.push_str(" version ");
+        migration_content.push_str(" version '");
         migration_content.push_str(version);
+        migration_content.push('\'');
     }
 
     migration_content.push_str(";\n");
