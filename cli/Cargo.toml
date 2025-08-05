@@ -12,6 +12,7 @@ clap = { version = "4.5.42", features = ["derive"] }
 dirs = "6.0.0"
 futures = "0.3"
 postgrest = "1.5.0"
+rand = "0.9.2"
 regex = "1.11"
 reqwest = { version = "0.12.9", features = ["json", "native-tls-vendored"] }
 rpassword = "7.4.0"

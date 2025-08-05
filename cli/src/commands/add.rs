@@ -4,6 +4,7 @@ use std::{
     path::Path,
 };
 
+use rand::{distr::Alphanumeric, Rng};
 use sqlx::{types::chrono::Utc, PgConnection};
 use tempfile::tempdir;
 use tokio::fs;
@@ -94,6 +95,14 @@ async fn write_upgrade_files(
     Ok(())
 }
 
+fn generate_random_ascii_string(length: usize) -> String {
+    let rng = rand::rng();
+    rng.sample_iter(Alphanumeric)
+        .take(length)
+        .map(char::from)
+        .collect()
+}
+
 pub async fn add(
     payload: &Payload,
     output_path: &Path,
@@ -151,6 +160,9 @@ pub async fn add(
         migration_content.push('\n');
     }
 
+    let random_string = generate_random_ascii_string(16); // 16 bytes = 128 bits entropy
+    let sql_separator = format!("$sql_{random_string}$");
+    let comment_separator = format!("$comment_{random_string}$");
     for install_file in &payload.install_files {
         if !existing_versions.contains(&install_file.version) {
             if installed_extension_once {
@@ -163,9 +175,9 @@ pub async fn add(
                 migration_content.push_str(&extension_name);
                 migration_content.push_str("', '");
                 migration_content.push_str(&install_file.version);
-                migration_content.push_str("', $sql$");
+                migration_content.push_str(&format!("', {sql_separator}"));
                 migration_content.push_str(&install_file.body);
-                migration_content.push_str("$sql$);\n\n");
+                migration_content.push_str(&format!("{sql_separator});\n\n"));
 
                 versions_installed_now.insert(install_file.version.clone());
             } else {
@@ -186,11 +198,11 @@ pub async fn add(
                 migration_content.push_str(&extension_name);
                 migration_content.push_str("', '");
                 migration_content.push_str(&install_file.version);
-                migration_content.push_str("', $comment$");
+                migration_content.push_str(&format!("', {comment_separator}"));
                 migration_content.push_str(payload.metadata.comment.as_deref().unwrap_or(""));
-                migration_content.push_str("$comment$, $sql$");
+                migration_content.push_str(&format!("{comment_separator}, {sql_separator}"));
                 migration_content.push_str(&install_file.body);
-                migration_content.push_str("$sql$, array[");
+                migration_content.push_str(&format!("{sql_separator}, array["));
                 migration_content.push_str(&requirements);
                 migration_content.push_str("]::text[] );\n\n");
 
@@ -217,9 +229,9 @@ pub async fn add(
             migration_content.push_str(&upgrade_file.from_version);
             migration_content.push_str("', '");
             migration_content.push_str(&upgrade_file.to_version);
-            migration_content.push_str("', $sql$");
+            migration_content.push_str(&format!("', {sql_separator}"));
             migration_content.push_str(&upgrade_file.body);
-            migration_content.push_str("$sql$);\n\n");
+            migration_content.push_str(&format!("{sql_separator});\n\n"));
         }
     }
 
