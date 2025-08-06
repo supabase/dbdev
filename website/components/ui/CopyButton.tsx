@@ -4,26 +4,11 @@ import { CheckIcon, ClipboardDocumentIcon } from '@heroicons/react/24/outline'
 import { cva, VariantProps } from 'class-variance-authority'
 import { HTMLAttributes, useEffect, useState } from 'react'
 import { cn } from '~/lib/utils'
+import { Button } from './button'
 
-export const copyButtonVariants = cva(
-  'inline-flex items-center justify-center rounded-md p-2 text-sm font-medium transition-all',
-  {
-    variants: {
-      variant: {
-        light: 'text-slate-900 border-slate-200 hover:bg-slate-100',
-        dark: 'text-white border-slate-900 hover:bg-slate-900',
-      },
-    },
-    defaultVariants: {
-      variant: 'light',
-    },
-  }
-)
-
-interface CopyButtonProps
-  extends HTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof copyButtonVariants> {
+interface CopyButtonProps extends HTMLAttributes<HTMLButtonElement> {
   getValue: () => string
+  variant?: 'light' | 'dark'
 }
 
 async function copyToClipboardWithMeta(value: string) {
@@ -33,7 +18,7 @@ async function copyToClipboardWithMeta(value: string) {
 const CopyButton = ({
   getValue,
   className,
-  variant,
+  variant = 'light',
   ...props
 }: CopyButtonProps) => {
   const [hasCopied, setHasCopied] = useState(false)
@@ -54,10 +39,12 @@ const CopyButton = ({
   }, [hasCopied])
 
   return (
-    <button
+    <Button
+      variant="ghost"
+      size="icon"
       className={cn(
-        copyButtonVariants({ variant }),
-        'bg-gray-50 text-slate-700 dark:text-slate-100 dark:bg-gray-700 dark:hover:bg-gray-900 transition-colors',
+        'h-8 w-8',
+        variant === 'dark' && 'text-muted-foreground hover:text-foreground',
         className
       )}
       onClick={() => {
@@ -68,11 +55,11 @@ const CopyButton = ({
     >
       <span className="sr-only">Copy</span>
       {hasCopied ? (
-        <CheckIcon className="w-5 h-5" />
+        <CheckIcon className="h-4 w-4" />
       ) : (
-        <ClipboardDocumentIcon className="w-5 h-5" />
+        <ClipboardDocumentIcon className="h-4 w-4" />
       )}
-    </button>
+    </Button>
   )
 }
 

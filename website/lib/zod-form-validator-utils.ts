@@ -16,12 +16,12 @@ export function recursiveFormatZodErrors(errors: any): any {
       if (!isNaN(key as any) && !Array.isArray(formattedErrors)) {
         formattedErrors = []
       }
-      (formattedErrors as any)[key] = errors[key]._errors[0]
+      ;(formattedErrors as any)[key] = errors[key]._errors[0]
     } else {
       if (!isNaN(key as any) && !Array.isArray(formattedErrors)) {
         formattedErrors = []
       }
-      (formattedErrors as any)[key] = recursiveFormatZodErrors(errors[key])
+      ;(formattedErrors as any)[key] = recursiveFormatZodErrors(errors[key])
     }
   }
 

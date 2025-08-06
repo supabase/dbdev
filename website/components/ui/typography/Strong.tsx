@@ -6,7 +6,7 @@ export interface StrongProps extends ComponentPropsWithoutRef<'strong'> {}
 const Strong = forwardRef<HTMLElement, StrongProps>(
   ({ className, children, ...props }, ref) => (
     <strong
-      className={cn('tracking-tight dark:text-white', className)}
+      className={cn('tracking-tight text-foreground font-semibold', className)}
       {...props}
       ref={ref}
     >

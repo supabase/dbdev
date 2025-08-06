@@ -6,7 +6,7 @@ import Layout from '~/components/layouts/Layout'
 import CopyButton from '~/components/ui/CopyButton'
 import Link from '~/components/ui/Link'
 import Markdown from '~/components/ui/Markdown'
-import Tabs, { TabsContent, TabsList, TabsTrigger } from '~/components/ui/Tabs'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import H1 from '~/components/ui/typography/H1'
 import H2 from '~/components/ui/typography/H2'
 import {

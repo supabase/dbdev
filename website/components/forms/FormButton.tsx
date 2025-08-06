@@ -1,7 +1,7 @@
 import { forwardRef } from 'react'
 import { useFormState } from 'react-final-form'
 import { cn } from '~/lib/utils'
-import { Button, ButtonProps } from '~/components/ui/Button'
+import { Button, ButtonProps } from '~/components/ui/button'
 
 export interface FormButtonProps extends ButtonProps {}
 
