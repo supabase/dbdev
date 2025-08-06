@@ -7,7 +7,7 @@ const H3 = forwardRef<HTMLHeadingElement, H3Props>(
   ({ className, children, ...props }, ref) => (
     <h3
       className={cn(
-        'scroll-m-20 text-1xl font-semibold tracking-tight transition-colors first:mt-0 dark:border-b-slate-700 dark:text-white',
+        'scroll-m-20 text-xl font-semibold tracking-tight transition-colors first:mt-0 text-foreground',
         className
       )}
       {...props}

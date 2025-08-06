@@ -1,7 +1,7 @@
 import { ComponentPropsWithoutRef, forwardRef, PropsWithoutRef } from 'react'
 import { useField, UseFieldConfig } from 'react-final-form'
 import { Input } from '~/components/ui/input'
-import Label from '../ui/Label'
+import { Label } from '../ui/label'
 import { cn } from '~/lib/utils'
 
 export interface FormInputProps

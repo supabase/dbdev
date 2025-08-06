@@ -3,11 +3,11 @@ import { ComponentPropsWithoutRef, forwardRef } from 'react'
 import { cn } from '~/lib/utils'
 
 const h2Variants = cva(
-  'mt-10 scroll-m-20 text-3xl font-semibold tracking-tight transition-colors first:mt-0 dark:border-b-slate-700 dark:text-white',
+  'mt-10 scroll-m-20 text-3xl font-semibold tracking-tight transition-colors first:mt-0 text-foreground',
   {
     variants: {
       variant: {
-        normal: 'pb-2 border-b border-b-slate-200',
+        normal: 'pb-2 border-b border-border',
         borderless: '',
       },
     },

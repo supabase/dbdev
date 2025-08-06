@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import { toast } from 'react-hot-toast'
 import { useDeleteAccessTokenMutation } from '~/data/access-tokens/delete-access-token'
-import { Button } from '~/components/ui/Button'
+import { Button } from '~/components/ui/button'
 
 export interface ApiTokenCardProps {
   tokenId: string

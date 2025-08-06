@@ -6,7 +6,7 @@ import Form, { FORM_ERROR } from '~/components/forms/Form'
 import FormButton from '~/components/forms/FormButton'
 import FormInput from '~/components/forms/FormInput'
 import Layout from '~/components/layouts/Layout'
-import H1 from '~/components/ui/typography/H1'
+import H1 from '~/components/ui/typography/h1'
 import { useUsersOrganizationsQuery } from '~/data/organizations/users-organizations-query'
 import { useProfileQuery } from '~/data/profiles/profile-query'
 import { useUpdateProfileMutation } from '~/data/profiles/update-profile-mutation'
@@ -60,7 +60,14 @@ const EditAccountPage: NextPageWithLayout = () => {
         setPreviewImage(profile.avatar_url)
       }
     }
-  }, [isProfileSuccess, isOrgsSuccess, preventUpdating])
+  }, [
+    isProfileSuccess,
+    isOrgsSuccess,
+    preventUpdating,
+    router,
+    handle,
+    profile?.avatar_url,
+  ])
 
   const uploadAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]

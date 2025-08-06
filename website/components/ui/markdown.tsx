@@ -3,14 +3,14 @@ import ReactMarkdown from 'react-markdown'
 import rehypeHighlight from 'rehype-highlight'
 import remarkGfm from 'remark-gfm'
 import { cn } from '~/lib/utils'
-import CopyButton from './CopyButton'
-import A from './typography/A'
-import H1 from './typography/H1'
-import H2 from './typography/H2'
-import H3 from './typography/H3'
-import Li from './typography/Li'
-import P from './typography/P'
-import Strong from './typography/Strong'
+import CopyButton from './copy-button'
+import A from './typography/a'
+import H1 from './typography/h1'
+import H2 from './typography/h2'
+import H3 from './typography/h3'
+import Li from './typography/li'
+import P from './typography/p'
+import Strong from './typography/strong'
 
 type MarkdownProps = ComponentPropsWithoutRef<typeof ReactMarkdown> & {
   copyableCode?: boolean
@@ -40,9 +40,10 @@ const DEFAULT_COMPONENTS: MarkdownProps['components'] = {
       </pre>
     )
   },
-  code({ node, inline, className, children, ...props }) {
+  code({ node, className, children, ...props }) {
+    const isInline = !className?.includes('language-')
     return (
-      <code {...props} className={cn(inline && 'dark:text-white', className)}>
+      <code {...props} className={cn(isInline && 'dark:text-white', className)}>
         {children}
       </code>
     )
@@ -85,10 +86,11 @@ const DEFAULT_COMPONENTS: MarkdownProps['components'] = {
 }
 
 const COPYABLE_CODE_COMPONENTS: MarkdownProps['components'] = {
-  code({ node, inline, className, children, ...props }) {
+  code({ node, className, children, ...props }) {
+    const isInline = !className?.includes('language-')
     return (
-      <code {...props} className={cn(inline && 'dark:text-white', className)}>
-        {!inline && (
+      <code {...props} className={cn(isInline && 'dark:text-white', className)}>
+        {!isInline && (
           <CopyButton
             getValue={() => childrenToText(children)}
             className="absolute top-2 right-2"
@@ -106,16 +108,14 @@ const Markdown = ({
   className,
   remarkPlugins = [],
   rehypePlugins = [],
-  linkTarget = '_blank',
   components,
   copyableCode = true,
   children,
   ...props
 }: MarkdownProps) => (
   <ReactMarkdown
-    remarkPlugins={[remarkGfm, ...remarkPlugins]}
-    rehypePlugins={[rehypeHighlight, ...rehypePlugins]}
-    linkTarget={linkTarget}
+    remarkPlugins={[remarkGfm, ...(remarkPlugins || [])]}
+    rehypePlugins={[rehypeHighlight, ...(rehypePlugins || [])]}
     className={cn('prose lg:prose-xl max-w-none', className)}
     components={{
       ...DEFAULT_COMPONENTS,

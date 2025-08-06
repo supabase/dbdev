@@ -4,8 +4,8 @@ import type { ZodError } from 'zod'
 
 export type ParserType = 'sync' | 'async'
 
-export function recursiveFormatZodErrors(errors: any) {
-  let formattedErrors: Record<string, any> = {}
+export function recursiveFormatZodErrors(errors: any): any {
+  let formattedErrors: any[] | Record<string, any> = {}
 
   for (const key in errors) {
     if (key === '_errors') {
@@ -16,12 +16,12 @@ export function recursiveFormatZodErrors(errors: any) {
       if (!isNaN(key as any) && !Array.isArray(formattedErrors)) {
         formattedErrors = []
       }
-      formattedErrors[key] = errors[key]._errors[0]
+      ;(formattedErrors as any)[key] = errors[key]._errors[0]
     } else {
       if (!isNaN(key as any) && !Array.isArray(formattedErrors)) {
         formattedErrors = []
       }
-      formattedErrors[key] = recursiveFormatZodErrors(errors[key])
+      ;(formattedErrors as any)[key] = recursiveFormatZodErrors(errors[key])
     }
   }
 

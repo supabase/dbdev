@@ -3,21 +3,22 @@ import { useRouter } from 'next/router'
 import { useCallback, useMemo } from 'react'
 import { toast } from 'react-hot-toast'
 import Search from '~/components/search/Search'
-import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/Avatar'
-import DropdownMenu, {
+import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
+import {
+  DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '~/components/ui/DropdownMenu'
+} from '~/components/ui/dropdown-menu'
 import { useSignOutMutation } from '~/data/auth/sign-out-mutation'
 import { useUsersOrganizationsQuery } from '~/data/organizations/users-organizations-query'
 import { useUser } from '~/lib/auth'
 import { getAvatarUrl } from '~/lib/avatars'
 import { useTheme } from '../themes/ThemeContext'
 import ThemeSwitcher from '../themes/ThemeSwitcher'
-import { Button } from '~/components/ui/Button'
+import { Button } from '~/components/ui/button'
 
 const Navbar = () => {
   const router = useRouter()
@@ -66,11 +67,15 @@ const Navbar = () => {
 
   const AvatarWrapper = ({ size = 'sm' }: { size?: 'sm' | 'md' }) =>
     user?.user_metadata.avatar_path === undefined ? (
-      <div className="flex items-center justify-center w-6 h-6 text-gray-600 bg-gray-300 border-gray-400 rounded-full border-1 dark:border-slate-400 dark:bg-slate-500 dark:text-white">
+      <div
+        className={`flex items-center justify-center text-gray-600 bg-gray-300 border-gray-400 rounded-full border-1 dark:border-slate-400 dark:bg-slate-500 dark:text-white ${size === 'sm' ? 'w-6 h-6' : 'w-10 h-10'}`}
+      >
         {displayName[0].toUpperCase()}
       </div>
     ) : (
-      <Avatar size={size} className="border dark:border-slate-700">
+      <Avatar
+        className={`border dark:border-slate-700 ${size === 'sm' ? 'w-6 h-6' : 'w-10 h-10'}`}
+      >
         <AvatarImage src={avatarUrl} alt={avatarName} />
         <AvatarFallback>{avatarFallback}</AvatarFallback>
       </Avatar>

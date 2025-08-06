@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import { usePackagesSearchQuery } from '~/data/packages/packages-search-query'
 import { useDebounce } from '~/lib/utils'
-import Spinner from '../ui/Spinner'
+import Spinner from '../ui/spinner'
 import SearchInput from './SearchInput'
 import SearchPackageRow from './SearchPackageRow'
 

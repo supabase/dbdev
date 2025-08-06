@@ -3,9 +3,9 @@ import { cn } from '~/lib/utils'
 
 export interface LiProps extends ComponentPropsWithoutRef<'li'> {}
 
-const Li = forwardRef<HTMLHeadingElement, LiProps>(
+const Li = forwardRef<HTMLLIElement, LiProps>(
   ({ className, children, ...props }) => (
-    <li className={cn('tracking-tight dark:text-white', className)} {...props}>
+    <li className={cn('tracking-tight text-foreground', className)} {...props}>
       {children}
     </li>
   )

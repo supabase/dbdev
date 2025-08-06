@@ -7,7 +7,7 @@ const H1 = forwardRef<HTMLHeadingElement, H1Props>(
   ({ className, children, ...props }, ref) => (
     <h1
       className={cn(
-        'scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl dark:text-white',
+        'scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl text-foreground',
         className
       )}
       {...props}
