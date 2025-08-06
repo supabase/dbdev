@@ -60,7 +60,7 @@ const EditAccountPage: NextPageWithLayout = () => {
         setPreviewImage(profile.avatar_url)
       }
     }
-  }, [isProfileSuccess, isOrgsSuccess, preventUpdating])
+  }, [isProfileSuccess, isOrgsSuccess, preventUpdating, router, handle, profile.avatar_url])
 
   const uploadAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
