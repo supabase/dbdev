@@ -3,12 +3,12 @@ import { dehydrate, QueryClient } from '@tanstack/react-query'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import Head from 'next/head'
 import Layout from '~/components/layouts/Layout'
-import CopyButton from '~/components/ui/CopyButton'
-import Link from '~/components/ui/Link'
-import Markdown from '~/components/ui/Markdown'
+import CopyButton from '~/components/ui/copy-button'
+import Link from '~/components/ui/link'
+import Markdown from '~/components/ui/markdown'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import H1 from '~/components/ui/typography/H1'
-import H2 from '~/components/ui/typography/H2'
+import H1 from '~/components/ui/typography/h1'
+import H2 from '~/components/ui/typography/h2'
 import {
   prefetchPackageVersions,
   usePackageVersionsQuery,

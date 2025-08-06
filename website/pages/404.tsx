@@ -2,8 +2,8 @@ import Head from 'next/head'
 import Link from 'next/link'
 import Layout from '~/components/layouts/Layout'
 import { Button } from '~/components/ui/button'
-import H1 from '~/components/ui/typography/H1'
-import P from '~/components/ui/typography/P'
+import H1 from '~/components/ui/typography/h1'
+import P from '~/components/ui/typography/p'
 import { NextPageWithLayout } from '~/lib/types'
 
 export type FourOhFourPageProps = {

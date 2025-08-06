@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Layout from '~/components/layouts/Layout'
 import PackageCard from '~/components/packages/PackageCard'
 
-import CopyButton from '~/components/ui/CopyButton'
+import CopyButton from '~/components/ui/copy-button'
 import { Button } from '~/components/ui/button'
 import {
   prefetchPopularPackages,
