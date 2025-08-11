@@ -72,7 +72,7 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.scoop_bucket_rw }}
-          commit-message: "dbdev scoop update for version v${{ steps.vars.outputs.version }}"
+          commit-message: "Release dbdev version v${{ steps.vars.outputs.version }}"
           title: "Release dbdev version v${{ steps.vars.outputs.version }}"
           body-path: PR_BODY.md
           add-paths: |
@@ -81,5 +81,3 @@ jobs:
           base: "main"
           committer: "dbdev release-scoop-bucket.yaml workflow <raminder@supabase.io>"
           author: "dbdev release-scoop-bucket.yaml workflow <raminder@supabase.io>"
-          labels: |
-            automated
