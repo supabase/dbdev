@@ -17,96 +17,111 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-      with:
-        repository: supabase/homebrew-tap
-        ref: 'main'
-        token:  ${{ secrets.homebrew_tap_rw }}
-    - name: Download Linux AMD64 package
-      uses: robinraju/release-downloader@v1.12
-      with:
-        repository: "supabase/dbdev"
-        tag: ${{ inputs.tag }}
-        fileName: "dbdev-${{ inputs.tag }}-linux-amd64.tar.gz"
+      - uses: actions/checkout@v4
+        with:
+          repository: supabase/homebrew-tap
+          ref: "main"
+          token: ${{ secrets.homebrew_tap_rw }}
+          fetch-depth: 0
+      - name: Compute tag and version
+        id: vars
+        run: |
+          tag="${{ inputs.tag }}"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+          # strip the leading v (if present)
+          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
+      - name: Download Linux AMD64 package
+        uses: robinraju/release-downloader@v1.12
+        with:
+          repository: "supabase/dbdev"
+          tag: ${{ inputs.tag }}
+          fileName: "dbdev-${{ inputs.tag }}-linux-amd64.tar.gz"
 
-    - name: Download Linux ARM64 package
-      uses: robinraju/release-downloader@v1.12
-      with:
-        repository: "supabase/dbdev"
-        tag: ${{ inputs.tag }}
-        fileName: "dbdev-${{ inputs.tag }}-linux-arm64.tar.gz"
+      - name: Download Linux ARM64 package
+        uses: robinraju/release-downloader@v1.12
+        with:
+          repository: "supabase/dbdev"
+          tag: ${{ inputs.tag }}
+          fileName: "dbdev-${{ inputs.tag }}-linux-arm64.tar.gz"
 
-    - name: Download macOS AMD64 package
-      uses: robinraju/release-downloader@v1.12
-      with:
-        repository: "supabase/dbdev"
-        tag: ${{ inputs.tag }}
-        fileName: "dbdev-${{ inputs.tag }}-macos-amd64.tar.gz"
+      - name: Download macOS AMD64 package
+        uses: robinraju/release-downloader@v1.12
+        with:
+          repository: "supabase/dbdev"
+          tag: ${{ inputs.tag }}
+          fileName: "dbdev-${{ inputs.tag }}-macos-amd64.tar.gz"
+      - name: Generate Manifest File
+        run: |
+          linux_amd64_hash=`shasum -a 256 dbdev-${{ inputs.tag }}-linux-amd64.tar.gz | cut -d" " -f1`
+          linux_arm64_hash=`shasum -a 256 dbdev-${{ inputs.tag }}-linux-arm64.tar.gz | cut -d" " -f1`
+          macos_amd64_hash=`shasum -a 256 dbdev-${{ inputs.tag }}-macos-amd64.tar.gz | cut -d" " -f1`
 
-    - name: Generate and Push Manifest File
-      run: |
-        linux_amd64_hash=`shasum -a 256 dbdev-${{ inputs.tag }}-linux-amd64.tar.gz | cut -d" " -f1`
-        linux_arm64_hash=`shasum -a 256 dbdev-${{ inputs.tag }}-linux-arm64.tar.gz | cut -d" " -f1`
-        macos_amd64_hash=`shasum -a 256 dbdev-${{ inputs.tag }}-macos-amd64.tar.gz | cut -d" " -f1`
+          version="${{ steps.vars.outputs.version }}"
 
-        tag="${{ inputs.tag }}"
-        # strip the leading v
-        version="${tag:1}"
+          # update dbdev.rb file
+          echo '# typed: false' > dbdev.rb
+          echo '# frozen_string_literal: true' >> dbdev.rb
+          echo '' >> dbdev.rb
+          echo 'class Dbdev < Formula' >> dbdev.rb
+          echo '  desc "Dbdev CLI"' >> dbdev.rb
+          echo '  homepage "https://database.dev/"' >> dbdev.rb
+          echo "  version \"${version}\"" >> dbdev.rb
+          echo '  license "MIT"' >> dbdev.rb
+          echo '' >> dbdev.rb
+          echo '  on_macos do' >> dbdev.rb
+          echo '    if Hardware::CPU.arm?' >> dbdev.rb
+          echo "      url \"https://github.com/supabase/dbdev/releases/download/v${version}/dbdev-v${version}-macos-amd64.tar.gz\"" >> dbdev.rb
+          echo "      sha256 \"${macos_amd64_hash}\"" >> dbdev.rb
+          echo '' >> dbdev.rb
+          echo '      def install' >> dbdev.rb
+          echo '        bin.install "dbdev"' >> dbdev.rb
+          echo '      end' >> dbdev.rb
+          echo '    end' >> dbdev.rb
+          echo '    if Hardware::CPU.intel?' >> dbdev.rb
+          echo "      url \"https://github.com/supabase/dbdev/releases/download/v${version}/dbdev-v${version}-macos-amd64.tar.gz\"" >> dbdev.rb
+          echo "      sha256 \"${macos_amd64_hash}\"" >> dbdev.rb
+          echo '' >> dbdev.rb
+          echo '      def install' >> dbdev.rb
+          echo '        bin.install "dbdev"' >> dbdev.rb
+          echo '      end' >> dbdev.rb
+          echo '    end' >> dbdev.rb
+          echo '  end' >> dbdev.rb
+          echo '' >> dbdev.rb
+          echo '  on_linux do' >> dbdev.rb
+          echo '    if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?' >> dbdev.rb
+          echo "      url \"https://github.com/supabase/dbdev/releases/download/v${version}/dbdev-v${version}-linux-arm64.tar.gz\"" >> dbdev.rb
+          echo "      sha256 \"${linux_arm64_hash}\"" >> dbdev.rb
+          echo '' >> dbdev.rb
+          echo '      def install' >> dbdev.rb
+          echo '        bin.install "dbdev"' >> dbdev.rb
+          echo '      end' >> dbdev.rb
+          echo '    end' >> dbdev.rb
+          echo '    if Hardware::CPU.intel?' >> dbdev.rb
+          echo "      url \"https://github.com/supabase/dbdev/releases/download/v${version}/dbdev-v${version}-linux-amd64.tar.gz\"" >> dbdev.rb
+          echo "      sha256 \"${linux_amd64_hash}\"" >> dbdev.rb
+          echo '' >> dbdev.rb
+          echo '      def install' >> dbdev.rb
+          echo '        bin.install "dbdev"' >> dbdev.rb
+          echo '      end' >> dbdev.rb
+          echo '    end' >> dbdev.rb
+          echo '  end' >> dbdev.rb
+          echo 'end' >> dbdev.rb
+          echo ''
 
-        # update dbdev.rb file
-        echo '# typed: false' > dbdev.rb
-        echo '# frozen_string_literal: true' >> dbdev.rb
-        echo '' >> dbdev.rb
-        echo 'class Dbdev < Formula' >> dbdev.rb
-        echo '  desc "Dbdev CLI"' >> dbdev.rb
-        echo '  homepage "https://database.dev/"' >> dbdev.rb
-        echo "  version \"${version}\"" >> dbdev.rb
-        echo '  license "MIT"' >> dbdev.rb
-        echo '' >> dbdev.rb
-        echo '  on_macos do' >> dbdev.rb
-        echo '    if Hardware::CPU.arm?' >> dbdev.rb
-        echo "      url \"https://github.com/supabase/dbdev/releases/download/v${version}/dbdev-v${version}-macos-amd64.tar.gz\"" >> dbdev.rb
-        echo "      sha256 \"${macos_amd64_hash}\"" >> dbdev.rb
-        echo '' >> dbdev.rb
-        echo '      def install' >> dbdev.rb
-        echo '        bin.install "dbdev"' >> dbdev.rb
-        echo '      end' >> dbdev.rb
-        echo '    end' >> dbdev.rb
-        echo '    if Hardware::CPU.intel?' >> dbdev.rb
-        echo "      url \"https://github.com/supabase/dbdev/releases/download/v${version}/dbdev-v${version}-macos-amd64.tar.gz\"" >> dbdev.rb
-        echo "      sha256 \"${macos_amd64_hash}\"" >> dbdev.rb
-        echo '' >> dbdev.rb
-        echo '      def install' >> dbdev.rb
-        echo '        bin.install "dbdev"' >> dbdev.rb
-        echo '      end' >> dbdev.rb
-        echo '    end' >> dbdev.rb
-        echo '  end' >> dbdev.rb
-        echo '' >> dbdev.rb
-        echo '  on_linux do' >> dbdev.rb
-        echo '    if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?' >> dbdev.rb
-        echo "      url \"https://github.com/supabase/dbdev/releases/download/v${version}/dbdev-v${version}-linux-arm64.tar.gz\"" >> dbdev.rb
-        echo "      sha256 \"${linux_arm64_hash}\"" >> dbdev.rb
-        echo '' >> dbdev.rb
-        echo '      def install' >> dbdev.rb
-        echo '        bin.install "dbdev"' >> dbdev.rb
-        echo '      end' >> dbdev.rb
-        echo '    end' >> dbdev.rb
-        echo '    if Hardware::CPU.intel?' >> dbdev.rb
-        echo "      url \"https://github.com/supabase/dbdev/releases/download/v${version}/dbdev-v${version}-linux-amd64.tar.gz\"" >> dbdev.rb
-        echo "      sha256 \"${linux_amd64_hash}\"" >> dbdev.rb
-        echo '' >> dbdev.rb
-        echo '      def install' >> dbdev.rb
-        echo '        bin.install "dbdev"' >> dbdev.rb
-        echo '      end' >> dbdev.rb
-        echo '    end' >> dbdev.rb
-        echo '  end' >> dbdev.rb
-        echo 'end' >> dbdev.rb
-        echo ''
+          # prepare a PR body file with some context
+          echo "This PR updates the Homebrew formula for dbdev to version v${version}." > PR_BODY.md
+          echo "It was auto-generated by the dbdev release workflow." >> PR_BODY.md
 
-        git diff
-
-        git config user.name "dbdev release-homebrew-tap.yaml workflow"
-        git config user.email raminder@supabase.io
-        git add ./dbdev.rb
-        git commit -m "dbdev brew formula update for version v${version}"
-        git push
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.homebrew_tap_rw }}
+          commit-message: "Release dbdev version v${{ steps.vars.outputs.version }}"
+          title: "Release dbdev version v${{ steps.vars.outputs.version }}"
+          body-path: PR_BODY.md
+          add-paths: |
+            dbdev.rb
+          branch: "dbdev/update/v${{ steps.vars.outputs.version }}"
+          base: "main"
+          committer: "dbdev release-homebrew-tap.yaml workflow <raminder@supabase.io>"
+          author: "dbdev release-homebrew-tap.yaml workflow <raminder@supabase.io>"
