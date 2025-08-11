@@ -119,7 +119,7 @@ jobs:
         with:
           token: ${{ secrets.homebrew_tap_rw }}
           commit-message: "dbdev brew formula update for version v${{ steps.vars.outputs.version }}"
-          title: "dbdev brew formula update for version v${{ steps.vars.outputs.version }}"
+          title: "Release dbdev version v${{ steps.vars.outputs.version }}"
           body-path: PR_BODY.md
           add-paths: |
             dbdev.rb
