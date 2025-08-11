@@ -80,7 +80,7 @@ pub async fn publish(
     Ok(())
 }
 
-fn create_publish_package_request(payload: &Payload) -> PublishPackageRequest {
+fn create_publish_package_request(payload: &'_ Payload) -> PublishPackageRequest<'_> {
     PublishPackageRequest {
         package_name: &payload.metadata.extension_name,
         package_description: &payload.metadata.comment,
