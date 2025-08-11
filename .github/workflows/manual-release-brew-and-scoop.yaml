@@ -11,12 +11,12 @@ permissions:
   contents: write
 
 jobs:
-  call-release-homebrew-tap:
-    uses: ./.github/workflows/release-homebrew-tap.yaml
-    with:
-      tag: ${{ github.event.inputs.tag }}
-    secrets:
-      homebrew_tap_rw: ${{ secrets.HOMEBREW_TAP_RW }}
+  # call-release-homebrew-tap:
+  #   uses: ./.github/workflows/release-homebrew-tap.yaml
+  #   with:
+  #     tag: ${{ github.event.inputs.tag }}
+  #   secrets:
+  #     homebrew_tap_rw: ${{ secrets.HOMEBREW_TAP_RW }}
 
   call-release-scoop-bucket:
     uses: ./.github/workflows/release-scoop-bucket.yaml
