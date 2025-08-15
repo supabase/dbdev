@@ -146,7 +146,7 @@ jobs:
         with:
           upload_url: ${{ env.UPLOAD_URL }}
           asset_path: ./cli/target/release/dbdev.tar.gz
-          asset_name: dbdev-${{ github.ref_name }}-macos-amd64.tar.gz
+          asset_name: dbdev-${{ github.ref_name }}-macos-arm64.tar.gz
           asset_content_type: application/${{ matrix.box.content-type }}
 
   build-windows:
