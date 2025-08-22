@@ -11,6 +11,7 @@ const cspHeader = `
 
 const nextConfig = {
   reactStrictMode: true,
+  transpilePackages: ['streamdown'],
   async headers() {
     return [
       {

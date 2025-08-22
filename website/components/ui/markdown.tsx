@@ -1,7 +1,5 @@
 import { ComponentPropsWithoutRef } from 'react'
-import ReactMarkdown from 'react-markdown'
-import rehypeHighlight from 'rehype-highlight'
-import remarkGfm from 'remark-gfm'
+import Streamdown from 'streamdown'
 import { cn } from '~/lib/utils'
 import CopyButton from './copy-button'
 import A from './typography/a'
@@ -12,7 +10,7 @@ import Li from './typography/li'
 import P from './typography/p'
 import Strong from './typography/strong'
 
-type MarkdownProps = ComponentPropsWithoutRef<typeof ReactMarkdown> & {
+type MarkdownProps = ComponentPropsWithoutRef<typeof Streamdown> & {
   copyableCode?: boolean
 }
 
@@ -33,14 +31,14 @@ function childrenToText(children: any): string {
 }
 
 const DEFAULT_COMPONENTS: MarkdownProps['components'] = {
-  pre({ node, children, className, ...props }) {
+  pre({ children, className, ...props }) {
     return (
       <pre {...props} className={cn('relative', className)}>
         {children}
       </pre>
     )
   },
-  code({ node, className, children, ...props }) {
+  code({ className, children, ...props }) {
     const isInline = !className?.includes('language-')
     return (
       <code {...props} className={cn(isInline && 'dark:text-white', className)}>
@@ -48,35 +46,35 @@ const DEFAULT_COMPONENTS: MarkdownProps['components'] = {
       </code>
     )
   },
-  a({ node, children, ...props }) {
+  a({ children, ...props }) {
     return <A {...props}>{children}</A>
   },
-  p({ node, children, ...props }) {
+  p({ children, ...props }) {
     return <P {...props}>{children}</P>
   },
-  li({ node, children, ...props }) {
+  li({ children, ...props }) {
     return <Li {...props}>{children}</Li>
   },
-  strong({ node, children, ...props }) {
+  strong({ children, ...props }) {
     return <Strong {...props}>{children}</Strong>
   },
-  h1({ node, children, ...props }) {
+  h1({ children, ...props }) {
     return <H1 {...props}>{children}</H1>
   },
-  h2({ node, children, ...props }) {
+  h2({ children, ...props }) {
     return <H2 {...props}>{children}</H2>
   },
-  h3({ node, children, ...props }) {
+  h3({ children, ...props }) {
     return <H3 {...props}>{children}</H3>
   },
-  th({ node, className, children, ...props }) {
+  th({ className, children, ...props }) {
     return (
       <th className={cn('font-semibold dark:text-white', className)} {...props}>
         {children}
       </th>
     )
   },
-  td({ node, className, children, ...props }) {
+  td({ className, children, ...props }) {
     return (
       <td className={cn('dark:text-white', className)} {...props}>
         {children}
@@ -86,7 +84,7 @@ const DEFAULT_COMPONENTS: MarkdownProps['components'] = {
 }
 
 const COPYABLE_CODE_COMPONENTS: MarkdownProps['components'] = {
-  code({ node, className, children, ...props }) {
+  code({ className, children, ...props }) {
     const isInline = !className?.includes('language-')
     return (
       <code {...props} className={cn(isInline && 'dark:text-white', className)}>
@@ -106,16 +104,12 @@ const COPYABLE_CODE_COMPONENTS: MarkdownProps['components'] = {
 
 const Markdown = ({
   className,
-  remarkPlugins = [],
-  rehypePlugins = [],
   components,
   copyableCode = true,
   children,
   ...props
 }: MarkdownProps) => (
-  <ReactMarkdown
-    remarkPlugins={[remarkGfm, ...(remarkPlugins || [])]}
-    rehypePlugins={[rehypeHighlight, ...(rehypePlugins || [])]}
+  <Streamdown
     className={cn('prose lg:prose-xl max-w-none', className)}
     components={{
       ...DEFAULT_COMPONENTS,
@@ -125,7 +119,7 @@ const Markdown = ({
     {...props}
   >
     {children}
-  </ReactMarkdown>
+  </Streamdown>
 )
 
 export default Markdown
