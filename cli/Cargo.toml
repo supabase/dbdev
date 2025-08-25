@@ -8,7 +8,7 @@ authors = ["supabase"]
 
 [dependencies]
 anyhow = "1.0.98"
-clap = { version = "4.5.43", features = ["derive"] }
+clap = { version = "4.5.45", features = ["derive"] }
 dirs = "6.0.0"
 futures = "0.3"
 postgrest = "1.5.0"
@@ -17,14 +17,14 @@ regex = "1.11"
 reqwest = { version = "0.12.9", features = ["json", "native-tls-vendored"] }
 rpassword = "7.4.0"
 serde = { version = "1.0.219", features = ["derive"] }
-serde_json = "1.0.142"
+serde_json = "1.0.143"
 sqlx = { version = "0.8.6", features = [
     "postgres",
     "chrono",
     "uuid",
     "runtime-tokio-rustls",
 ] }
-tempfile = "3.20.0"
+tempfile = "3.21.0"
 thiserror = "2.0.16"
 tokio = { version = "1", features = ["full"] }
 toml = { version = "0.9.5", features = ["preserve_order"] }
