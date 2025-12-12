@@ -8,8 +8,10 @@ import { cn } from '~/lib/utils'
 import { validateZodSchema } from '~/lib/zod-form-validator-utils'
 export { FORM_ERROR } from 'final-form'
 
-export interface FormProps<S extends z.ZodType<any, any>>
-  extends Omit<PropsWithoutRef<JSX.IntrinsicElements['form']>, 'onSubmit'> {
+export interface FormProps<S extends z.ZodType<any, any>> extends Omit<
+  PropsWithoutRef<JSX.IntrinsicElements['form']>,
+  'onSubmit'
+> {
   /** All your form fields */
   schema?: S
   onSubmit: FinalFormProps<z.infer<S>>['onSubmit']

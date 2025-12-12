@@ -18,8 +18,7 @@ const h2Variants = cva(
 )
 
 export interface H2Props
-  extends ComponentPropsWithoutRef<'h2'>,
-    VariantProps<typeof h2Variants> {}
+  extends ComponentPropsWithoutRef<'h2'>, VariantProps<typeof h2Variants> {}
 
 const H2 = forwardRef<HTMLHeadingElement, H2Props>(
   ({ className, variant, children, ...props }, ref) => (
