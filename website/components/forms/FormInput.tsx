@@ -4,8 +4,9 @@ import { Input } from '~/components/ui/input'
 import { Label } from '../ui/label'
 import { cn } from '~/lib/utils'
 
-export interface FormInputProps
-  extends PropsWithoutRef<JSX.IntrinsicElements['input']> {
+export interface FormInputProps extends PropsWithoutRef<
+  JSX.IntrinsicElements['input']
+> {
   /** Field name. */
   name: string
   /** Field label. */
