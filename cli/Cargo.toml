@@ -27,6 +27,6 @@ sqlx = { version = "0.8.6", features = [
 tempfile = "3.23.0"
 thiserror = "2.0.17"
 tokio = { version = "1", features = ["full"] }
-toml = { version = "0.9.8", features = ["preserve_order"] }
+toml = { version = "0.9.10", features = ["preserve_order"] }
 url = { version = "2.5.7", features = ["serde"] }
 uuid = { version = "1.16.0", features = ["serde"] }
