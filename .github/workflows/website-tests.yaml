@@ -1,0 +1,47 @@
+name: Website Tests
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'website/**'
+      - '.github/workflows/website-tests.yaml'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'website/**'
+      - '.github/workflows/website-tests.yaml'
+
+jobs:
+  test:
+    name: Test & Coverage
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: website
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: website/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: npm run test:coverage
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v4
+        with:
+          files: website/coverage/lcov.info
+          flags: frontend
+          fail_ci_if_error: false
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
