@@ -2,12 +2,12 @@ name: Website Tests
 
 on:
   push:
-    branches: [main, master]
+    branches: [master]
     paths:
       - 'website/**'
       - '.github/workflows/website-tests.yaml'
   pull_request:
-    branches: [main, master]
+    branches: [master]
     paths:
       - 'website/**'
       - '.github/workflows/website-tests.yaml'
@@ -27,7 +27,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
           cache-dependency-path: website/package-lock.json
 
