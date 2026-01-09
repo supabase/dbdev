@@ -17,22 +17,23 @@ export async function signOut() {
 type SignOutData = Awaited<ReturnType<typeof signOut>>
 type SignOutError = AuthError
 
-export const useSignOutMutation = ({
-  onSuccess,
-  ...options
-}: Omit<
-  UseMutationOptions<SignOutData, SignOutError, void>,
-  'mutationFn'
-> = {}) => {
+export const useSignOutMutation = (
+  options: Omit<
+    UseMutationOptions<SignOutData, SignOutError, void>,
+    'mutationFn'
+  > = {}
+) => {
+  const { onSuccess, ...restOptions } = options
   const queryClient = useQueryClient()
 
-  return useMutation<SignOutData, SignOutError, void>(() => signOut(), {
+  return useMutation<SignOutData, SignOutError, void>({
+    mutationFn: () => signOut(),
     async onSuccess(data, variables, context) {
-      await Promise.all([
-        queryClient.resetQueries(),
-        await onSuccess?.(data, variables, context),
-      ])
+      await queryClient.resetQueries()
+      if (onSuccess) {
+        ;(onSuccess as any)(data, variables, context)
+      }
     },
-    ...options,
+    ...restOptions,
   })
 }

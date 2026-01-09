@@ -49,20 +49,22 @@ export type PopularPackagesError = PostgrestError
 export const usePopularPackagesQuery = <TData = PopularPackagesData>({
   enabled = true,
   ...options
-}: UseQueryOptions<PopularPackagesData, PopularPackagesError, TData> = {}) =>
-  useQuery<PopularPackagesData, PopularPackagesError, TData>(
-    ['popular-packages'],
-    ({ signal }) => getPopularPackages(signal),
-    {
-      enabled,
-      ...options,
-    }
-  )
+}: Omit<
+  UseQueryOptions<PopularPackagesData, PopularPackagesError, TData>,
+  'queryKey' | 'queryFn'
+> = {}) =>
+  useQuery<PopularPackagesData, PopularPackagesError, TData>({
+    queryKey: ['popular-packages'],
+    queryFn: ({ signal }) => getPopularPackages(signal),
+    enabled,
+    ...options,
+  })
 
 export const prefetchPopularPackages = (client: QueryClient) => {
-  return client.prefetchQuery(['popular-packages'], ({ signal }) =>
-    getPopularPackages(signal)
-  )
+  return client.prefetchQuery({
+    queryKey: ['popular-packages'],
+    queryFn: ({ signal }) => getPopularPackages(signal),
+  })
 }
 
 export const usePopularPackagesPrefetch = () => {

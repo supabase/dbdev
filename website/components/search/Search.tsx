@@ -1,4 +1,5 @@
 import * as Dialog from '@radix-ui/react-dialog'
+import { keepPreviousData } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import { usePackagesSearchQuery } from '~/data/packages/packages-search-query'
@@ -27,7 +28,7 @@ const Search = () => {
     },
     {
       enabled: Boolean(query),
-      keepPreviousData: true,
+      placeholderData: keepPreviousData,
     }
   )
 

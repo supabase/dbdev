@@ -72,27 +72,26 @@ export const usePackageQuery = <TData = PackageData>(
   {
     enabled = true,
     ...options
-  }: UseQueryOptions<PackageData, PackageError, TData> = {}
+  }: Omit<UseQueryOptions<PackageData, PackageError, TData>, 'queryKey' | 'queryFn'> = {}
 ) =>
-  useQuery<PackageData, PackageError, TData>(
-    ['package', handle, partialName],
-    ({ signal }) => getPackage({ handle, partialName }, signal),
-    {
-      enabled:
-        enabled &&
-        typeof handle !== 'undefined' &&
-        typeof partialName !== 'undefined',
-      ...options,
-    }
-  )
+  useQuery<PackageData, PackageError, TData>({
+    queryKey: ['package', handle, partialName],
+    queryFn: ({ signal }) => getPackage({ handle, partialName }, signal),
+    enabled:
+      enabled &&
+      typeof handle !== 'undefined' &&
+      typeof partialName !== 'undefined',
+    ...options,
+  })
 
 export const prefetchPackage = (
   client: QueryClient,
   { handle, partialName }: PackageVariables
 ) => {
-  return client.prefetchQuery(['package', handle, partialName], ({ signal }) =>
-    getPackage({ handle, partialName }, signal)
-  )
+  return client.prefetchQuery({
+    queryKey: ['package', handle, partialName],
+    queryFn: ({ signal }) => getPackage({ handle, partialName }, signal),
+  })
 }
 
 export const usePackagePrefetch = ({
