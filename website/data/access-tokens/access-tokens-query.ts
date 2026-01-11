@@ -45,18 +45,22 @@ export type AccessTokensError = PostgrestError
 export const useAccessTokensQuery = <TData = AccessTokensData>({
   enabled = true,
   ...options
-}: UseQueryOptions<AccessTokensData, AccessTokensError, TData> = {}) =>
-  useQuery<AccessTokensData, AccessTokensError, TData>(
-    [accessTokensQueryKey],
-    ({}) => getAccessTokens(),
-    {
-      enabled: enabled,
-      ...options,
-    }
-  )
+}: Omit<
+  UseQueryOptions<AccessTokensData, AccessTokensError, TData>,
+  'queryKey' | 'queryFn'
+> = {}) =>
+  useQuery<AccessTokensData, AccessTokensError, TData>({
+    queryKey: [accessTokensQueryKey],
+    queryFn: ({}) => getAccessTokens(),
+    enabled: enabled,
+    ...options,
+  })
 
 export const prefetchAccessTokens = (client: QueryClient) => {
-  return client.prefetchQuery([accessTokensQueryKey], ({}) => getAccessTokens())
+  return client.prefetchQuery({
+    queryKey: [accessTokensQueryKey],
+    queryFn: ({}) => getAccessTokens(),
+  })
 }
 
 export const useAccessTokensPrefetch = () => {

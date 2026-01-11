@@ -21,7 +21,7 @@ const ApiTokensPage: NextPageWithLayout = () => {
 
   const {
     mutateAsync: createNewAccessToken,
-    isLoading: creatingNewAccessToken,
+    isPending: creatingNewAccessToken,
   } = useNewAccessTokenMutation({
     onSuccess() {
       toast.success('Successfully created token!')

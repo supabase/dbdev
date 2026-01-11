@@ -55,29 +55,26 @@ export const useUsersOrganizationsQuery = <TData = UsersOrganizationsData>(
   {
     enabled = true,
     ...options
-  }: UseQueryOptions<
-    UsersOrganizationsData,
-    UsersOrganizationsError,
-    TData
+  }: Omit<
+    UseQueryOptions<UsersOrganizationsData, UsersOrganizationsError, TData>,
+    'queryKey' | 'queryFn'
   > = {}
 ) =>
-  useQuery<UsersOrganizationsData, UsersOrganizationsError, TData>(
-    ['users', userId, 'organizations'],
-    ({ signal }) => getUsersOrganizations({ userId }, signal),
-    {
-      enabled: enabled && typeof userId !== 'undefined',
-      ...options,
-    }
-  )
+  useQuery<UsersOrganizationsData, UsersOrganizationsError, TData>({
+    queryKey: ['users', userId, 'organizations'],
+    queryFn: ({ signal }) => getUsersOrganizations({ userId }, signal),
+    enabled: enabled && typeof userId !== 'undefined',
+    ...options,
+  })
 
 export const prefetchUsersOrganizations = (
   client: QueryClient,
   { userId }: UsersOrganizationsVariables
 ) => {
-  return client.prefetchQuery(
-    ['users', userId, 'organizations'],
-    ({ signal }) => getUsersOrganizations({ userId }, signal)
-  )
+  return client.prefetchQuery({
+    queryKey: ['users', userId, 'organizations'],
+    queryFn: ({ signal }) => getUsersOrganizations({ userId }, signal),
+  })
 }
 
 export const useUsersOrganizationsPrefetch = ({

@@ -16,7 +16,7 @@ const AccessTokenCard = ({
   maskedToken,
   createdAt,
 }: ApiTokenCardProps) => {
-  const { mutate: deleteAccessToken, isLoading: isDeletingAccessToken } =
+  const { mutate: deleteAccessToken, isPending: isDeletingAccessToken } =
     useDeleteAccessTokenMutation({
       onSuccess() {
         toast.success('Successfully revoked token!')

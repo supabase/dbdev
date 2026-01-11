@@ -54,20 +54,21 @@ export const usePackagesSearchQuery = <TData = PackagesSearchData>(
   {
     enabled,
     ...options
-  }: UseQueryOptions<PackagesSearchData, PackagesSearchError, TData> = {}
+  }: Omit<
+    UseQueryOptions<PackagesSearchData, PackagesSearchError, TData>,
+    'queryKey' | 'queryFn'
+  > = {}
 ) => {
   const { handle, partialName } = parseSearchQuery(query)
 
-  return useQuery<PackagesSearchData, PackagesSearchError, TData>(
-    ['packages', { type: 'search', handle, partialName }],
-    ({ signal }) => searchPackages({ handle, partialName }, signal),
-    {
-      enabled:
-        enabled &&
-        (typeof handle !== 'undefined' || typeof partialName !== 'undefined'),
-      ...options,
-    }
-  )
+  return useQuery<PackagesSearchData, PackagesSearchError, TData>({
+    queryKey: ['packages', { type: 'search', handle, partialName }],
+    queryFn: ({ signal }) => searchPackages({ handle, partialName }, signal),
+    enabled:
+      enabled &&
+      (typeof handle !== 'undefined' || typeof partialName !== 'undefined'),
+    ...options,
+  })
 }
 
 export const prefetchPackagesSearch = (
@@ -76,10 +77,10 @@ export const prefetchPackagesSearch = (
 ) => {
   const { handle, partialName } = parseSearchQuery(query)
 
-  return client.prefetchQuery(
-    ['packages', { type: 'search', handle, partialName }],
-    ({ signal }) => searchPackages({ handle, partialName }, signal)
-  )
+  return client.prefetchQuery({
+    queryKey: ['packages', { type: 'search', handle, partialName }],
+    queryFn: ({ signal }) => searchPackages({ handle, partialName }, signal),
+  })
 }
 
 export const usePackagesSearchPrefetch = ({

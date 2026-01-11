@@ -66,28 +66,31 @@ export const usePackageVersionsQuery = <TData = PackageVersionsData>(
   {
     enabled = true,
     ...options
-  }: UseQueryOptions<PackageVersionsData, PackageVersionsError, TData> = {}
+  }: Omit<
+    UseQueryOptions<PackageVersionsData, PackageVersionsError, TData>,
+    'queryKey' | 'queryFn'
+  > = {}
 ) =>
-  useQuery<PackageVersionsData, PackageVersionsError, TData>(
-    ['package-versions', handle, partialName],
-    ({ signal }) => getPackageVersions({ handle, partialName }, signal),
-    {
-      enabled:
-        enabled &&
-        typeof handle !== 'undefined' &&
-        typeof partialName !== 'undefined',
-      ...options,
-    }
-  )
+  useQuery<PackageVersionsData, PackageVersionsError, TData>({
+    queryKey: ['package-versions', handle, partialName],
+    queryFn: ({ signal }) =>
+      getPackageVersions({ handle, partialName }, signal),
+    enabled:
+      enabled &&
+      typeof handle !== 'undefined' &&
+      typeof partialName !== 'undefined',
+    ...options,
+  })
 
 export const prefetchPackageVersions = (
   client: QueryClient,
   { handle, partialName }: PackageVersionsVariables
 ) => {
-  return client.prefetchQuery(
-    ['package-versions', handle, partialName],
-    ({ signal }) => getPackageVersions({ handle, partialName }, signal)
-  )
+  return client.prefetchQuery({
+    queryKey: ['package-versions', handle, partialName],
+    queryFn: ({ signal }) =>
+      getPackageVersions({ handle, partialName }, signal),
+  })
 }
 
 export const usePackageVersionsPrefetch = ({

@@ -69,24 +69,26 @@ export const useProfileQuery = <TData = ProfileData>(
   {
     enabled = true,
     ...options
-  }: UseQueryOptions<ProfileData, ProfileError, TData> = {}
+  }: Omit<
+    UseQueryOptions<ProfileData, ProfileError, TData>,
+    'queryKey' | 'queryFn'
+  > = {}
 ) =>
-  useQuery<ProfileData, ProfileError, TData>(
-    ['profile', handle],
-    ({ signal }) => getProfile({ handle }, signal),
-    {
-      enabled: enabled && typeof handle !== 'undefined',
-      ...options,
-    }
-  )
+  useQuery<ProfileData, ProfileError, TData>({
+    queryKey: ['profile', handle],
+    queryFn: ({ signal }) => getProfile({ handle }, signal),
+    enabled: enabled && typeof handle !== 'undefined',
+    ...options,
+  })
 
 export const prefetchProfile = (
   client: QueryClient,
   { handle }: ProfileVariables
 ) => {
-  return client.prefetchQuery(['profile', handle], ({ signal }) =>
-    getProfile({ handle }, signal)
-  )
+  return client.prefetchQuery({
+    queryKey: ['profile', handle],
+    queryFn: ({ signal }) => getProfile({ handle }, signal),
+  })
 }
 
 export const useProfilePrefetch = () => {

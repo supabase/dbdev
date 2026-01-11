@@ -21,30 +21,31 @@ export async function updatePassword({ newPassword }: UpdatePasswordVariables) {
 type UpdatePasswordData = Awaited<ReturnType<typeof updatePassword>>
 type UpdatePasswordError = AuthError
 
-export const useUpdatePasswordMutation = ({
-  onSuccess,
-  ...options
-}: Omit<
-  UseMutationOptions<
-    UpdatePasswordData,
-    UpdatePasswordError,
-    UpdatePasswordVariables
-  >,
-  'mutationFn'
-> = {}) => {
+export const useUpdatePasswordMutation = (
+  options: Omit<
+    UseMutationOptions<
+      UpdatePasswordData,
+      UpdatePasswordError,
+      UpdatePasswordVariables
+    >,
+    'mutationFn'
+  > = {}
+) => {
+  const { onSuccess, ...restOptions } = options
   const queryClient = useQueryClient()
 
   return useMutation<
     UpdatePasswordData,
     UpdatePasswordError,
     UpdatePasswordVariables
-  >(({ newPassword }) => updatePassword({ newPassword }), {
+  >({
+    mutationFn: ({ newPassword }) => updatePassword({ newPassword }),
     async onSuccess(data, variables, context) {
-      await Promise.all([
-        queryClient.resetQueries(),
-        await onSuccess?.(data, variables, context),
-      ])
+      await queryClient.resetQueries()
+      if (onSuccess) {
+        ;(onSuccess as any)(data, variables, context)
+      }
     },
-    ...options,
+    ...restOptions,
   })
 }

@@ -1,5 +1,5 @@
 import { Inter } from 'next/font/google'
-import { Hydrate, QueryClientProvider } from '@tanstack/react-query'
+import { HydrationBoundary, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { Toaster } from 'react-hot-toast'
 import { ThemeContextProvider } from '~/components/themes/ThemeContext'
@@ -18,7 +18,7 @@ const CustomApp = ({ Component, pageProps }: AppPropsWithLayout) => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Hydrate state={pageProps.dehydratedState}>
+      <HydrationBoundary state={pageProps.dehydratedState}>
         <AuthProvider>
           <ThemeContextProvider>
             <div className={cn(inter.className, 'h-full')}>
@@ -28,8 +28,11 @@ const CustomApp = ({ Component, pageProps }: AppPropsWithLayout) => {
         </AuthProvider>
 
         <Toaster position="bottom-left" />
-        <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
-      </Hydrate>
+        <ReactQueryDevtools
+          initialIsOpen={false}
+          buttonPosition="bottom-right"
+        />
+      </HydrationBoundary>
     </QueryClientProvider>
   )
 }
