@@ -13,7 +13,11 @@ vi.mock('react-hot-toast', () => ({
 
 // Mock the delete mutation
 vi.mock('~/data/access-tokens/delete-access-token', () => ({
-  useDeleteAccessTokenMutation: ({ onSuccess }: { onSuccess?: () => void }) => ({
+  useDeleteAccessTokenMutation: ({
+    onSuccess,
+  }: {
+    onSuccess?: () => void
+  }) => ({
     mutate: vi.fn((vars: { tokenId: string }) => {
       onSuccess?.()
     }),
@@ -51,7 +55,9 @@ describe('Access Tokens Integration', () => {
   })
 
   it('renders access token card with all information', () => {
-    const createdAt = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString() // 7 days ago
+    const createdAt = new Date(
+      Date.now() - 7 * 24 * 60 * 60 * 1000
+    ).toISOString() // 7 days ago
 
     renderWithQueryClient(
       <AccessTokenCard
@@ -90,9 +96,24 @@ describe('Access Tokens Integration', () => {
 
   it('renders multiple tokens in a list', () => {
     const tokens = [
-      { id: '1', name: 'Production API', masked: 'sk_****_prod', created: '2024-01-01' },
-      { id: '2', name: 'Development API', masked: 'sk_****_dev', created: '2024-06-01' },
-      { id: '3', name: 'CI/CD Token', masked: 'sk_****_cicd', created: '2024-12-01' },
+      {
+        id: '1',
+        name: 'Production API',
+        masked: 'sk_****_prod',
+        created: '2024-01-01',
+      },
+      {
+        id: '2',
+        name: 'Development API',
+        masked: 'sk_****_dev',
+        created: '2024-06-01',
+      },
+      {
+        id: '3',
+        name: 'CI/CD Token',
+        masked: 'sk_****_cicd',
+        created: '2024-12-01',
+      },
     ]
 
     renderWithQueryClient(

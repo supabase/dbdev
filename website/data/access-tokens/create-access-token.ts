@@ -38,7 +38,8 @@ export const useNewAccessTokenMutation = (
   const { onSuccess, ...restOptions } = options
 
   return useMutation({
-    mutationFn: ({ tokenName }: NewAccessTokenVariables) => newAccessToken({ tokenName }),
+    mutationFn: ({ tokenName }: NewAccessTokenVariables) =>
+      newAccessToken({ tokenName }),
     ...restOptions,
     onSuccess: async (data, variables, context) => {
       await queryClient.invalidateQueries({ queryKey: [accessTokensQueryKey] })

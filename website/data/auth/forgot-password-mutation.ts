@@ -42,7 +42,8 @@ export const useForgotPasswordMutation = (
     ForgotPasswordError,
     ForgotPasswordVariables
   >({
-    mutationFn: ({ email, redirectTo }) => forgotPassword({ email, redirectTo }),
+    mutationFn: ({ email, redirectTo }) =>
+      forgotPassword({ email, redirectTo }),
     async onSuccess(data, variables, context) {
       await queryClient.resetQueries()
       if (onSuccess) {

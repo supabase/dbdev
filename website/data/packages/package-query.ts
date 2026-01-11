@@ -72,7 +72,10 @@ export const usePackageQuery = <TData = PackageData>(
   {
     enabled = true,
     ...options
-  }: Omit<UseQueryOptions<PackageData, PackageError, TData>, 'queryKey' | 'queryFn'> = {}
+  }: Omit<
+    UseQueryOptions<PackageData, PackageError, TData>,
+    'queryKey' | 'queryFn'
+  > = {}
 ) =>
   useQuery<PackageData, PackageError, TData>({
     queryKey: ['package', handle, partialName],

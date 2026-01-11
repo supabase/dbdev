@@ -11,7 +11,11 @@ const LoginSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters'),
 })
 
-function LoginForm({ onSubmit }: { onSubmit: (values: z.infer<typeof LoginSchema>) => void }) {
+function LoginForm({
+  onSubmit,
+}: {
+  onSubmit: (values: z.infer<typeof LoginSchema>) => void
+}) {
   return (
     <Form schema={LoginSchema} onSubmit={onSubmit}>
       <FormInput name="email" label="Email" type="email" />

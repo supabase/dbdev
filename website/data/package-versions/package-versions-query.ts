@@ -73,7 +73,8 @@ export const usePackageVersionsQuery = <TData = PackageVersionsData>(
 ) =>
   useQuery<PackageVersionsData, PackageVersionsError, TData>({
     queryKey: ['package-versions', handle, partialName],
-    queryFn: ({ signal }) => getPackageVersions({ handle, partialName }, signal),
+    queryFn: ({ signal }) =>
+      getPackageVersions({ handle, partialName }, signal),
     enabled:
       enabled &&
       typeof handle !== 'undefined' &&
@@ -87,7 +88,8 @@ export const prefetchPackageVersions = (
 ) => {
   return client.prefetchQuery({
     queryKey: ['package-versions', handle, partialName],
-    queryFn: ({ signal }) => getPackageVersions({ handle, partialName }, signal),
+    queryFn: ({ signal }) =>
+      getPackageVersions({ handle, partialName }, signal),
   })
 }
 

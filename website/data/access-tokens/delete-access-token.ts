@@ -40,7 +40,8 @@ export const useDeleteAccessTokenMutation = (
   const { onSuccess, ...restOptions } = options
 
   return useMutation({
-    mutationFn: ({ tokenId }: DeleteAccessTokenVariables) => deleteAccessToken({ tokenId }),
+    mutationFn: ({ tokenId }: DeleteAccessTokenVariables) =>
+      deleteAccessToken({ tokenId }),
     ...restOptions,
     onSuccess: async (data, variables, context) => {
       await queryClient.invalidateQueries({ queryKey: [accessTokensQueryKey] })

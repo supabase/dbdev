@@ -28,7 +28,10 @@ const CustomApp = ({ Component, pageProps }: AppPropsWithLayout) => {
         </AuthProvider>
 
         <Toaster position="bottom-left" />
-        <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-right" />
+        <ReactQueryDevtools
+          initialIsOpen={false}
+          buttonPosition="bottom-right"
+        />
       </HydrationBoundary>
     </QueryClientProvider>
   )

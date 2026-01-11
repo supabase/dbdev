@@ -54,7 +54,10 @@ export const usePackagesSearchQuery = <TData = PackagesSearchData>(
   {
     enabled,
     ...options
-  }: Omit<UseQueryOptions<PackagesSearchData, PackagesSearchError, TData>, 'queryKey' | 'queryFn'> = {}
+  }: Omit<
+    UseQueryOptions<PackagesSearchData, PackagesSearchError, TData>,
+    'queryKey' | 'queryFn'
+  > = {}
 ) => {
   const { handle, partialName } = parseSearchQuery(query)
 

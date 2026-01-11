@@ -1,7 +1,14 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi } from 'vitest'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '~/components/ui/card'
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from '~/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
@@ -10,7 +17,7 @@ function ProfileCard({
   name,
   role,
   initials,
-  onFollow
+  onFollow,
 }: {
   name: string
   role: string
@@ -81,9 +88,15 @@ describe('UI Components Integration', () => {
     render(
       <div>
         <Badge data-testid="default">Default</Badge>
-        <Badge variant="secondary" data-testid="secondary">Secondary</Badge>
-        <Badge variant="destructive" data-testid="destructive">Destructive</Badge>
-        <Badge variant="outline" data-testid="outline">Outline</Badge>
+        <Badge variant="secondary" data-testid="secondary">
+          Secondary
+        </Badge>
+        <Badge variant="destructive" data-testid="destructive">
+          Destructive
+        </Badge>
+        <Badge variant="outline" data-testid="outline">
+          Outline
+        </Badge>
       </div>
     )
 

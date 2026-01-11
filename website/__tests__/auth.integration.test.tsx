@@ -117,7 +117,9 @@ describe('Auth Integration', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('logged-in')).toHaveTextContent('Yes')
-      expect(screen.getByTestId('user-email')).toHaveTextContent('test@example.com')
+      expect(screen.getByTestId('user-email')).toHaveTextContent(
+        'test@example.com'
+      )
       expect(screen.getByTestId('session')).toHaveTextContent('Has session')
     })
   })
@@ -190,7 +192,9 @@ describe('Auth Integration', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('logged-in')).toHaveTextContent('Yes')
-      expect(screen.getByTestId('user-email')).toHaveTextContent('new@example.com')
+      expect(screen.getByTestId('user-email')).toHaveTextContent(
+        'new@example.com'
+      )
     })
   })
 })

@@ -4,9 +4,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 // Mock next/link
 vi.mock('next/link', () => ({
-  default: ({ children, href }: { children: React.ReactNode; href: string }) => (
-    <a href={href}>{children}</a>
-  ),
+  default: ({
+    children,
+    href,
+  }: {
+    children: React.ReactNode
+    href: string
+  }) => <a href={href}>{children}</a>,
 }))
 
 // Mock next/router
@@ -86,8 +90,18 @@ describe('Search Integration', () => {
   it('shows search results when query matches packages', async () => {
     const user = userEvent.setup()
     mockSearchData = [
-      { id: '1', handle: 'supabase', partial_name: 'pg_graphql', created_at: '2024-01-01' },
-      { id: '2', handle: 'supabase', partial_name: 'pg_net', created_at: '2024-02-01' },
+      {
+        id: '1',
+        handle: 'supabase',
+        partial_name: 'pg_graphql',
+        created_at: '2024-01-01',
+      },
+      {
+        id: '2',
+        handle: 'supabase',
+        partial_name: 'pg_net',
+        created_at: '2024-02-01',
+      },
     ]
     mockIsSuccess = true
 
@@ -114,7 +128,9 @@ describe('Search Integration', () => {
 
     await waitFor(() => {
       expect(screen.getByText('No results found')).toBeInTheDocument()
-      expect(screen.getByText(/try prefixing your query with an @ symbol/i)).toBeInTheDocument()
+      expect(
+        screen.getByText(/try prefixing your query with an @ symbol/i)
+      ).toBeInTheDocument()
     })
   })
 

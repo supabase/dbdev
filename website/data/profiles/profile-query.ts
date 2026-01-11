@@ -69,7 +69,10 @@ export const useProfileQuery = <TData = ProfileData>(
   {
     enabled = true,
     ...options
-  }: Omit<UseQueryOptions<ProfileData, ProfileError, TData>, 'queryKey' | 'queryFn'> = {}
+  }: Omit<
+    UseQueryOptions<ProfileData, ProfileError, TData>,
+    'queryKey' | 'queryFn'
+  > = {}
 ) =>
   useQuery<ProfileData, ProfileError, TData>({
     queryKey: ['profile', handle],

@@ -1,7 +1,10 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { ThemeContextProvider, LOCAL_STORAGE_KEY } from '~/components/themes/ThemeContext'
+import {
+  ThemeContextProvider,
+  LOCAL_STORAGE_KEY,
+} from '~/components/themes/ThemeContext'
 import ThemeSwitcher from '~/components/themes/ThemeSwitcher'
 
 // Mock next/head since it doesn't work in jsdom
