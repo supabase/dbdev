@@ -15,7 +15,7 @@ export interface FormInputProps extends PropsWithoutRef<
   type?: 'text' | 'password' | 'email' | 'number'
   outerProps?: PropsWithoutRef<JSX.IntrinsicElements['div']>
   labelProps?: ComponentPropsWithoutRef<'label'>
-  fieldProps?: UseFieldConfig<string>
+  fieldProps?: UseFieldConfig
 }
 
 const FormInput = forwardRef<HTMLInputElement, FormInputProps>(

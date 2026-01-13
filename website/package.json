@@ -33,7 +33,7 @@
     "dayjs": "^1.11.13",
     "eslint": "^9.39.1",
     "eslint-config-next": "^15.4.5",
-    "final-form": "^4.20.10",
+    "final-form": "^5.0.0",
     "lucide-react": "^0.536.0",
     "next": "^16.1.1",
     "react": "^19.2.3",
