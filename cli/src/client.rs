@@ -240,17 +240,6 @@ impl<'a> ApiClient<'a> {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct UserMetadata {
-    handle: String,
-}
-
-#[derive(Deserialize, Debug)]
-pub enum TokenType {
-    #[serde(alias = "bearer")]
-    Bearer,
-}
-
 #[derive(Serialize)]
 pub struct PublishPackageRequest<'a> {
     pub package_name: &'a str,
