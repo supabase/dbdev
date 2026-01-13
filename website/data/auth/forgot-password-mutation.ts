@@ -24,30 +24,32 @@ export async function forgotPassword({
 type ForgotPasswordData = Awaited<ReturnType<typeof forgotPassword>>
 type ForgotPasswordError = AuthError
 
-export const useForgotPasswordMutation = ({
-  onSuccess,
-  ...options
-}: Omit<
-  UseMutationOptions<
-    ForgotPasswordData,
-    ForgotPasswordError,
-    ForgotPasswordVariables
-  >,
-  'mutationFn'
-> = {}) => {
+export const useForgotPasswordMutation = (
+  options: Omit<
+    UseMutationOptions<
+      ForgotPasswordData,
+      ForgotPasswordError,
+      ForgotPasswordVariables
+    >,
+    'mutationFn'
+  > = {}
+) => {
+  const { onSuccess, ...restOptions } = options
   const queryClient = useQueryClient()
 
   return useMutation<
     ForgotPasswordData,
     ForgotPasswordError,
     ForgotPasswordVariables
-  >(({ email, redirectTo }) => forgotPassword({ email, redirectTo }), {
+  >({
+    mutationFn: ({ email, redirectTo }) =>
+      forgotPassword({ email, redirectTo }),
     async onSuccess(data, variables, context) {
-      await Promise.all([
-        queryClient.resetQueries(),
-        await onSuccess?.(data, variables, context),
-      ])
+      await queryClient.resetQueries()
+      if (onSuccess) {
+        ;(onSuccess as any)(data, variables, context)
+      }
     },
-    ...options,
+    ...restOptions,
   })
 }

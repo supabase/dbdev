@@ -23,29 +23,29 @@ export async function newAccessToken({ tokenName }: NewAccessTokenVariables) {
 type NewAccessTokenData = Awaited<ReturnType<typeof newAccessToken>>
 type NewAccessTokenError = PostgrestError
 
-export const useNewAccessTokenMutation = ({
-  onSuccess,
-  ...options
-}: Omit<
-  UseMutationOptions<
-    NewAccessTokenData,
-    NewAccessTokenError,
-    NewAccessTokenVariables
-  >,
-  'mutationFn'
-> = {}) => {
+export const useNewAccessTokenMutation = (
+  options: Omit<
+    UseMutationOptions<
+      NewAccessTokenData,
+      NewAccessTokenError,
+      NewAccessTokenVariables,
+      unknown
+    >,
+    'mutationFn'
+  > = {}
+) => {
   const queryClient = useQueryClient()
+  const { onSuccess, ...restOptions } = options
 
-  return useMutation<
-    NewAccessTokenData,
-    NewAccessTokenError,
-    NewAccessTokenVariables
-  >(({ tokenName }) => newAccessToken({ tokenName }), {
-    async onSuccess(data, variables, context) {
-      await Promise.all([queryClient.invalidateQueries([accessTokensQueryKey])])
-
-      await onSuccess?.(data, variables, context)
+  return useMutation({
+    mutationFn: ({ tokenName }: NewAccessTokenVariables) =>
+      newAccessToken({ tokenName }),
+    ...restOptions,
+    onSuccess: async (data, variables, context) => {
+      await queryClient.invalidateQueries({ queryKey: [accessTokensQueryKey] })
+      if (onSuccess) {
+        ;(onSuccess as any)(data, variables, context)
+      }
     },
-    ...options,
   })
 }

@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prettier": "prettier --write ."
+    "prettier": "prettier --write .",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -20,8 +23,8 @@
     "@radix-ui/react-tabs": "^1.1.12",
     "@radix-ui/react-toast": "^1.2.14",
     "@supabase/supabase-js": "^2.53.0",
-    "@tanstack/react-query": "^4.40.1",
-    "@tanstack/react-query-devtools": "^4.40.1",
+    "@tanstack/react-query": "^5.90.16",
+    "@tanstack/react-query-devtools": "^5.91.2",
     "@types/node": "^20.17.14",
     "@types/react": "^18.3.19",
     "@types/react-dom": "^18.3.3",
@@ -30,12 +33,12 @@
     "dayjs": "^1.11.13",
     "eslint": "^9.39.1",
     "eslint-config-next": "^15.4.5",
-    "final-form": "^4.20.10",
+    "final-form": "^5.0.0",
     "lucide-react": "^0.536.0",
-    "next": "^15.4.10",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-final-form": "^6.5.9",
+    "next": "^16.1.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-final-form": "^7.0.0",
     "react-hot-toast": "^2.5.2",
     "react-markdown": "^9.0.1",
     "rehype-highlight": "^7.0.2",
@@ -48,9 +51,17 @@
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.9",
     "@tailwindcss/typography": "^0.5.15",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.1",
+    "@testing-library/user-event": "^14.6.1",
+    "@vitejs/plugin-react": "^5.1.2",
+    "@vitest/coverage-v8": "^4.0.16",
     "autoprefixer": "^10.4.20",
+    "jsdom": "^27.4.0",
     "postcss": "^8.4.49",
     "prettier": "^3.7.4",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^3.4.17",
+    "vitest": "^4.0.16"
   }
 }

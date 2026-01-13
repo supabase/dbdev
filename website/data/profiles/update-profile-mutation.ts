@@ -29,34 +29,32 @@ export async function updateProfile({
 type UpdateProfileData = Awaited<ReturnType<typeof updateProfile>>
 type UpdateProfileError = any
 
-export const useUpdateProfileMutation = ({
-  onSuccess,
-  ...options
-}: Omit<
-  UseMutationOptions<
-    UpdateProfileData,
-    UpdateProfileError,
-    UpdateProfileVariables
-  >,
-  'mutationFn'
-> = {}) => {
+export const useUpdateProfileMutation = (
+  options: Omit<
+    UseMutationOptions<
+      UpdateProfileData,
+      UpdateProfileError,
+      UpdateProfileVariables
+    >,
+    'mutationFn'
+  > = {}
+) => {
+  const { onSuccess, ...restOptions } = options
   const queryClient = useQueryClient()
 
   return useMutation<
     UpdateProfileData,
     UpdateProfileError,
     UpdateProfileVariables
-  >(
-    ({ handle, displayName, bio }) =>
+  >({
+    mutationFn: ({ handle, displayName, bio }) =>
       updateProfile({ handle, displayName, bio }),
-    {
-      async onSuccess(data, variables, context) {
-        await Promise.all([
-          queryClient.resetQueries(),
-          await onSuccess?.(data, variables, context),
-        ])
-      },
-      ...options,
-    }
-  )
+    async onSuccess(data, variables, context) {
+      await queryClient.resetQueries()
+      if (onSuccess) {
+        ;(onSuccess as any)(data, variables, context)
+      }
+    },
+    ...restOptions,
+  })
 }

@@ -25,29 +25,29 @@ export async function deleteAccessToken({
 type DeleteAccessTokenData = Awaited<ReturnType<typeof deleteAccessToken>>
 type DeleteAccessTokenError = PostgrestError
 
-export const useDeleteAccessTokenMutation = ({
-  onSuccess,
-  ...options
-}: Omit<
-  UseMutationOptions<
-    DeleteAccessTokenData,
-    DeleteAccessTokenError,
-    DeleteAccessTokenVariables
-  >,
-  'mutationFn'
-> = {}) => {
+export const useDeleteAccessTokenMutation = (
+  options: Omit<
+    UseMutationOptions<
+      DeleteAccessTokenData,
+      DeleteAccessTokenError,
+      DeleteAccessTokenVariables,
+      unknown
+    >,
+    'mutationFn'
+  > = {}
+) => {
   const queryClient = useQueryClient()
+  const { onSuccess, ...restOptions } = options
 
-  return useMutation<
-    DeleteAccessTokenData,
-    DeleteAccessTokenError,
-    DeleteAccessTokenVariables
-  >(({ tokenId }) => deleteAccessToken({ tokenId }), {
-    async onSuccess(data, variables, context) {
-      await Promise.all([queryClient.invalidateQueries([accessTokensQueryKey])])
-
-      await onSuccess?.(data, variables, context)
+  return useMutation({
+    mutationFn: ({ tokenId }: DeleteAccessTokenVariables) =>
+      deleteAccessToken({ tokenId }),
+    ...restOptions,
+    onSuccess: async (data, variables, context) => {
+      await queryClient.invalidateQueries({ queryKey: [accessTokensQueryKey] })
+      if (onSuccess) {
+        ;(onSuccess as any)(data, variables, context)
+      }
     },
-    ...options,
   })
 }

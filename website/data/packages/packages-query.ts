@@ -49,24 +49,26 @@ export const usePackagesQuery = <TData = PackagesData>(
   {
     enabled = true,
     ...options
-  }: UseQueryOptions<PackagesData, PackagesError, TData> = {}
+  }: Omit<
+    UseQueryOptions<PackagesData, PackagesError, TData>,
+    'queryKey' | 'queryFn'
+  > = {}
 ) =>
-  useQuery<PackagesData, PackagesError, TData>(
-    ['packages', { handle }],
-    ({ signal }) => getPackages({ handle }, signal),
-    {
-      enabled: enabled && typeof handle !== 'undefined',
-      ...options,
-    }
-  )
+  useQuery<PackagesData, PackagesError, TData>({
+    queryKey: ['packages', { handle }],
+    queryFn: ({ signal }) => getPackages({ handle }, signal),
+    enabled: enabled && typeof handle !== 'undefined',
+    ...options,
+  })
 
 export const prefetchPackages = (
   client: QueryClient,
   { handle }: PackagesVariables
 ) => {
-  return client.prefetchQuery(['packages', { handle }], ({ signal }) =>
-    getPackages({ handle }, signal)
-  )
+  return client.prefetchQuery({
+    queryKey: ['packages', { handle }],
+    queryFn: ({ signal }) => getPackages({ handle }, signal),
+  })
 }
 
 export const usePackagesPrefetch = ({ handle }: PackagesVariables) => {

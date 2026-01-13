@@ -27,25 +27,23 @@ export async function signIn({ email, password }: SignInVariables) {
 type SignInData = Awaited<ReturnType<typeof signIn>>
 type SignInError = AuthError
 
-export const useSignInMutation = ({
-  onSuccess,
-  ...options
-}: Omit<
-  UseMutationOptions<SignInData, SignInError, SignInVariables>,
-  'mutationFn'
-> = {}) => {
+export const useSignInMutation = (
+  options: Omit<
+    UseMutationOptions<SignInData, SignInError, SignInVariables>,
+    'mutationFn'
+  > = {}
+) => {
+  const { onSuccess, ...restOptions } = options
   const queryClient = useQueryClient()
 
-  return useMutation<SignInData, SignInError, SignInVariables>(
-    ({ email, password }) => signIn({ email, password }),
-    {
-      async onSuccess(data, variables, context) {
-        await Promise.all([
-          queryClient.resetQueries(),
-          await onSuccess?.(data, variables, context),
-        ])
-      },
-      ...options,
-    }
-  )
+  return useMutation<SignInData, SignInError, SignInVariables>({
+    mutationFn: ({ email, password }) => signIn({ email, password }),
+    async onSuccess(data, variables, context) {
+      await queryClient.resetQueries()
+      if (onSuccess) {
+        ;(onSuccess as any)(data, variables, context)
+      }
+    },
+    ...restOptions,
+  })
 }
