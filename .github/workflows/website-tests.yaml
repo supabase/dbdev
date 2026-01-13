@@ -4,13 +4,13 @@ on:
   push:
     branches: [master]
     paths:
-      - 'website/**'
-      - '.github/workflows/website-tests.yaml'
+      - "website/**"
+      - ".github/workflows/website-tests.yaml"
   pull_request:
     branches: [master]
     paths:
-      - 'website/**'
-      - '.github/workflows/website-tests.yaml'
+      - "website/**"
+      - ".github/workflows/website-tests.yaml"
 
 jobs:
   test:
@@ -24,18 +24,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
-          cache: 'npm'
-          cache-dependency-path: website/package-lock.json
+          node-version: "24"
+          cache: "pnpm"
+          cache-dependency-path: website/pnpm-lock.yaml
 
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: pnpm install --frozen-lockfile
 
       - name: Run tests with coverage
-        run: npm run test:coverage
+        run: pnpm run test:coverage
 
       - name: Upload coverage to Coveralls
         uses: coverallsapp/github-action@v2
