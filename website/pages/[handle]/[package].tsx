@@ -65,24 +65,27 @@ const PackagePage: NextPageWithLayout = () => {
 
       <div className="flex flex-col w-full gap-8 px-4 mx-auto mb-16 max-w-7xl">
         <div className="flex flex-col gap-2">
-          <div className="flex items-end gap-3">
-            <H1>{pkg?.package_alias ?? pkg?.package_name ?? 'Loading...'}</H1>
+          <div className="flex items-start gap-3 min-w-0">
+            <H1 className="break-words min-w-0">
+              {partialPackageName ?? 'Loading...'}
+            </H1>
             {pkg && (
               <CopyButton
                 getValue={() => pkg.package_alias ?? pkg.package_name}
+                className="flex-shrink-0 mt-1"
               />
             )}
           </div>
 
-          <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 mt-4">
+          <div className="text-slate-600 dark:text-slate-400">
+            By <Link href={`/${pkg?.handle ?? ''}`}>{pkg?.handle ?? ''}</Link>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
             <span className="font-mono">v{pkg?.latest_version ?? '0.0.0'}</span>
             <span>&bull;</span>
             <span>
               Created {pkg ? dayjs(pkg.created_at).fromNow() : 'Loading...'}
-            </span>
-            <span>&bull;</span>
-            <span>
-              By <Link href={`/${pkg?.handle ?? ''}`}>{pkg?.handle ?? ''}</Link>
             </span>
           </div>
         </div>
