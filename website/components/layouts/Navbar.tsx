@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useCallback, useMemo, useState } from 'react'
-import { Bars3Icon } from '@heroicons/react/24/outline'
+import { useCallback, useMemo, useRef, useState } from 'react'
+import { Bars3Icon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { toast } from '~/hooks/use-toast'
 import Search from '~/components/search/Search'
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
@@ -90,12 +90,21 @@ const Navbar = () => {
     )
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [mobileSearchExpanded, setMobileSearchExpanded] = useState(false)
+  const mobileSearchRef = useRef<HTMLDivElement>(null)
+
+  const handleMobileSearchBlur = useCallback((e: React.FocusEvent) => {
+    // Check if the new focus target is still within the search container
+    if (!mobileSearchRef.current?.contains(e.relatedTarget as Node)) {
+      setMobileSearchExpanded(false)
+    }
+  }, [])
 
   return (
     <header className="px-4 py-2 border-b border-gray-100 dark:border-slate-700 md:px-8">
       <nav className="flex items-center justify-between gap-4 md:gap-6">
-        {/* Logo */}
-        <div>
+        {/* Logo - hidden on mobile when search is expanded */}
+        <div className={mobileSearchExpanded ? 'hidden' : 'block'}>
           <Link href="/">
             <img
               src={
@@ -191,10 +200,25 @@ const Navbar = () => {
 
         {/* Mobile Navigation - visible only on mobile */}
         <div className="flex items-center gap-2 sm:hidden">
-          {/* Mobile Search */}
-          <div className="flex-1">
-            <Search />
-          </div>
+          {/* Mobile Search - expandable */}
+          {mobileSearchExpanded ? (
+            <div
+              ref={mobileSearchRef}
+              className="flex-1"
+              onBlur={handleMobileSearchBlur}
+            >
+              <Search autoFocus />
+            </div>
+          ) : (
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Search"
+              onClick={() => setMobileSearchExpanded(true)}
+            >
+              <MagnifyingGlassIcon className="h-5 w-5" />
+            </Button>
+          )}
 
           {/* Mobile Menu Button */}
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
