@@ -189,8 +189,14 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Menu Button - visible only on mobile */}
-        <div className="sm:hidden">
+        {/* Mobile Navigation - visible only on mobile */}
+        <div className="flex items-center gap-2 sm:hidden">
+          {/* Mobile Search */}
+          <div className="flex-1">
+            <Search />
+          </div>
+
+          {/* Mobile Menu Button */}
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" aria-label="Open menu">
@@ -202,11 +208,6 @@ const Navbar = () => {
                 <SheetTitle className="text-left">Menu</SheetTitle>
               </SheetHeader>
               <div className="flex flex-col gap-6 mt-6">
-                {/* Mobile Search */}
-                <div>
-                  <Search />
-                </div>
-
                 {/* Mobile Navigation Links */}
                 <nav className="flex flex-col gap-4">
                   <Link
