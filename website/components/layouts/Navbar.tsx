@@ -203,7 +203,10 @@ const Navbar = () => {
                 <Bars3Icon className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[280px] bg-white dark:bg-slate-900">
+            <SheetContent
+              side="right"
+              className="w-[280px] bg-white dark:bg-slate-900"
+            >
               <SheetHeader>
                 <SheetTitle className="text-left">Menu</SheetTitle>
               </SheetHeader>
@@ -279,7 +282,9 @@ const Navbar = () => {
                 {/* Theme Switcher */}
                 <div className="pt-4 border-t dark:border-slate-700">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Theme</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      Theme
+                    </span>
                     <ThemeSwitcher />
                   </div>
                 </div>
