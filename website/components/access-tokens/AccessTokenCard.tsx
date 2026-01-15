@@ -1,7 +1,14 @@
 import dayjs from 'dayjs'
-import { toast } from 'react-hot-toast'
+import { toast } from '~/hooks/use-toast'
 import { useDeleteAccessTokenMutation } from '~/data/access-tokens/delete-access-token'
 import { Button } from '~/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '~/components/ui/card'
 
 export interface ApiTokenCardProps {
   tokenId: string
@@ -24,22 +31,26 @@ const AccessTokenCard = ({
     })
 
   return (
-    <div className="rounded-lg px-6 py-5 border border-gray-200 flex justify-between">
-      <div className="flex flex-col space-y-4">
-        <div className="font-medium text-lg dark:text-white">{tokenName}</div>
-        <div className="text-gray-500">{`Token: ${maskedToken}`}</div>
-        <div className="text-gray-400 text-sm">{`Created ${dayjs(
-          createdAt
-        ).fromNow()}`}</div>
-      </div>
-      <Button
-        variant="secondary"
-        onClick={() => deleteAccessToken({ tokenId })}
-        disabled={isDeletingAccessToken}
-      >
-        Revoke
-      </Button>
-    </div>
+    <Card>
+      <CardHeader className="flex flex-row items-start justify-between space-y-0">
+        <div className="space-y-1">
+          <CardTitle className="text-lg">{tokenName}</CardTitle>
+          <CardDescription>Token: {maskedToken}</CardDescription>
+        </div>
+        <Button
+          variant="secondary"
+          onClick={() => deleteAccessToken({ tokenId })}
+          disabled={isDeletingAccessToken}
+        >
+          Revoke
+        </Button>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm text-muted-foreground">
+          Created {dayjs(createdAt).fromNow()}
+        </p>
+      </CardContent>
+    </Card>
   )
 }
 

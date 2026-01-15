@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useCallback, useMemo } from 'react'
-import { toast } from 'react-hot-toast'
+import { toast } from '~/hooks/use-toast'
 import Search from '~/components/search/Search'
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
 import {

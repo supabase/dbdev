@@ -129,7 +129,7 @@ describe('Search Integration', () => {
     await waitFor(() => {
       expect(screen.getByText('No results found')).toBeInTheDocument()
       expect(
-        screen.getByText(/try prefixing your query with an @ symbol/i)
+        screen.getByText(/try prefixing with @ to search organizations/i)
       ).toBeInTheDocument()
     })
   })

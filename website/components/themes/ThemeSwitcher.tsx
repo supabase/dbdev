@@ -1,4 +1,5 @@
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
+import { Button } from '~/components/ui/button'
 import { useThemeContext } from './ThemeContext'
 
 const ThemeSwitcher = () => {
@@ -10,13 +11,15 @@ const ThemeSwitcher = () => {
   }
 
   return (
-    <button
+    <Button
+      variant="ghost"
+      size="icon"
       onClick={handleThemeChange}
-      className="p-1 rounded cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 dark:text-slate-100 dark:hover:text-slate-100"
+      aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
     >
-      {theme === 'dark' && <MoonIcon className="w-5 h-5" />}
-      {theme === 'light' && <SunIcon className="w-5 h-5" />}
-    </button>
+      {theme === 'dark' && <MoonIcon className="h-5 w-5" />}
+      {theme === 'light' && <SunIcon className="h-5 w-5" />}
+    </Button>
   )
 }
 

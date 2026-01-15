@@ -3,12 +3,17 @@ import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-// Mock react-hot-toast - must be before component import
-vi.mock('react-hot-toast', () => ({
+// Mock use-toast - must be before component import
+vi.mock('~/hooks/use-toast', () => ({
   toast: {
     success: vi.fn(),
     error: vi.fn(),
   },
+  useToast: () => ({
+    toast: vi.fn(),
+    toasts: [],
+    dismiss: vi.fn(),
+  }),
 }))
 
 // Mock the delete mutation
@@ -25,7 +30,7 @@ vi.mock('~/data/access-tokens/delete-access-token', () => ({
   }),
 }))
 
-import { toast } from 'react-hot-toast'
+import { toast } from '~/hooks/use-toast'
 import AccessTokenCard from '~/components/access-tokens/AccessTokenCard'
 
 // Setup dayjs with relativeTime
