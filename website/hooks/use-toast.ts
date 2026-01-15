@@ -6,7 +6,7 @@ import * as React from 'react'
 import type { ToastActionElement, ToastProps } from '~/components/ui/toast'
 
 const TOAST_LIMIT = 1
-const TOAST_REMOVE_DELAY = 1000000
+const TOAST_REMOVE_DELAY = 5000
 
 type ToasterToast = ToastProps & {
   id: string
@@ -139,7 +139,25 @@ function dispatch(action: Action) {
 
 type Toast = Omit<ToasterToast, 'id'>
 
-function toast({ ...props }: Toast) {
+interface ToastFunction {
+  (props: Toast): {
+    id: string
+    dismiss: () => void
+    update: (props: ToasterToast) => void
+  }
+  success: (message: string) => {
+    id: string
+    dismiss: () => void
+    update: (props: ToasterToast) => void
+  }
+  error: (message: string) => {
+    id: string
+    dismiss: () => void
+    update: (props: ToasterToast) => void
+  }
+}
+
+const toast: ToastFunction = function ({ ...props }: Toast) {
   const id = genId()
 
   const update = (props: ToasterToast) =>
@@ -166,6 +184,22 @@ function toast({ ...props }: Toast) {
     dismiss,
     update,
   }
+}
+
+// Helper methods for common toast patterns (similar to react-hot-toast API)
+toast.success = (message: string) => {
+  return toast({
+    title: 'Success',
+    description: message,
+  })
+}
+
+toast.error = (message: string) => {
+  return toast({
+    variant: 'destructive',
+    title: 'Error',
+    description: message,
+  })
 }
 
 function useToast() {

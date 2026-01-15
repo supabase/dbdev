@@ -1,13 +1,17 @@
+import { AlertCircle } from 'lucide-react'
 import Head from 'next/head'
 import { MouseEventHandler, useState } from 'react'
-import toast from 'react-hot-toast'
+import { toast } from '~/hooks/use-toast'
 import AccessTokenCard from '~/components/access-tokens/AccessTokenCard'
 import Form, { FORM_ERROR } from '~/components/forms/Form'
 import FormButton from '~/components/forms/FormButton'
 import FormInput from '~/components/forms/FormInput'
 import Layout from '~/components/layouts/Layout'
+import { Alert, AlertDescription } from '~/components/ui/alert'
 import { Button } from '~/components/ui/button'
 import CopyButton from '~/components/ui/copy-button'
+import { Skeleton } from '~/components/ui/skeleton'
+import { Textarea } from '~/components/ui/textarea'
 import H1 from '~/components/ui/typography/h1'
 import H3 from '~/components/ui/typography/h3'
 import { useAccessTokensQuery } from '~/data/access-tokens/access-tokens-query'
@@ -65,7 +69,12 @@ const ApiTokensPage: NextPageWithLayout = () => {
             New Token
           </Button>
         </div>
-        {accessTokensLoading && <p className="dark:text-white">Loading...</p>}
+        {accessTokensLoading && (
+          <div className="space-y-4">
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
+          </div>
+        )}
         {isAccessTokensSuccess &&
           accessTokens.length > 0 &&
           accessTokens.map((accessToken) => (
@@ -83,7 +92,10 @@ const ApiTokensPage: NextPageWithLayout = () => {
           </p>
         )}
         {isAccessTokensError && (
-          <p className="text-red-500">Error loading access tokens</p>
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>Error loading access tokens</AlertDescription>
+          </Alert>
         )}
       </>
     )
@@ -108,19 +120,18 @@ const ApiTokensPage: NextPageWithLayout = () => {
         </span>{' '}
         command in a terminal and paste the copied token.
       </H3>
-      <Form onSubmit={() => {}} initialValues={{ token: `${newToken}` }}>
-        <div className="flex flex-row w-full rounded-md border border-slate-300">
-          <textarea
-            disabled
-            value={`${newToken}`}
-            className="w-full h-15 mt-1 rounded-md border-none text-sm resize-none bg-transparent text-slate-400"
-          />
-          <CopyButton
-            className="w-14 rounded-none rounded-r-md"
-            getValue={() => newToken}
-          />
-        </div>
-      </Form>
+      <div className="flex flex-row w-full">
+        <Textarea
+          disabled
+          value={newToken}
+          className="flex-1 min-h-[60px] resize-none rounded-r-none border-r-0"
+          readOnly
+        />
+        <CopyButton
+          className="w-14 rounded-none rounded-r-md border border-l-0 border-input"
+          getValue={() => newToken}
+        />
+      </div>
       <div className="flex flex-row-reverse">
         <Button onClick={onCloseButtonClick} variant="secondary">
           Close

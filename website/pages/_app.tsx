@@ -1,7 +1,7 @@
 import { Inter } from 'next/font/google'
 import { HydrationBoundary, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { Toaster } from 'react-hot-toast'
+import { Toaster } from '~/components/ui/toaster'
 import { ThemeContextProvider } from '~/components/themes/ThemeContext'
 import { useRootQueryClient } from '~/data/query-client'
 import { AuthProvider } from '~/lib/auth'
@@ -27,7 +27,7 @@ const CustomApp = ({ Component, pageProps }: AppPropsWithLayout) => {
           </ThemeContextProvider>
         </AuthProvider>
 
-        <Toaster position="bottom-left" />
+        <Toaster />
         <ReactQueryDevtools
           initialIsOpen={false}
           buttonPosition="bottom-right"

@@ -1,22 +1,25 @@
-import * as Dialog from '@radix-ui/react-dialog'
 import { keepPreviousData } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { usePackagesSearchQuery } from '~/data/packages/packages-search-query'
 import { useDebounce } from '~/lib/utils'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandList,
+} from '../ui/command'
+import { Popover, PopoverAnchor, PopoverContent } from '../ui/popover'
 import Spinner from '../ui/spinner'
 import SearchInput from './SearchInput'
-import SearchPackageRow from './SearchPackageRow'
 
 const Search = () => {
   const [searchValue, setSearchValue] = useState('')
   const [isOpen, setIsOpen] = useState(false)
 
-  const containerRef = useRef<HTMLInputElement>(null)
-
   const onSearchChange = (value: string) => {
     setSearchValue(value)
-
     setIsOpen(value.trim().length > 0)
   }
 
@@ -33,6 +36,16 @@ const Search = () => {
   )
 
   const router = useRouter()
+
+  const handleSelect = useCallback(
+    (handle: string, partialName: string) => {
+      setIsOpen(false)
+      setSearchValue('')
+      router.push(`/${handle}/${partialName}`)
+    },
+    [router]
+  )
+
   useEffect(() => {
     const handler = () => {
       setIsOpen(false)
@@ -46,19 +59,23 @@ const Search = () => {
   }, [router.events])
 
   return (
-    <div className="relative">
-      <SearchInput value={searchValue} onChange={onSearchChange} />
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverAnchor asChild>
+        <div className="relative">
+          <SearchInput value={searchValue} onChange={onSearchChange} />
+        </div>
+      </PopoverAnchor>
 
-      <div ref={containerRef} />
-
-      <Dialog.Root modal={false} open={isOpen} onOpenChange={setIsOpen}>
-        <Dialog.Portal container={containerRef.current}>
-          <Dialog.Content
-            className="absolute z-10 w-full mt-2 left-0 max-h-[85vh] border shadow-lg border-gray-300 rounded-md bg-white focus:outline-none dark:bg-slate-800 dark:border-slate-600"
-            onOpenAutoFocus={(e) => {
-              e.preventDefault()
-            }}
-          >
+      <PopoverContent
+        className="w-[var(--radix-popover-trigger-width)] max-h-[85vh] p-0 border-border bg-background"
+        align="start"
+        sideOffset={8}
+        onOpenAutoFocus={(e) => {
+          e.preventDefault()
+        }}
+      >
+        <Command shouldFilter={false}>
+          <CommandList>
             {isLoading && (
               <div className="flex items-center justify-center px-4 py-6">
                 <Spinner />
@@ -67,37 +84,46 @@ const Search = () => {
 
             {isError && (
               <div className="flex items-center justify-center px-4 py-6">
-                <p className="text-gray-700">Something went wrong</p>
+                <p className="text-muted-foreground">Something went wrong</p>
               </div>
             )}
 
-            {isSuccess &&
-              (data.length > 0 ? (
-                <div className="flex flex-col divide-y divide-gray-300">
-                  {data.map((pkg) => (
-                    <SearchPackageRow
-                      key={pkg.id}
-                      handle={pkg.handle}
-                      partialName={pkg.partial_name}
-                      createdAt={pkg.created_at}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center gap-4 px-4 py-6 text-center">
-                  <p className="text-gray-600">No results found</p>
-                  <p className="text-sm text-gray-500">
-                    To search packages in an organization, try prefixing your
-                    query with an @ symbol.
-                    <br />
-                    For example @supabase to see packages from Supabase.
+            {isSuccess && data.length === 0 && (
+              <CommandEmpty>
+                <div className="flex flex-col items-center gap-2">
+                  <p>No results found</p>
+                  <p className="text-xs text-muted-foreground">
+                    Try prefixing with @ to search organizations
                   </p>
                 </div>
-              ))}
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
-    </div>
+              </CommandEmpty>
+            )}
+
+            {isSuccess && data.length > 0 && (
+              <CommandGroup>
+                {data.map((pkg) => (
+                  <CommandItem
+                    key={pkg.id}
+                    value={`${pkg.handle}/${pkg.partial_name}`}
+                    onSelect={() => handleSelect(pkg.handle, pkg.partial_name)}
+                    className="cursor-pointer"
+                  >
+                    <div className="flex flex-col gap-1">
+                      <span className="font-medium">
+                        {pkg.handle}/{pkg.partial_name}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {new Date(pkg.created_at).toLocaleString()}
+                      </span>
+                    </div>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   )
 }
 

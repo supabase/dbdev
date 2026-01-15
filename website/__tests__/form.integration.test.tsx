@@ -2,7 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi } from 'vitest'
 import { z } from 'zod'
-import Form from '~/components/forms/Form'
+import Form, { FORM_ERROR } from '~/components/forms/Form'
 import FormInput from '~/components/forms/FormInput'
 import FormButton from '~/components/forms/FormButton'
 
@@ -11,10 +11,14 @@ const LoginSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters'),
 })
 
+type FormResult = { [FORM_ERROR]?: string } | void
+
 function LoginForm({
   onSubmit,
 }: {
-  onSubmit: (values: z.infer<typeof LoginSchema>) => void
+  onSubmit: (
+    values: z.infer<typeof LoginSchema>
+  ) => FormResult | Promise<FormResult>
 }) {
   return (
     <Form schema={LoginSchema} onSubmit={onSubmit}>
@@ -37,11 +41,10 @@ describe('Form Integration', () => {
     await user.click(screen.getByRole('button', { name: /sign in/i }))
 
     await waitFor(() => {
-      expect(handleSubmit).toHaveBeenCalledWith(
-        { email: 'test@example.com', password: 'password123' },
-        expect.anything(),
-        expect.anything()
-      )
+      expect(handleSubmit).toHaveBeenCalledWith({
+        email: 'test@example.com',
+        password: 'password123',
+      })
     })
   })
 
@@ -62,5 +65,53 @@ describe('Form Integration', () => {
     })
 
     expect(handleSubmit).not.toHaveBeenCalled()
+  })
+
+  it('shows submit error in alert when onSubmit returns FORM_ERROR', async () => {
+    const user = userEvent.setup()
+    const handleSubmit = vi.fn().mockResolvedValue({
+      [FORM_ERROR]: 'Invalid credentials. Please try again.',
+    })
+
+    render(<LoginForm onSubmit={handleSubmit} />)
+
+    await user.type(screen.getByLabelText(/email/i), 'test@example.com')
+    await user.type(screen.getByLabelText(/password/i), 'password123')
+    await user.click(screen.getByRole('button', { name: /sign in/i }))
+
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toBeInTheDocument()
+      expect(screen.getByText(/invalid credentials/i)).toBeInTheDocument()
+    })
+  })
+
+  it('disables submit button while submitting', async () => {
+    const user = userEvent.setup()
+    let resolveSubmit: () => void
+    const handleSubmit = vi.fn().mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveSubmit = resolve
+        })
+    )
+
+    render(<LoginForm onSubmit={handleSubmit} />)
+
+    await user.type(screen.getByLabelText(/email/i), 'test@example.com')
+    await user.type(screen.getByLabelText(/password/i), 'password123')
+
+    const submitButton = screen.getByRole('button', { name: /sign in/i })
+    await user.click(submitButton)
+
+    await waitFor(() => {
+      expect(submitButton).toBeDisabled()
+    })
+
+    // Resolve the promise to complete submission
+    resolveSubmit!()
+
+    await waitFor(() => {
+      expect(submitButton).not.toBeDisabled()
+    })
   })
 })

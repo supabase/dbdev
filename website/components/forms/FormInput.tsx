@@ -1,5 +1,5 @@
-import { ComponentPropsWithoutRef, forwardRef, PropsWithoutRef } from 'react'
-import { useField, UseFieldConfig } from 'react-final-form'
+import { ComponentPropsWithoutRef, PropsWithoutRef } from 'react'
+import { useFormContext } from 'react-hook-form'
 import { Input } from '~/components/ui/input'
 import { Label } from '../ui/label'
 import { cn } from '~/lib/utils'
@@ -15,52 +15,55 @@ export interface FormInputProps extends PropsWithoutRef<
   type?: 'text' | 'password' | 'email' | 'number'
   outerProps?: PropsWithoutRef<JSX.IntrinsicElements['div']>
   labelProps?: ComponentPropsWithoutRef<'label'>
-  fieldProps?: UseFieldConfig
 }
 
-const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
-  (
-    { name, label, className, outerProps, fieldProps, labelProps, ...props },
-    ref
-  ) => {
-    const {
-      input,
-      meta: { touched, error, submitError, submitting },
-    } = useField(name, {
-      parse:
-        props.type === 'number'
-          ? (Number as any)
-          : // Converting `""` to `null` ensures empty values will be set to null in the DB
-            (v) => (v === '' ? null : v),
-      ...fieldProps,
-    })
+function FormInput({
+  name,
+  label,
+  className,
+  outerProps,
+  labelProps,
+  type,
+  ...props
+}: FormInputProps) {
+  const {
+    register,
+    formState: { errors, isSubmitting, submitCount },
+  } = useFormContext()
 
-    const normalizedError = Array.isArray(error)
-      ? error.join(', ')
-      : error || submitError
+  const fieldError = errors[name]
+  const errorMessage = fieldError?.message as string | undefined
 
-    return (
-      <div {...outerProps} className={cn('space-y-1', className)}>
-        <Label htmlFor={name} {...labelProps}>
-          {label}
-        </Label>
-        <Input
-          id={name}
-          {...input}
-          disabled={submitting}
-          {...props}
-          ref={ref}
-        />
+  // Get the register props including the ref
+  const { ref, ...registerProps } = register(name, {
+    valueAsNumber: type === 'number',
+  })
 
-        {touched && normalizedError && (
-          <div role="alert" className="text-sm text-red-600">
-            {normalizedError}
-          </div>
-        )}
-      </div>
-    )
-  }
-)
+  // Show errors after first submit attempt
+  const showError = submitCount > 0 && !!errorMessage
+
+  return (
+    <div {...outerProps} className={cn('space-y-1', className)}>
+      <Label htmlFor={name} {...labelProps}>
+        {label}
+      </Label>
+      <Input
+        id={name}
+        type={type}
+        disabled={isSubmitting || props.disabled}
+        {...props}
+        {...registerProps}
+        ref={ref}
+      />
+
+      {showError && (
+        <p role="alert" className="text-sm text-destructive">
+          {errorMessage}
+        </p>
+      )}
+    </div>
+  )
+}
 
 FormInput.displayName = 'FormInput'
 

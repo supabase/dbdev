@@ -1,11 +1,13 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
-import toast from 'react-hot-toast'
+import { toast } from '~/hooks/use-toast'
 import Form, { FORM_ERROR } from '~/components/forms/Form'
 import FormButton from '~/components/forms/FormButton'
 import FormInput from '~/components/forms/FormInput'
 import Layout from '~/components/layouts/Layout'
+import { Button } from '~/components/ui/button'
+import { Skeleton } from '~/components/ui/skeleton'
 import H1 from '~/components/ui/typography/h1'
 import { useUsersOrganizationsQuery } from '~/data/organizations/users-organizations-query'
 import { useProfileQuery } from '~/data/profiles/profile-query'
@@ -121,7 +123,19 @@ const EditAccountPage: NextPageWithLayout = () => {
         </title>
       </Head>
       {isLoading ? (
-        <p>Loading</p>
+        <div className="w-full max-w-lg mx-auto space-y-8">
+          <Skeleton className="h-10 w-48" />
+          <div className="flex items-center mb-4 space-x-8">
+            <Skeleton className="w-24 h-24 rounded-full" />
+            <Skeleton className="h-10 w-32" />
+          </div>
+          <div className="space-y-4">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+          <Skeleton className="h-10 w-32" />
+        </div>
       ) : (
         <div className="w-full max-w-lg mx-auto space-y-8">
           <H1 className="!text-3xl">Edit {profile?.type ?? ''}</H1>
@@ -147,14 +161,14 @@ const EditAccountPage: NextPageWithLayout = () => {
                 className="hidden"
                 accept="image/jpeg, image/png"
               />
-              <button
+              <Button
                 type="button"
-                className="flex items-center px-4 py-2 space-x-2 text-sm text-gray-600 border-gray-300 transition bg-white border rounded-md dark:bg-transparent dark:border-slate-500 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:border-slate-400 hover:text-gray-800 hover:border-gray-400"
+                variant="outline"
                 onClick={() => uploadButtonRef?.current?.click()}
                 disabled={preventUpdating}
               >
                 Select an image
-              </button>
+              </Button>
             </div>
             <div className="space-y-4">
               <FormInput disabled name="handle" label="Handle" type="text" />

@@ -1,5 +1,12 @@
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
 import Link from 'next/link'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '~/components/ui/card'
 import { cn } from '~/lib/utils'
 
 export interface PackageCardProps {
@@ -19,31 +26,32 @@ const PackageCard = ({ pkg, className }: PackageCardProps) => {
     <Link
       key={pkg.package_alias ?? pkg.package_name}
       href={`/${pkg.handle}/${pkg.partial_name}`}
-      className={cn(
-        'col-span-4  from-white via-white to-gray-100 rounded-lg px-6 py-5 transition duration-300 group hover:shadow-md opacity-90 hover:opacity-100 border border-gray-200',
-        'dark:from-slate-600 dark:to-slate-800 dark:border-slate-800',
-        className
-      )}
+      className={cn('col-span-4 block group', className)}
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-1">
-          <p className="font-medium dark:text-white overflow-hidden truncate w-36">
-            {pkg.partial_name}{' '}
+      <Card className="h-full transition duration-300 hover:shadow-md opacity-90 hover:opacity-100">
+        <CardHeader className="pb-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <CardTitle className="text-base font-medium overflow-hidden truncate max-w-36">
+                {pkg.partial_name}
+              </CardTitle>
+              <span className="font-mono text-xs text-muted-foreground">
+                v{pkg.latest_version}
+              </span>
+            </div>
+            <ArrowTopRightOnSquareIcon
+              className="w-4 h-4 text-muted-foreground transition group-hover:text-foreground"
+              aria-hidden="true"
+            />
+          </div>
+          <CardDescription>{pkg.handle}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">
+            {pkg.control_description}
           </p>
-
-          <p className="font-mono text-xs text-gray-400">
-            v{pkg.latest_version}
-          </p>
-        </div>
-        <ArrowTopRightOnSquareIcon
-          className="w-4 h-4 text-gray-400 transition group-hover:text-gray-600 dark:group-hover:text-gray-200"
-          aria-hidden="true"
-        />
-      </div>
-      <p className="text-gray-400">{pkg.handle}</p>
-      <p className="mt-2 text-sm text-gray-600 dark:text-gray-200">
-        {pkg.control_description}
-      </p>
+        </CardContent>
+      </Card>
     </Link>
   )
 }
