@@ -37,7 +37,7 @@
     "eslint": "^9.39.2",
     "eslint-config-next": "^15.5.9",
     "lucide-react": "^0.536.0",
-    "next": "^16.1.4",
+    "next": "^16.1.5",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-hook-form": "^7.71.1",
