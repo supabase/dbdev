@@ -4,10 +4,11 @@ import { Input } from '~/components/ui/input'
 export type SearchInputProps = {
   value: string
   onChange: (value: string) => void
+  autoFocus?: boolean
 }
 
 const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
-  function SearchInput({ value, onChange }, ref) {
+  function SearchInput({ value, onChange, autoFocus = false }, ref) {
     return (
       <>
         <Input
@@ -18,6 +19,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           type="search"
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          autoFocus={autoFocus}
         />
       </>
     )
