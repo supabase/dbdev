@@ -5,6 +5,7 @@ module.exports = {
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
+    './content/**/*.mdx',
     './src/**/*.{ts,tsx}',
   ],
   theme: {
@@ -14,6 +15,20 @@ module.exports = {
       screens: {
         '2xl': '1400px',
       },
+    },
+    fontFamily: {
+      sans: [
+        'Inter',
+        'ui-sans-serif',
+        'system-ui',
+        '-apple-system',
+        'BlinkMacSystemFont',
+        'Segoe UI',
+        'Roboto',
+        'Helvetica Neue',
+        'Arial',
+        'sans-serif',
+      ],
     },
     extend: {
       colors: {

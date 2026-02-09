@@ -11,3 +11,5 @@ __pycache__/
 *.pyc
 .DS_Store
 target/
+website/.source/
+node_modules/

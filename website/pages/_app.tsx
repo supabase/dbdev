@@ -1,4 +1,3 @@
-import { Inter } from 'next/font/google'
 import { HydrationBoundary, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { Toaster } from '~/components/ui/toaster'
@@ -8,8 +7,6 @@ import { AuthProvider } from '~/lib/auth'
 import { AppPropsWithLayout } from '~/lib/types'
 import { cn } from '~/lib/utils'
 import '~/styles/globals.css'
-
-const inter = Inter({ subsets: ['latin'] })
 
 const CustomApp = ({ Component, pageProps }: AppPropsWithLayout) => {
   const queryClient = useRootQueryClient()
@@ -21,7 +18,7 @@ const CustomApp = ({ Component, pageProps }: AppPropsWithLayout) => {
       <HydrationBoundary state={pageProps.dehydratedState}>
         <AuthProvider>
           <ThemeContextProvider>
-            <div className={cn(inter.className, 'h-full')}>
+            <div className={cn('font-sans', 'h-full')}>
               {getLayout(<Component {...pageProps} />)}
             </div>
           </ThemeContextProvider>
