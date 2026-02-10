@@ -1,12 +1,19 @@
+---
+title: Install a Package
+description: Install extensions from the database.dev registry using the dbdev CLI
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
 You can install extensions available on the database.dev registry using the dbdev CLI's `add` command. The dbdev client is itself an extension which you can install by following the instructions below.
 
 ## Pre-requisites
 
 Before you can install a package, ensure you have the `pg_tle` extension installed in your database.
 
-!!! warning
-
-    Restoring a logical backup of a database with a TLE installed can fail. For this reason, dbdev should only be used with databases with physical backups enabled.
+<Callout type="warn" title="Backup Warning">
+Restoring a logical backup of a database with a TLE installed can fail. For this reason, dbdev should only be used with databases with physical backups enabled.
+</Callout>
 
 ```sql
 create extension if not exists pg_tle;
@@ -37,6 +44,6 @@ To update the `kiwicopple@pg_idkit` package to the latest version, you can run:
 dbdev add -c "postgresql://postgres:[YOUR-PASSWORD]@[YOUR-HOST]:5432/postgres" -o "./migrations/" package -n kiwicopple@pg_idkit
 ```
 
-!!! warning
-
-    To generate a correct update migration file, ensure that before running the `dbdev add` command, all existing migrations in the `migrations` folder have been applied to the database. The `dbdev add` command looks for existing installed extensions in the database and generates a migration file that will install the TLE if it is not already installed.
+<Callout type="warn" title="Important">
+To generate a correct update migration file, ensure that before running the `dbdev add` command, all existing migrations in the `migrations` folder have been applied to the database. The `dbdev add` command looks for existing installed extensions in the database and generates a migration file that will install the TLE if it is not already installed.
+</Callout>

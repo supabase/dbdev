@@ -1,3 +1,8 @@
+---
+title: Structure of a Postgres Extension
+description: Learn about the files that make up a Postgres trusted language extension
+---
+
 A Postgres [trusted language extension](https://github.com/aws/pg_tle) (TLE) consists of the following files:
 
 1. Script files. These files contain the SQL commands to create the extension's objects.
@@ -24,7 +29,7 @@ A control file contains metadata about the extension in key-value pairs. The mos
 
 For example, the [pgjwt extension's control file](https://github.com/michelp/pgjwt/blob/master/pgjwt.control) looks like this:
 
-```control
+```
 # pgjwt extension
 comment = 'JSON Web Token API for Postgresql'
 default_version = '0.2.0'
