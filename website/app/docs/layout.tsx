@@ -6,20 +6,20 @@ function Logo() {
   return (
     <>
       <style>{`
-        .dark .logo-light { display: none; }
-        .dark .logo-dark { display: block; }
+        .logo-light, .logo-dark { height: 28px; }
+        .logo-dark { display: none !important; }
+        .dark .logo-light { display: none !important; }
+        .dark .logo-dark { display: block !important; }
       `}</style>
       <img
         src="/images/dbdev-lightmode.png"
         alt="dbdev logo"
         className="logo-light"
-        style={{ height: 20, display: 'block' }}
       />
       <img
         src="/images/dbdev-darkmode.png"
         alt="dbdev logo"
         className="logo-dark"
-        style={{ height: 20, display: 'none' }}
       />
     </>
   )
