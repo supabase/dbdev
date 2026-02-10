@@ -2,6 +2,7 @@ import { createMDX } from 'fumadocs-mdx/next'
 
 const cspHeader = `
   default-src 'self' 'unsafe-eval' ${process.env.NEXT_PUBLIC_SUPABASE_URL};
+  script-src 'self' 'unsafe-eval' 'unsafe-inline';
   style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://fonts.google.com/;
   img-src 'self' data: ${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/ https://img.shields.io;
   object-src 'none';
