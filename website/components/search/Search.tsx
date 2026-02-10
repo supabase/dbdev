@@ -14,7 +14,11 @@ import { Popover, PopoverAnchor, PopoverContent } from '../ui/popover'
 import Spinner from '../ui/spinner'
 import SearchInput from './SearchInput'
 
-const Search = () => {
+type SearchProps = {
+  autoFocus?: boolean
+}
+
+const Search = ({ autoFocus = false }: SearchProps) => {
   const [searchValue, setSearchValue] = useState('')
   const [isOpen, setIsOpen] = useState(false)
 
@@ -62,7 +66,11 @@ const Search = () => {
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverAnchor asChild>
         <div className="relative">
-          <SearchInput value={searchValue} onChange={onSearchChange} />
+          <SearchInput
+            value={searchValue}
+            onChange={onSearchChange}
+            autoFocus={autoFocus}
+          />
         </div>
       </PopoverAnchor>
 

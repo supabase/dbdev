@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
+import { Bars3Icon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { toast } from '~/hooks/use-toast'
 import Search from '~/components/search/Search'
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
@@ -12,6 +13,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu'
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '~/components/ui/sheet'
 import { useSignOutMutation } from '~/data/auth/sign-out-mutation'
 import { useUsersOrganizationsQuery } from '~/data/organizations/users-organizations-query'
 import { useUser } from '~/lib/auth'
@@ -81,11 +89,22 @@ const Navbar = () => {
       </Avatar>
     )
 
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [mobileSearchExpanded, setMobileSearchExpanded] = useState(false)
+  const mobileSearchRef = useRef<HTMLDivElement>(null)
+
+  const handleMobileSearchBlur = useCallback((e: React.FocusEvent) => {
+    // Check if the new focus target is still within the search container
+    if (!mobileSearchRef.current?.contains(e.relatedTarget as Node)) {
+      setMobileSearchExpanded(false)
+    }
+  }, [])
+
   return (
     <header className="px-4 py-2 border-b border-gray-100 dark:border-slate-700 md:px-8">
-      {/* sticky top-0 bg-gray-100 dark:bg-slate-900 */}
       <nav className="flex items-center justify-between gap-4 md:gap-6">
-        <div>
+        {/* Logo - hidden on mobile when search is expanded */}
+        <div className={mobileSearchExpanded ? 'hidden' : 'block'}>
           <Link href="/">
             <img
               src={
@@ -99,12 +118,14 @@ const Navbar = () => {
           </Link>
         </div>
 
+        {/* Desktop Search - hidden on mobile */}
         <div className="flex-1 max-w-3xl hidden sm:block">
           <Search />
         </div>
 
-        <div className="flex items-center justify-end gap-2 sm:gap-6 sm:min-w-[160px]">
-          <div className="flex items-center ml-1 sm:ml-4">
+        {/* Desktop Navigation - hidden on mobile */}
+        <div className="hidden sm:flex items-center justify-end gap-6 min-w-[160px]">
+          <div className="flex items-center ml-4">
             <Button variant="link" asChild>
               <Link href="https://supabase.github.io/dbdev/" target="blank">
                 Docs
@@ -112,7 +133,7 @@ const Navbar = () => {
             </Button>
 
             {user ? (
-              <div className="flex items-center ml-1 sm:ml-4">
+              <div className="flex items-center ml-4">
                 <DropdownMenu>
                   <DropdownMenuTrigger>
                     <AvatarWrapper size="md" />
@@ -172,9 +193,128 @@ const Navbar = () => {
               </div>
             )}
           </div>
-          <div className="flex items-center gap-2 sm:gap-4 pl-4 border-l dark:border-slate-700">
+          <div className="flex items-center gap-4 pl-4 border-l dark:border-slate-700">
             <ThemeSwitcher />
           </div>
+        </div>
+
+        {/* Mobile Navigation - visible only on mobile */}
+        <div className="flex items-center gap-2 sm:hidden">
+          {/* Mobile Search - expandable */}
+          {mobileSearchExpanded ? (
+            <div
+              ref={mobileSearchRef}
+              className="flex-1"
+              onBlur={handleMobileSearchBlur}
+            >
+              <Search autoFocus />
+            </div>
+          ) : (
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Search"
+              onClick={() => setMobileSearchExpanded(true)}
+            >
+              <MagnifyingGlassIcon className="h-5 w-5" />
+            </Button>
+          )}
+
+          {/* Mobile Menu Button */}
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" aria-label="Open menu">
+                <Bars3Icon className="h-6 w-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent
+              side="right"
+              className="w-[280px] bg-white dark:bg-slate-900"
+            >
+              <SheetHeader>
+                <SheetTitle className="text-left">Menu</SheetTitle>
+              </SheetHeader>
+              <div className="flex flex-col gap-6 mt-6">
+                {/* Mobile Navigation Links */}
+                <nav className="flex flex-col gap-4">
+                  <Link
+                    href="https://supabase.github.io/dbdev/"
+                    target="blank"
+                    className="text-sm font-medium hover:text-blue-500 transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Docs
+                  </Link>
+
+                  {user ? (
+                    <>
+                      <Link
+                        href={`/${user?.user_metadata.handle}`}
+                        className="flex items-center gap-3 text-sm font-medium hover:text-blue-500 transition-colors"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <AvatarWrapper size="sm" />
+                        {displayName}
+                      </Link>
+                      <Link
+                        href={`/${user?.user_metadata.handle}/_/access-tokens`}
+                        className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-500 transition-colors pl-9"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Access Tokens
+                      </Link>
+
+                      {isOrganizationsSuccess && organizations.length > 0 && (
+                        <div className="pt-2 border-t dark:border-slate-700">
+                          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2">
+                            Organizations
+                          </p>
+                          {organizations.map((org) => (
+                            <Link
+                              key={org.id}
+                              href={`/${org.handle}`}
+                              className="block text-sm text-gray-600 dark:text-gray-400 hover:text-blue-500 transition-colors py-1"
+                              onClick={() => setMobileMenuOpen(false)}
+                            >
+                              {org.display_name}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+
+                      <button
+                        onClick={() => {
+                          handleSignOut()
+                          setMobileMenuOpen(false)
+                        }}
+                        className="text-sm text-left text-red-500 hover:text-red-600 transition-colors"
+                      >
+                        Sign out
+                      </button>
+                    </>
+                  ) : (
+                    <Link
+                      href="/sign-in"
+                      className="text-sm font-medium hover:text-blue-500 transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Login
+                    </Link>
+                  )}
+                </nav>
+
+                {/* Theme Switcher */}
+                <div className="pt-4 border-t dark:border-slate-700">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      Theme
+                    </span>
+                    <ThemeSwitcher />
+                  </div>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </nav>
     </header>
