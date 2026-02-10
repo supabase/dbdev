@@ -4,7 +4,7 @@ use std::{
     path::Path,
 };
 
-use rand::{distr::Alphanumeric, Rng};
+use rand::{distr::Alphanumeric, RngExt};
 use sqlx::{types::chrono::Utc, PgConnection};
 use tempfile::tempdir;
 use tokio::fs;

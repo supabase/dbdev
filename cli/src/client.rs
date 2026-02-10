@@ -128,20 +128,19 @@ impl<'a> ApiClient<'a> {
     }
 
     pub async fn get_package(&self, package_name: &str) -> anyhow::Result<GetPackageResponse> {
-        let url = format!("{}/rest/v1/packages", self.base_url);
+        let mut url = self.base_url.join("rest/v1/packages")?;
+        url.query_pairs_mut()
+            .append_pair(
+                "select",
+                "handle,partial_name,control_description,control_requires,default_version",
+            )
+            .append_pair(
+                "or",
+                &format!("(package_name.eq.{package_name},package_alias.eq.{package_name})"),
+            );
         let response = self
             .http_client
             .get(url)
-            .query(&[
-                (
-                    "select",
-                    "handle,partial_name,control_description,control_requires,default_version",
-                ),
-                (
-                    "or",
-                    &format!("(package_name.eq.{package_name},package_alias.eq.{package_name})"),
-                ),
-            ])
             .header("apiKey", self.api_key)
             .send()
             .await
@@ -175,17 +174,16 @@ impl<'a> ApiClient<'a> {
         &self,
         package_name: &str,
     ) -> anyhow::Result<Vec<GetPackageVersionsResponse>> {
-        let url = format!("{}/rest/v1/package_versions", self.base_url);
+        let mut url = self.base_url.join("rest/v1/package_versions")?;
+        url.query_pairs_mut()
+            .append_pair("select", "version,sql")
+            .append_pair(
+                "or",
+                &format!("(package_name.eq.{package_name},package_alias.eq.{package_name})"),
+            );
         let response = self
             .http_client
             .get(url)
-            .query(&[
-                ("select", "version,sql"),
-                (
-                    "or",
-                    &format!("(package_name.eq.{package_name},package_alias.eq.{package_name})"),
-                ),
-            ])
             .header("apiKey", self.api_key)
             .send()
             .await
@@ -209,17 +207,16 @@ impl<'a> ApiClient<'a> {
         &self,
         package_name: &str,
     ) -> anyhow::Result<Vec<GetPackageUpgradesResponse>> {
-        let url = format!("{}/rest/v1/package_upgrades", self.base_url);
+        let mut url = self.base_url.join("rest/v1/package_upgrades")?;
+        url.query_pairs_mut()
+            .append_pair("select", "from_version,to_version,sql")
+            .append_pair(
+                "or",
+                &format!("(package_name.eq.{package_name},package_alias.eq.{package_name})"),
+            );
         let response = self
             .http_client
             .get(url)
-            .query(&[
-                ("select", "from_version,to_version,sql"),
-                (
-                    "or",
-                    &format!("(package_name.eq.{package_name},package_alias.eq.{package_name})"),
-                ),
-            ])
             .header("apiKey", self.api_key)
             .send()
             .await
