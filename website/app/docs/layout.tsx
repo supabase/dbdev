@@ -5,15 +5,21 @@ import { source } from '@/lib/source'
 function Logo() {
   return (
     <>
+      <style>{`
+        .dark .logo-light { display: none; }
+        .dark .logo-dark { display: block; }
+      `}</style>
       <img
         src="/images/dbdev-lightmode.png"
         alt="dbdev logo"
-        className="h-7 dark:hidden"
+        className="logo-light"
+        style={{ height: 20, display: 'block' }}
       />
       <img
         src="/images/dbdev-darkmode.png"
         alt="dbdev logo"
-        className="h-7 hidden dark:block"
+        className="logo-dark"
+        style={{ height: 20, display: 'none' }}
       />
     </>
   )
