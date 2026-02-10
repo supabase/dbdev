@@ -4,10 +4,6 @@ You can install extensions available on the database.dev registry using the dbde
 
 Before you can install a package, ensure you have the `pg_tle` extension installed in your database.
 
-!!! note
-
-    If your database is running on Supabase, `pg_tle` is already installed.
-
 !!! warning
 
     Restoring a logical backup of a database with a TLE installed can fail. For this reason, dbdev should only be used with databases with physical backups enabled.
