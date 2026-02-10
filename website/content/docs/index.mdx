@@ -3,13 +3,37 @@ title: dbdev
 description: A package manager for PostgreSQL trusted language extensions
 ---
 
-import { Callout } from 'fumadocs-ui/components/callout';
+import { Callout } from 'fumadocs-ui/components/callout'
 
 <p>
-<a href=""><img src="https://img.shields.io/badge/postgresql-14+-blue.svg" alt="PostgreSQL version" height="18" /></a>
-<a href="https://github.com/supabase/dbdev/blob/master/LICENSE"><img src="https://img.shields.io/pypi/l/markdown-subtemplate.svg" alt="License" height="18" /></a>
-<a href="https://github.com/supabase/dbdev/actions/workflows/pgTAP.yaml"><img src="https://github.com/supabase/dbdev/actions/workflows/pgTAP.yaml/badge.svg" alt="pgTAP Tests" height="18" /></a>
-<a href="https://github.com/supabase/dbdev/actions/workflows/cli.yaml"><img src="https://github.com/supabase/dbdev/actions/workflows/cli.yaml/badge.svg" alt="CLI" height="18" /></a>
+  <a href="">
+    <img
+      src="https://img.shields.io/badge/postgresql-14+-blue.svg"
+      alt="PostgreSQL version"
+      height="18"
+    />
+  </a>
+  <a href="https://github.com/supabase/dbdev/blob/master/LICENSE">
+    <img
+      src="https://img.shields.io/pypi/l/markdown-subtemplate.svg"
+      alt="License"
+      height="18"
+    />
+  </a>
+  <a href="https://github.com/supabase/dbdev/actions/workflows/pgTAP.yaml">
+    <img
+      src="https://github.com/supabase/dbdev/actions/workflows/pgTAP.yaml/badge.svg"
+      alt="pgTAP Tests"
+      height="18"
+    />
+  </a>
+  <a href="https://github.com/supabase/dbdev/actions/workflows/cli.yaml">
+    <img
+      src="https://github.com/supabase/dbdev/actions/workflows/cli.yaml/badge.svg"
+      alt="CLI"
+      height="18"
+    />
+  </a>
 </p>
 
 ---
@@ -29,11 +53,16 @@ dbdev is a package manager for Postgres [trusted language extensions](https://gi
 - dbdev client (deprecated): an in-database client for installing TLEs from registries.
 
 <Callout type="warn" title="Deprecation Notice">
-The in-database client is deprecated and will be removed in the future. We recommend using the dbdev CLI's `dbdev add` command to generate the SQL needed to install a TLE, and then including that SQL in your database as a migration file.
+  The in-database client is deprecated and will be removed in the future. We
+  recommend using the dbdev CLI's `dbdev add` command to generate the SQL needed
+  to install a TLE, and then including that SQL in your database as a migration
+  file.
 </Callout>
 
 If you want to publish your own TLE or install and extension from the registry, you will need the dbdev CLI. Follow its [installation instructions](/docs/cli#installation) to get started.
 
 <Callout type="warn" title="Backup Warning">
-Restoring a logical backup of a database with a TLE installed can fail. For this reason, dbdev should only be used with databases with physical backups enabled.
+  Restoring a logical backup of a database with a TLE installed can fail. For
+  this reason, dbdev should only be used with databases with physical backups
+  enabled.
 </Callout>

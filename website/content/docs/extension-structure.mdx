@@ -11,9 +11,9 @@ A Postgres [trusted language extension](https://github.com/aws/pg_tle) (TLE) con
 For an extension to be valid, one file of each type must be present in an extension. For example, if you want to create an extension named `my-extension`, create the following folder structure:
 
 - my-extension
-    - my-extension.control
-    - my-extension--0.0.1.sql
-    - README.md
+  - my-extension.control
+  - my-extension--0.0.1.sql
+  - README.md
 
 In the above example, the `my-extension` folder contains the extension files. Names of the files are important. The control file should be named `<extension_name>.control` and the script file should be named `<extension_name>--<extension_version>.sql`. The readme file should be named `README.md` (case sensitive).
 
@@ -71,7 +71,6 @@ comment = ACommentForTheExtension
 # A string with escapse sequences
 comment = 'A double quote '' and a newline \n'
 ```
-
 
 ## Script Files
 

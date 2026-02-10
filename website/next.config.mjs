@@ -1,4 +1,4 @@
-import { createMDX } from 'fumadocs-mdx/next';
+import { createMDX } from 'fumadocs-mdx/next'
 
 const cspHeader = `
   default-src 'self' 'unsafe-eval' ${process.env.NEXT_PUBLIC_SUPABASE_URL};
@@ -7,7 +7,7 @@ const cspHeader = `
   object-src 'none';
   base-uri 'none';
   frame-ancestors 'none';
-`;
+`
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -27,10 +27,10 @@ const nextConfig = {
           },
         ],
       },
-    ];
+    ]
   },
-};
+}
 
-const withMDX = createMDX();
+const withMDX = createMDX()
 
-export default withMDX(nextConfig);
+export default withMDX(nextConfig)
