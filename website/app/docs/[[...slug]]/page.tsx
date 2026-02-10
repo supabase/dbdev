@@ -38,7 +38,7 @@ export default async function DocsPage(props: PageProps) {
           </p>
         )}
 
-        <div className="docs-content">
+        <div className="prose prose-gray dark:prose-invert max-w-none">
           <MDXContent components={getMDXComponents()} />
         </div>
 
