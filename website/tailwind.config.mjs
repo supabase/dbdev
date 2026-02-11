@@ -1,11 +1,21 @@
+import { createPreset } from 'fumadocs-ui/tailwind-plugin'
+import tailwindAnimate from 'tailwindcss-animate'
+import tailwindTypography from '@tailwindcss/typography'
+
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   darkMode: ['class'],
   content: [
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    './content/**/*.{md,mdx}',
+    './node_modules/fumadocs-ui/dist/**/*.js',
+  ],
+  presets: [
+    createPreset({
+      cssPrefix: 'fd',
+    }),
   ],
   theme: {
     container: {
@@ -72,5 +82,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography')],
+  plugins: [tailwindAnimate, tailwindTypography],
 }
