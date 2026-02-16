@@ -29,4 +29,4 @@ thiserror = "2.0.18"
 tokio = { version = "1.49.0", features = ["full"] }
 toml = { version = "0.9.11", features = ["preserve_order"] }
 url = { version = "2.5.8", features = ["serde"] }
-uuid = { version = "1.20.0", features = ["serde"] }
+uuid = { version = "1.21.0", features = ["serde"] }
