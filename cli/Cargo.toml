@@ -10,7 +10,7 @@ authors = ["supabase"]
 anyhow = "1.0.101"
 clap = { version = "4.5.57", features = ["derive"] }
 dirs = "6.0.0"
-futures = "0.3.31"
+futures = "0.3.32"
 postgrest = "1.6.0"
 rand = "0.10.0"
 regex = "1.12.3"
