@@ -44,7 +44,7 @@ jobs:
       - name: Update @supabase/supabase-js
         working-directory: website
         run: |
-          npm pkg set 'dependencies["@supabase/supabase-js"]'="${{ inputs.version }}"
+          npm pkg set "dependencies.@supabase/supabase-js=${{ inputs.version }}"
           pnpm install --lockfile-only --ignore-scripts
 
       - name: Generate token
