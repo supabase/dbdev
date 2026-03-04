@@ -21,10 +21,10 @@ DBDEV_DIR="${DBDEV_DIR:-${SCRIPT_DIR}/..}"
 SHADOW_IMAGE="${SHADOW_IMAGE:-supabase/postgres:15.8.1.085}"
 SHADOW_CONTAINER="pgdelta-dbdev-shadow"
 SHADOW_PORT="${SHADOW_PORT:-6544}"
-SHADOW_URL="postgres://postgres:postgres@localhost:${SHADOW_PORT}/postgres"
+SHADOW_URL="postgres://supabase_admin:postgres@localhost:${SHADOW_PORT}/postgres"
 
 SUPABASE_DB_PORT=54322
-SUPABASE_DB_URL="postgres://postgres:postgres@localhost:${SUPABASE_DB_PORT}/postgres"
+SUPABASE_DB_URL="postgres://supabase_admin:postgres@localhost:${SUPABASE_DB_PORT}/postgres"
 
 PGDELTA="${PGDELTA:-npx pgdelta}"
 OUTPUT_DIR="${OUTPUT_DIR:-${DBDEV_DIR}/declarative-schemas}"
@@ -107,8 +107,7 @@ if [ -z "$SKIP_VERIFY" ]; then
   echo "Applying declarative schema to shadow DB..."
   $PGDELTA declarative apply \
     --path "$OUTPUT_DIR" \
-    --target "$SHADOW_URL" \
-    --verbose
+    --target "$SHADOW_URL"
 
   echo "Verifying roundtrip: diff shadow DB vs supabase DB (expect 0 changes)..."
   VERIFY_OPTS=(

@@ -19,7 +19,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DBDEV_DIR="${DBDEV_DIR:-${SCRIPT_DIR}/..}"
 
-SHADOW_IMAGE="${SHADOW_IMAGE:-supabase/postgres:15.6.1.143}"
+SHADOW_IMAGE="${SHADOW_IMAGE:-supabase/postgres:15.8.1.085}"
 SHADOW_CONTAINER="pgdelta-dbdev-shadow"
 SHADOW_PORT="${SHADOW_PORT:-6544}"
 SHADOW_URL="postgres://postgres:postgres@localhost:${SHADOW_PORT}/postgres"

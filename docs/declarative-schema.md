@@ -127,6 +127,27 @@ Optional env vars:
 | `SHADOW_IMAGE` | `supabase/postgres:15.6.1.143` | Docker image for the shadow DB. |
 | `OUTPUT_DIR` | `./declarative-schemas` | Declarative schema directory. |
 
+### 3. Squash: one migration for full schema
+
+Generates a **single migration** that brings an empty DB (clean shadow) to the current state—equivalent to squashing all existing migrations into one file. Useful for greenfield deploys or new projects.
+
+1. Starts a shadow DB (clean baseline, no migrations applied).
+2. Runs `pgdelta plan` (source = shadow, target = Supabase DB).
+3. Writes the SQL to `supabase/migrations/<timestamp>_<name>.sql`.
+
+```bash
+bash scripts/declarative-dbdev-squash.sh
+MIGRATION_NAME=initial_schema bash scripts/declarative-dbdev-squash.sh
+```
+
+The script does **not** apply the migration (your running DB is already current). Use the generated file for new environments or to replace a long migration history with one file.
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MIGRATION_NAME` | `squashed` | Suffix for the migration filename. |
+| `PGDELTA` | `npx pgdelta` | Override the pg-delta CLI command. |
+| `SHADOW_IMAGE` | `supabase/postgres:15.6.1.143` | Docker image for the shadow DB. |
+
 ## File layout
 
 - **`declarative-schemas/`** – Version-controlled desired schema (exported by init, edited by you, applied to shadow in update).
