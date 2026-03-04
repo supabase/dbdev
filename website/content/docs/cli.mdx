@@ -1,3 +1,10 @@
+---
+title: Using the CLI
+description: Install, upgrade, and use the dbdev CLI
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs'
+
 The `dbdev` CLI can be used for:
 
 - Installing TLEs from [database.dev](https://database.dev/) or your local machine.
@@ -11,15 +18,14 @@ Installation is available through a native package, binary download or building 
 
 ### Native Package
 
-=== "macOS"
-
+<Tabs items={['macOS', 'Linux', 'Windows']}>
+  <Tab value="macOS">
     Install the CLI with [Homebrew](https://brew.sh/):
     ```
     brew install supabase/tap/dbdev
     ```
-
-=== "Linux"
-
+  </Tab>
+  <Tab value="Linux">
     Install the CLI with [Homebrew](https://brew.sh/):
     ```
     brew install supabase/tap/dbdev
@@ -34,13 +40,15 @@ Installation is available through a native package, binary download or building 
     sudo dpkg -i <...>.deb
     ```
 
-=== "Windows"
-
+  </Tab>
+  <Tab value="Windows">
     Install the CLI with [Scoop](https://scoop.sh/).
     ```
     scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
     scoop install dbdev
     ```
+  </Tab>
+</Tabs>
 
 ## Upgrading
 
@@ -48,16 +56,15 @@ Use `dbdev --version` to check if you are on the latest version of the CLI.
 
 ### Native Package
 
-=== "macOS"
-
+<Tabs items={['macOS', 'Linux', 'Windows']}>
+  <Tab value="macOS">
     Upgrade the CLI with [Homebrew](https://brew.sh/):
     ```
     brew upgrade dbdev
     ```
-
-=== "Linux"
-
-    Install the CLI with [Homebrew](https://brew.sh/):
+  </Tab>
+  <Tab value="Linux">
+    Upgrade the CLI with [Homebrew](https://brew.sh/):
     ```
     brew upgrade dbdev
     ```
@@ -71,12 +78,14 @@ Use `dbdev --version` to check if you are on the latest version of the CLI.
     sudo dpkg -i <...>.deb
     ```
 
-=== "Windows"
-
+  </Tab>
+  <Tab value="Windows">
     Update the CLI with [Scoop](https://scoop.sh/).
     ```
     scoop update dbdev
     ```
+  </Tab>
+</Tabs>
 
 ### Binary Download
 
@@ -93,4 +102,4 @@ Alternatively, you can build the binary from source. You will need to have [Rust
 
 If you have [cargo-install](https://doc.rust-lang.org/cargo/commands/cargo-install.html), you can perform all the above steps with a single command: `cargo install --git https://github.com/supabase/dbdev.git dbdev`.
 
-Now you're ready to [publish your first package](publish-extension.md).
+Now you're ready to [publish your first package](/docs/publish-extension).

@@ -1,14 +1,16 @@
-/** @type {import('next').NextConfig} */
+import { createMDX } from 'fumadocs-mdx/next'
 
 const cspHeader = `
   default-src 'self' 'unsafe-eval' ${process.env.NEXT_PUBLIC_SUPABASE_URL};
+  script-src 'self' 'unsafe-eval' 'unsafe-inline';
   style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://fonts.google.com/;
-  img-src 'self' data: ${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/;
+  img-src 'self' data: ${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/ https://img.shields.io https://github.com;
   object-src 'none';
   base-uri 'none';
   frame-ancestors 'none';
 `
 
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   async headers() {
@@ -30,4 +32,6 @@ const nextConfig = {
   },
 }
 
-module.exports = nextConfig
+const withMDX = createMDX()
+
+export default withMDX(nextConfig)

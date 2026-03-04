@@ -1,0 +1,9 @@
+{
+  "pages": [
+    "index",
+    "cli",
+    "publish-extension",
+    "install-a-package",
+    "extension-structure"
+  ]
+}

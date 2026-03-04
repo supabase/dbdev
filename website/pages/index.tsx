@@ -45,14 +45,10 @@ const IndexPage: NextPageWithLayout = () => {
           </p>
           <div className="flex flex-col sm:flex-row md:items-center mt-6 gap-4 md:justify-center lg:justify-start">
             <Button variant="default" asChild>
-              <Link href="https://supabase.github.io/dbdev/cli/">
-                Getting started
-              </Link>
+              <Link href="/docs/cli">Getting started</Link>
             </Button>
             <Button asChild variant="secondary">
-              <a href="https://supabase.github.io/dbdev/" target="blank">
-                Documentation
-              </a>
+              <Link href="/docs">Documentation</Link>
             </Button>
           </div>
         </div>
