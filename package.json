@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "dependencies": {
+    "@supabase/pg-delta": "https://pkg.pr.new/supabase/pg-toolbelt/@supabase/pg-delta@f56ff1e"
+  },
+  "devDependencies": {
+    "supabase": "^2.76.16"
+  }
+}
