@@ -6,13 +6,13 @@ set -e
 #
 # After editing declarative schema files, this script:
 # 1. Starts a shadow DB (supabase/postgres image)
-# 2. Applies the declarative schema to the shadow DB (desired state)
-# 3. Diffs the running supabase DB against the shadow DB
-# 4. Generates a migration file from the diff
+# 2. Applies prerequisites (extensions, schema creation) to shadow
+# 3. Applies declarative schemas to shadow via pgschema (desired state)
+# 4. Plans per-schema diffs (supabase DB vs desired state) to generate migration SQL
 # 5. Applies the migration to the supabase project DB
 # 6. Verifies the roundtrip (expect 0 remaining changes)
 #
-# Run from the dbdev repo root so npx pgdelta resolves from node_modules:
+# Run from the dbdev repo root:
 #   MIGRATION_NAME=my_change bash scripts/declarative-dbdev-update.sh
 # ──────────────────────────────────────────────────────────────
 
@@ -20,20 +20,23 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DBDEV_DIR="${DBDEV_DIR:-${SCRIPT_DIR}/..}"
 
 SHADOW_IMAGE="${SHADOW_IMAGE:-supabase/postgres:15.8.1.085}"
-SHADOW_CONTAINER="pgdelta-dbdev-shadow"
+SHADOW_CONTAINER="pgschema-dbdev-shadow"
 SHADOW_PORT="${SHADOW_PORT:-6544}"
-SHADOW_URL="postgres://postgres:postgres@localhost:${SHADOW_PORT}/postgres"
+SHADOW_URL="postgres://supabase_admin:postgres@localhost:${SHADOW_PORT}/postgres"
 
 SUPABASE_DB_PORT=54322
-SUPABASE_DB_URL="postgres://postgres:postgres@localhost:${SUPABASE_DB_PORT}/postgres"
+SUPABASE_DB_URL="postgres://supabase_admin:postgres@localhost:${SUPABASE_DB_PORT}/postgres"
 
-PGDELTA="${PGDELTA:-npx pgdelta}"
+PGSCHEMA="${PGSCHEMA:-pgschema}"
 OUTPUT_DIR="${OUTPUT_DIR:-${DBDEV_DIR}/declarative-schemas}"
 MIGRATION_NAME="${MIGRATION_NAME:-declarative_update}"
 SKIP_APPLY="${SKIP_APPLY:-}"
 SKIP_VERIFY="${SKIP_VERIFY:-}"
 
 MIGRATIONS_DIR="${DBDEV_DIR}/supabase/migrations"
+
+# Schemas to manage (order matters: app first, then public which references app)
+SCHEMAS=("app" "public")
 
 cleanup_shadow() {
   echo "Cleaning up shadow container..."
@@ -73,105 +76,154 @@ done
 sleep 3
 
 # ──────────────────────────────────────────────────────────────
-# 2. Apply declarative schema to shadow DB (desired state)
+# 2. Apply prerequisites to shadow DB
 # ──────────────────────────────────────────────────────────────
-echo "Applying declarative schema to shadow DB..."
-$PGDELTA declarative apply \
-  --path "$OUTPUT_DIR" \
-  --target "$SHADOW_URL" \
-  --verbose
+echo "Applying prerequisites to shadow DB..."
+psql "$SHADOW_URL" -f "${OUTPUT_DIR}/extensions.sql"
+psql "$SHADOW_URL" -f "${OUTPUT_DIR}/schemas-setup.sql"
 
 # ──────────────────────────────────────────────────────────────
-# 3. Generate migration: diff supabase DB → shadow DB
+# 3. Apply declarative schemas to shadow DB (desired state)
+# ──────────────────────────────────────────────────────────────
+echo "Applying declarative schemas to shadow DB..."
+for schema in "${SCHEMAS[@]}"; do
+  echo "  Applying schema: ${schema}"
+  $PGSCHEMA apply \
+    --host localhost --port "$SHADOW_PORT" --db postgres --user supabase_admin \
+    --password postgres \
+    --schema "$schema" \
+    --file "${OUTPUT_DIR}/${schema}/main.sql" \
+    --auto-approve \
+    --plan-host localhost --plan-port "$SHADOW_PORT" --plan-db postgres \
+    --plan-user supabase_admin --plan-password postgres
+done
+
+# ──────────────────────────────────────────────────────────────
+# 4. Generate migration: plan per-schema, concatenate SQL
 # ──────────────────────────────────────────────────────────────
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
 MIGRATION_FILE="${MIGRATIONS_DIR}/${TIMESTAMP}_${MIGRATION_NAME}.sql"
-TMP_MIGRATION="/tmp/pgdelta-dbdev-migration-${TIMESTAMP}.sql"
+TMP_DIR="/tmp/pgschema-dbdev-migration-${TIMESTAMP}"
+mkdir -p "$TMP_DIR"
 
-echo "Generating migration (supabase DB → shadow DB)..."
-rm -f "$TMP_MIGRATION"
-PLAN_EXIT=0
-$PGDELTA plan \
-  --source "$SUPABASE_DB_URL" \
-  --target "$SHADOW_URL" \
-  --integration supabase \
-  --format sql \
-  --output "$TMP_MIGRATION" || PLAN_EXIT=$?
+echo "Generating migration (plan per-schema against supabase DB)..."
+HAS_CHANGES=0
 
-if [ "$PLAN_EXIT" -ne 0 ] && [ "$PLAN_EXIT" -ne 2 ]; then
-  echo "Error: pgdelta plan failed with exit code ${PLAN_EXIT}"
-  cleanup_shadow
-  exit 1
-fi
+for schema in "${SCHEMAS[@]}"; do
+  echo "  Planning schema: ${schema}"
+  TMP_FILE="${TMP_DIR}/migration-${schema}.sql"
+  PLAN_EXIT=0
+  $PGSCHEMA plan \
+    --host localhost --port "$SUPABASE_DB_PORT" --db postgres --user supabase_admin \
+    --password postgres \
+    --schema "$schema" \
+    --file "${OUTPUT_DIR}/${schema}/main.sql" \
+    --plan-host localhost --plan-port "$SHADOW_PORT" --plan-db postgres \
+    --plan-user supabase_admin --plan-password postgres \
+    --output-sql "$TMP_FILE" 2>&1 || PLAN_EXIT=$?
 
-if [ "$PLAN_EXIT" -eq 0 ]; then
+  if [ -s "$TMP_FILE" ]; then
+    HAS_CHANGES=1
+    echo "    ${schema}: changes detected"
+  else
+    echo "    ${schema}: no changes"
+    rm -f "$TMP_FILE"
+  fi
+done
+
+if [ "$HAS_CHANGES" -eq 0 ]; then
   echo ""
   echo "No changes detected. Declarative schema matches the supabase DB."
   cleanup_shadow
+  rm -rf "$TMP_DIR"
   exit 0
 fi
+
+# Concatenate per-schema migrations into one file
+echo "-- Generated by declarative-dbdev-update.sh at $(date -u +%Y-%m-%dT%H:%M:%SZ)" > "${TMP_DIR}/combined.sql"
+for schema in "${SCHEMAS[@]}"; do
+  TMP_FILE="${TMP_DIR}/migration-${schema}.sql"
+  if [ -f "$TMP_FILE" ]; then
+    echo "" >> "${TMP_DIR}/combined.sql"
+    echo "-- Schema: ${schema}" >> "${TMP_DIR}/combined.sql"
+    cat "$TMP_FILE" >> "${TMP_DIR}/combined.sql"
+  fi
+done
 
 echo ""
 echo "Changes detected. Migration preview:"
 echo "──────────────────────────────────────"
-cat "$TMP_MIGRATION"
+cat "${TMP_DIR}/combined.sql"
 echo "──────────────────────────────────────"
 echo ""
 
 if [ -n "$SKIP_APPLY" ]; then
   echo "Saving migration to: ${MIGRATION_FILE}"
   mkdir -p "$MIGRATIONS_DIR"
-  mv "$TMP_MIGRATION" "$MIGRATION_FILE"
+  mv "${TMP_DIR}/combined.sql" "$MIGRATION_FILE"
   echo "Skipping apply (SKIP_APPLY is set). Apply manually with:"
   echo "  psql '${SUPABASE_DB_URL}' -f '${MIGRATION_FILE}'"
   cleanup_shadow
+  rm -rf "$TMP_DIR"
   exit 0
 fi
 
 # ──────────────────────────────────────────────────────────────
-# 4. Save and apply migration to supabase DB
+# 5. Save and apply migration to supabase DB
 # ──────────────────────────────────────────────────────────────
 echo "Saving migration to: ${MIGRATION_FILE}"
 mkdir -p "$MIGRATIONS_DIR"
-mv "$TMP_MIGRATION" "$MIGRATION_FILE"
+mv "${TMP_DIR}/combined.sql" "$MIGRATION_FILE"
 
 echo "Applying migration to supabase DB..."
 psql "$SUPABASE_DB_URL" -f "$MIGRATION_FILE"
 
 # ──────────────────────────────────────────────────────────────
-# 5. Verify roundtrip
+# 6. Verify roundtrip
 # ──────────────────────────────────────────────────────────────
 if [ -z "$SKIP_VERIFY" ]; then
   echo ""
   echo "=== Roundtrip verification ==="
-  echo "Verifying: diff supabase DB vs shadow DB (expect 0 changes)..."
+  echo "Verifying: plan each schema (expect 0 changes)..."
 
-  VERIFY_OPTS=(
-    --source "$SUPABASE_DB_URL"
-    --target "$SHADOW_URL"
-    --integration supabase
-  )
-  VERIFY_OUTPUT=$($PGDELTA plan "${VERIFY_OPTS[@]}" 2>&1) || true
+  VERIFY_FAILED=0
+  for schema in "${SCHEMAS[@]}"; do
+    echo "  Verifying schema: ${schema}"
+    PLAN_OUTPUT=$($PGSCHEMA plan \
+      --host localhost --port "$SUPABASE_DB_PORT" --db postgres --user supabase_admin \
+      --password postgres \
+      --schema "$schema" \
+      --file "${OUTPUT_DIR}/${schema}/main.sql" \
+      --plan-host localhost --plan-port "$SHADOW_PORT" --plan-db postgres \
+      --plan-user supabase_admin --plan-password postgres \
+      --output-human stdout 2>&1) || true
 
-  if echo "$VERIFY_OUTPUT" | grep -q "No changes detected."; then
-    echo "Verification PASSED: 0 changes after migration."
-  else
-    echo "$VERIFY_OUTPUT"
+    if echo "$PLAN_OUTPUT" | grep -qi "no changes\|0 changes\|nothing to do\|up to date"; then
+      echo "    ${schema}: OK (0 changes)"
+    else
+      echo "    ${schema}: changes detected!"
+      echo "$PLAN_OUTPUT"
+      VERIFY_FAILED=1
+    fi
+  done
+
+  if [ "$VERIFY_FAILED" -eq 1 ]; then
     echo ""
-    echo "Writing full diff for debugging..."
-    $PGDELTA plan "${VERIFY_OPTS[@]}" --format sql || true
-    echo ""
-    echo "Verification FAILED: diff still reports changes after applying migration."
+    echo "Verification FAILED: plan still reports changes after applying migration."
     cleanup_shadow
+    rm -rf "$TMP_DIR"
     exit 1
+  else
+    echo "Verification PASSED: 0 changes after migration."
   fi
 else
   echo "Skipping verification (SKIP_VERIFY is set)."
 fi
 
 # ──────────────────────────────────────────────────────────────
-# 6. Cleanup
+# 7. Cleanup
 # ──────────────────────────────────────────────────────────────
 cleanup_shadow
+rm -rf "$TMP_DIR"
 echo ""
 echo "Done. Migration applied: ${MIGRATION_FILE}"
