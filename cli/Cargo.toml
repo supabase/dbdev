@@ -24,7 +24,7 @@ sqlx = { version = "0.8.6", features = [
     "uuid",
     "runtime-tokio-rustls",
 ] }
-tempfile = "3.25.0"
+tempfile = "3.26.0"
 thiserror = "2.0.18"
 tokio = { version = "1.49.0", features = ["full"] }
 toml = { version = "1.0.6", features = ["preserve_order"] }
