@@ -42,8 +42,8 @@ importers:
         specifier: ^1.2.15
         version: 1.2.15(@types/react-dom@18.3.7(@types/react@18.3.27))(@types/react@18.3.27)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@supabase/supabase-js':
-        specifier: 2.100.1
-        version: 2.100.1
+        specifier: 2.100.0-canary.9
+        version: 2.100.0-canary.9
       '@tanstack/react-query':
         specifier: ^5.90.19
         version: 5.90.19(react@19.2.3)
@@ -1596,31 +1596,31 @@ packages:
   '@standard-schema/utils@0.3.0':
     resolution: {integrity: sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==}
 
-  '@supabase/auth-js@2.100.1':
-    resolution: {integrity: sha512-c5FB4nrG7cs1mLSzFGuIVl2iR2YO5XkSJ96uF4zubYm8YDn71XOi2emE9sBm/avfGCj61jaRBLOvxEAVnpys0Q==}
+  '@supabase/auth-js@2.100.0-canary.9':
+    resolution: {integrity: sha512-R34K63xMOKg5xVp9BmAP/BoUCvz+3Sfz+J6+gckgpyumhTztObGbBAnGq1TqZnWlDCeYUkTxBq5duZQQiMTxrA==}
     engines: {node: '>=20.0.0'}
 
-  '@supabase/functions-js@2.100.1':
-    resolution: {integrity: sha512-mo8QheoV4KR+wSubtyEWhZUxWnCM7YZ23TncccMAlbWAHb8YTDqRGRm9IalWCAswniKyud6buZCk9snRqI86KA==}
+  '@supabase/functions-js@2.100.0-canary.9':
+    resolution: {integrity: sha512-rIwpFxkqe0WWm0lvYRrjSfPY0JTzeu21sZlu349Obh4fTvj2nzjVl72JJ/CnK1hGj1chXzf7ixKfBR6ffVrBlQ==}
     engines: {node: '>=20.0.0'}
 
   '@supabase/phoenix@0.4.0':
     resolution: {integrity: sha512-RHSx8bHS02xwfHdAbX5Lpbo6PXbgyf7lTaXTlwtFDPwOIw64NnVRwFAXGojHhjtVYI+PEPNSWwkL90f4agN3bw==}
 
-  '@supabase/postgrest-js@2.100.1':
-    resolution: {integrity: sha512-OIh4mOSo2LdqF2kox76OAPDtcSs+PwKABJOjc6plUV4/LXhFEsI2uwdEEIs7K7fd141qehWEVl/Y+Ts0fNvYsw==}
+  '@supabase/postgrest-js@2.100.0-canary.9':
+    resolution: {integrity: sha512-RpLlq7U2fHUPEec9LyYMPVv5yDozM0c7AZvj/O4OeBCANJ2bCk9/762C1TqcHe+2FD7RniYi53Kaw7yczblq1Q==}
     engines: {node: '>=20.0.0'}
 
-  '@supabase/realtime-js@2.100.1':
-    resolution: {integrity: sha512-FHuRWPX4qZQ4x+0Q+ZrKaBZnOiVGiwsgiAUJM98pYRib1yeaE/fOM1lZ1ozd+4gA8Udw23OyaD8SxKS5mT5NYw==}
+  '@supabase/realtime-js@2.100.0-canary.9':
+    resolution: {integrity: sha512-AZ13c+sYo/qGBDF4aV0GojroFCDa2RsrWgh358FgjjBBNQmv/Bf0yH/+h70XQzVQWlTFk/czu4FoUY/mnzp/Tw==}
     engines: {node: '>=20.0.0'}
 
-  '@supabase/storage-js@2.100.1':
-    resolution: {integrity: sha512-x9xpEIoWM4xKiAlwfWTgHPSN6N4Y0aS4FVU4F6ZPbq7Gayw08SrtC6/YH/gOr8CjXQr0HxXYXDop2xGTSjubYA==}
+  '@supabase/storage-js@2.100.0-canary.9':
+    resolution: {integrity: sha512-jzpoaC/nhoj5/wCXy3N5xGWjJIcxoHQb5V5SlJmJKPBlrQZZGT9OdZd4WV9c7GNAkfq9nrEPXilmGlzrYxOiFg==}
     engines: {node: '>=20.0.0'}
 
-  '@supabase/supabase-js@2.100.1':
-    resolution: {integrity: sha512-CAeFm5sfX8sbTzxoxRafhohreIzl9a7R6qHTck3MrgTqm5M5g/u0IHfEKYzI9w/17r8NINl8UZrw2i08wrO7Iw==}
+  '@supabase/supabase-js@2.100.0-canary.9':
+    resolution: {integrity: sha512-LUm1nCA/3r5GiDtg5b5zZodqPSiqjcd2zsCpxsyptYJVzgu1iqZUc5PY9ARI9EHWEXzpR4s8jbEeI1JpjftFRg==}
     engines: {node: '>=20.0.0'}
 
   '@swc/helpers@0.5.15':
@@ -5458,21 +5458,21 @@ snapshots:
 
   '@standard-schema/utils@0.3.0': {}
 
-  '@supabase/auth-js@2.100.1':
+  '@supabase/auth-js@2.100.0-canary.9':
     dependencies:
       tslib: 2.8.1
 
-  '@supabase/functions-js@2.100.1':
+  '@supabase/functions-js@2.100.0-canary.9':
     dependencies:
       tslib: 2.8.1
 
   '@supabase/phoenix@0.4.0': {}
 
-  '@supabase/postgrest-js@2.100.1':
+  '@supabase/postgrest-js@2.100.0-canary.9':
     dependencies:
       tslib: 2.8.1
 
-  '@supabase/realtime-js@2.100.1':
+  '@supabase/realtime-js@2.100.0-canary.9':
     dependencies:
       '@supabase/phoenix': 0.4.0
       '@types/ws': 8.18.1
@@ -5482,18 +5482,18 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@supabase/storage-js@2.100.1':
+  '@supabase/storage-js@2.100.0-canary.9':
     dependencies:
       iceberg-js: 0.8.1
       tslib: 2.8.1
 
-  '@supabase/supabase-js@2.100.1':
+  '@supabase/supabase-js@2.100.0-canary.9':
     dependencies:
-      '@supabase/auth-js': 2.100.1
-      '@supabase/functions-js': 2.100.1
-      '@supabase/postgrest-js': 2.100.1
-      '@supabase/realtime-js': 2.100.1
-      '@supabase/storage-js': 2.100.1
+      '@supabase/auth-js': 2.100.0-canary.9
+      '@supabase/functions-js': 2.100.0-canary.9
+      '@supabase/postgrest-js': 2.100.0-canary.9
+      '@supabase/realtime-js': 2.100.0-canary.9
+      '@supabase/storage-js': 2.100.0-canary.9
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
