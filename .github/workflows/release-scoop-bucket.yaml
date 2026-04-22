@@ -6,9 +6,6 @@ on:
       tag:
         required: true
         type: string
-    secrets:
-      scoop_bucket_rw:
-        required: true
 
 permissions:
   contents: write
@@ -17,11 +14,21 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Generate GitHub App Token
+        id: app-token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+          owner: supabase
+          repositories: scoop-bucket
+
+      - name: Checkout scoop-bucket repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           repository: supabase/scoop-bucket
           ref: "main"
-          token: ${{ secrets.scoop_bucket_rw }}
+          token: ${{ steps.app-token.outputs.token }}
           fetch-depth: 0
 
       - name: Compute tag and version
@@ -71,7 +78,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
-          token: ${{ secrets.scoop_bucket_rw }}
+          token: ${{ steps.app-token.outputs.token }}
           commit-message: "Release dbdev version v${{ steps.vars.outputs.version }}"
           title: "Release dbdev version v${{ steps.vars.outputs.version }}"
           body-path: PR_BODY.md

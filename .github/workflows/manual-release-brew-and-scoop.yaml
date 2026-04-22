@@ -15,12 +15,10 @@ jobs:
     uses: ./.github/workflows/release-homebrew-tap.yaml
     with:
       tag: ${{ github.event.inputs.tag }}
-    secrets:
-      homebrew_tap_rw: ${{ secrets.HOMEBREW_TAP_RW }}
+    secrets: inherit
 
   call-release-scoop-bucket:
     uses: ./.github/workflows/release-scoop-bucket.yaml
     with:
       tag: ${{ github.event.inputs.tag }}
-    secrets:
-      scoop_bucket_rw: ${{ secrets.SCOOP_BUCKET_RW }}
+    secrets: inherit
