@@ -186,3 +186,20 @@ jobs:
           asset_path: ./cli/target/release/dbdev.zip
           asset_name: dbdev-${{ github.ref_name }}-windows-amd64.zip
           asset_content_type: application/zip
+
+  release-homebrew-tap:
+    needs:
+      - build-linux
+      - build-macos
+    uses: ./.github/workflows/release-homebrew-tap.yaml
+    with:
+      tag: ${{ github.ref_name }}
+    secrets: inherit
+
+  release-scoop-bucket:
+    needs:
+      - build-windows
+    uses: ./.github/workflows/release-scoop-bucket.yaml
+    with:
+      tag: ${{ github.ref_name }}
+    secrets: inherit
