@@ -157,7 +157,7 @@ jobs:
           upload_url: ${{ env.UPLOAD_URL }}
           asset_path: ./cli/target/release/dbdev.tar.gz
           asset_name: dbdev-${{ github.ref_name }}-macos-${{ runner.arch == 'X64' && 'amd64' || 'arm64' }}.tar.gz
-          asset_content_type: application/${{ matrix.box.content-type }}
+          asset_content_type: application/gzip
 
   build-windows:
     name: Release Artifacts on Windows
