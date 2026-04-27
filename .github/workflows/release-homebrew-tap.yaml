@@ -40,28 +40,28 @@ jobs:
           echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
 
       - name: Download Linux AMD64 package
-        uses: robinraju/release-downloader@daf26c55d821e836577a15f77d86ddc078948b05 # v1
+        uses: robinraju/release-downloader@28fc21f50d76778e7023361aa1f863e717d3d56f # v1
         with:
           repository: "supabase/dbdev"
           tag: ${{ inputs.tag }}
           fileName: "dbdev-${{ inputs.tag }}-linux-amd64.tar.gz"
 
       - name: Download Linux ARM64 package
-        uses: robinraju/release-downloader@daf26c55d821e836577a15f77d86ddc078948b05 # v1
+        uses: robinraju/release-downloader@28fc21f50d76778e7023361aa1f863e717d3d56f # v1
         with:
           repository: "supabase/dbdev"
           tag: ${{ inputs.tag }}
           fileName: "dbdev-${{ inputs.tag }}-linux-arm64.tar.gz"
 
       - name: Download macOS ARM64 package
-        uses: robinraju/release-downloader@daf26c55d821e836577a15f77d86ddc078948b05 # v1
+        uses: robinraju/release-downloader@28fc21f50d76778e7023361aa1f863e717d3d56f # v1
         with:
           repository: "supabase/dbdev"
           tag: ${{ inputs.tag }}
           fileName: "dbdev-${{ inputs.tag }}-macos-arm64.tar.gz"
 
       - name: Download macOS AMD64 package
-        uses: robinraju/release-downloader@daf26c55d821e836577a15f77d86ddc078948b05 # v1
+        uses: robinraju/release-downloader@28fc21f50d76778e7023361aa1f863e717d3d56f # v1
         with:
           repository: "supabase/dbdev"
           tag: ${{ inputs.tag }}
