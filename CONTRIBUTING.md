@@ -31,6 +31,9 @@ service_role key: KEY
 
 The *API URL* and *anon key* values will be used in the next section to setup environment variables.
 
+### Schema management (declarative)
+
+The repo supports a **declarative schema** workflow using [pg-delta](https://github.com/supabase/pg-toolbelt/tree/main/packages/pg-delta) to export the database shape into version-controlled `.sql` files and generate migrations by diffing desired state against the running Supabase DB. For full details, prerequisites, and commands, see [docs/declarative-schema.md](docs/declarative-schema.md).
 
 ### Website (database.dev)
 
