@@ -10,10 +10,16 @@ Once the `dbdev` TLE is installed
 select dbdev.install('math', '0.0.1');
 ```
 
-Where the `dbdev` CLI functions as a backup solution for installing packages when requirements for the `dbdev` TLE are not met (no [pgsql-http](https://github.com/pramsey/pgsql-http))
+Where the `dbdev` CLI functions as a backup solution for installing local packages when requirements for the `dbdev` TLE are not met (no [pgsql-http](https://github.com/pramsey/pgsql-http))
 
 ```
-dbdev install --connection 'postgresql://...' --package 'math' --version '0.0.1'
+dbdev install --connection 'postgresql://...' path --directory ./math
+```
+
+To list package versions installed into `pg_tle` and available to enable with `CREATE EXTENSION`, run:
+
+```
+dbdev list --connection 'postgresql://...'
 ```
 
 ## Objective Statements
@@ -37,6 +43,7 @@ Usage: dbdev [OPTIONS] <COMMAND>
 
 Commands:
   install    Install a package to a database
+  list       List available packages
   uninstall  Uninstall a package from a database
   help       Print this message or the help of the given subcommand(s)
 
@@ -55,13 +62,39 @@ Options:
 ```
 Install a package to a database
 
-Usage: dbdev install [OPTIONS] --connection <CONNECTION>
+Usage: dbdev install [OPTIONS] --connection <CONNECTION> <SOURCE>
 
 Options:
   -c, --connection <CONNECTION>  PostgreSQL connection string
-  -p, --package <PACKAGE>        Package name on package index
-      --path <PATH>              From local directory
   -h, --help                     Print help
+
+Sources:
+  path     From a local directory
+```
+
+For example, to install a package from a local directory:
+
+```
+dbdev install --connection 'postgresql://postgres:postgres@localhost:54322/postgres' path --directory ./pg_idkit
+```
+
+### list
+
+```
+List available packages
+
+Usage: dbdev list --connection <CONNECTION>
+
+Options:
+  -c, --connection <CONNECTION>  PostgreSQL connection string
+  -h, --help                     Print help
+```
+
+You can query the same extension names and default versions directly from PostgreSQL:
+
+```sql
+select name, default_version
+from pgtle.available_extensions();
 ```
 
 ### uninstall
