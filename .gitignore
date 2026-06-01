@@ -11,3 +11,5 @@ __pycache__/
 *.pyc
 .DS_Store
 target/
+node_modules/
+baseline-catalog.json
