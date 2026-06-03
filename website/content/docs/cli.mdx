@@ -102,9 +102,13 @@ Alternatively, you can build the binary from source. You will need to have [Rust
 
 If you have [cargo-install](https://doc.rust-lang.org/cargo/commands/cargo-install.html), you can perform all the above steps with a single command: `cargo install --git https://github.com/supabase/dbdev.git dbdev`.
 
-## Common commands
+Now you're ready to [publish your first package](/docs/publish-extension).
 
-### Install a local package
+## Developer Commands
+
+If you are developing a package locally, the following dbdev commands will be useful.
+
+### Install a Local Package
 
 Use `dbdev install` to install a local TLE package into the connected database:
 
@@ -114,19 +118,10 @@ dbdev install --connection "postgresql://postgres:postgres@localhost:54322/postg
 
 The `path` source defaults to the current directory when `--directory` is omitted.
 
-### List installed package versions
+### List Installed Package Versions
 
 Use `dbdev list` to list package versions installed into `pg_tle` and available to enable with `CREATE EXTENSION`:
 
 ```bash
 dbdev list --connection "postgresql://postgres:postgres@localhost:54322/postgres"
 ```
-
-You can query the same extension names and default versions directly from PostgreSQL:
-
-```sql
-select name, default_version
-from pgtle.available_extensions();
-```
-
-Now you're ready to [publish your first package](/docs/publish-extension).

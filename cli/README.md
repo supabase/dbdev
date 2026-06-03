@@ -16,7 +16,7 @@ Where the `dbdev` CLI functions as a backup solution for installing local packag
 dbdev install --connection 'postgresql://...' path --directory ./math
 ```
 
-To list package versions installed into `pg_tle` and available to enable with `CREATE EXTENSION`, run:
+To list package versions installed into `pg_tle` and available to enable with `create extension`, run:
 
 ```
 dbdev list --connection 'postgresql://...'
@@ -88,13 +88,6 @@ Usage: dbdev list --connection <CONNECTION>
 Options:
   -c, --connection <CONNECTION>  PostgreSQL connection string
   -h, --help                     Print help
-```
-
-You can query the same extension names and default versions directly from PostgreSQL:
-
-```sql
-select name, default_version
-from pgtle.available_extensions();
 ```
 
 ### uninstall
