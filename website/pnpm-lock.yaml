@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  yaml: 2.9.0
+
 importers:
 
   .:
@@ -3516,7 +3519,7 @@ packages:
       jiti: '>=1.21.0'
       postcss: '>=8.0.9'
       tsx: ^4.8.1
-      yaml: ^2.4.2
+      yaml: 2.9.0
     peerDependenciesMeta:
       jiti:
         optional: true
@@ -4123,7 +4126,7 @@ packages:
       sugarss: ^5.0.0
       terser: ^5.16.0
       tsx: ^4.8.1
-      yaml: ^2.4.2
+      yaml: 2.9.0
     peerDependenciesMeta:
       '@types/node':
         optional: true

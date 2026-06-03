@@ -1,0 +1,7 @@
+overrides:
+  yaml: 2.9.0
+
+allowBuilds:
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
