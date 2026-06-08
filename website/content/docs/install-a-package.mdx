@@ -35,6 +35,19 @@ For example, to install `kiwicopple@pg_idkit` version 0.0.4 in `extensions` sche
 dbdev add -o "./migrations/" -v 0.0.4 -s extensions package -n kiwicopple@pg_idkit
 ```
 
+Or to install the `jvent@supa_privacy` data anonymisation extension:
+
+```bash
+dbdev add -o "./migrations/" -v 1.0.0 -s extensions package -n jvent@supa_privacy
+```
+
+Or to install the `jvent@supa_profile` table profiling extension:
+
+```bash
+dbdev add -o "./migrations/" -v 1.0.0 -s extensions package -n jvent@supa_profile
+```
+
+
 To create a migration file to update to the latest version of a package, you need to specify the `-c` flag with the connection string to your database. The connection is used to check the current version of the package installed in the database and generate a migration file that will update it to the latest version available on database.dev.
 
 ```bash

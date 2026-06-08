@@ -116,6 +116,12 @@ Use `dbdev install` to install a local TLE package into the connected database:
 dbdev install --connection "postgresql://postgres:postgres@localhost:54322/postgres" path --directory ./pg_idkit
 ```
 
+Or for a local package like `supa_privacy` or `supa_profile`:
+
+```bash
+dbdev install --connection "postgresql://postgres:postgres@localhost:54322/postgres" path --directory ./supa_privacy
+```
+
 The `path` source defaults to the current directory when `--directory` is omitted.
 
 ### List Installed Package Versions
