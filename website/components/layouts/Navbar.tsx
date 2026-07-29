@@ -106,6 +106,10 @@ const Navbar = () => {
         <div className="flex items-center justify-end gap-2 sm:gap-6 sm:min-w-[160px]">
           <div className="flex items-center ml-1 sm:ml-4">
             <Button variant="link" asChild>
+              <Link href="/packages">Packages</Link>
+            </Button>
+
+            <Button variant="link" asChild>
               <Link href="/docs">Docs</Link>
             </Button>
 
