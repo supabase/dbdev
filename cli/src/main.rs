@@ -84,6 +84,29 @@ enum Commands {
         #[arg(short, long)]
         connection: String,
     },
+
+    /// Create (enable) an extension in a database using CREATE EXTENSION
+    Create {
+        /// PostgreSQL connection string
+        #[arg(short, long)]
+        connection: String,
+
+        /// Name of the extension to create
+        #[arg(short, long)]
+        package: String,
+
+        /// Schema to create the extension in
+        #[arg(short, long)]
+        schema: Option<String>,
+
+        /// Specific version of the extension to install
+        #[arg(short, long)]
+        version: Option<String>,
+
+        /// Automatically install dependent extensions
+        #[arg(long, default_value_t = false)]
+        cascade: bool,
+    },
 }
 
 #[derive(Debug, clap::Args)]
@@ -238,6 +261,25 @@ async fn main() -> anyhow::Result<()> {
         Commands::List { connection } => {
             let mut conn = util::get_connection(connection).await?;
             commands::list::list(&mut conn).await?;
+            Ok(())
+        }
+
+        Commands::Create {
+            connection,
+            package,
+            schema,
+            version,
+            cascade,
+        } => {
+            let conn = util::get_connection(connection).await?;
+            commands::create::create(
+                conn,
+                package,
+                schema.as_deref(),
+                version.as_deref(),
+                *cascade,
+            )
+            .await?;
             Ok(())
         }
     }

@@ -15,11 +15,15 @@ import { SignUpSchema } from '~/lib/validations'
 const SignUpPage: NextPageWithLayout = () => {
   const router = useRouter()
   const { mutateAsync: signUp } = useSignUpMutation({
-    onSuccess() {
-      toast.success(
-        'You have signed up successfully! Please check your email to confirm your account.'
-      )
-      router.push('/sign-in')
+    onSuccess(data) {
+      if (data?.session) {
+        toast.success('You have signed up and are now logged in!')
+      } else {
+        toast.success(
+          'You have signed up successfully! Please check your email to confirm your account.'
+        )
+      }
+      router.push('/')
     },
   })
 

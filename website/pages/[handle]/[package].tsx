@@ -74,7 +74,7 @@ const PackagePage: NextPageWithLayout = () => {
             )}
           </div>
 
-          <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 mt-4">
+          <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 mt-4 flex-wrap">
             <span className="font-mono">v{pkg?.latest_version ?? '0.0.0'}</span>
             <span>&bull;</span>
             <span>
@@ -84,6 +84,19 @@ const PackagePage: NextPageWithLayout = () => {
             <span>
               By <Link href={`/${pkg?.handle ?? ''}`}>{pkg?.handle ?? ''}</Link>
             </span>
+            {pkg?.repository_url && (
+              <>
+                <span>&bull;</span>
+                <a
+                  href={pkg.repository_url}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="underline hover:text-indigo-600 dark:hover:text-indigo-400"
+                >
+                  Repository
+                </a>
+              </>
+            )}
           </div>
         </div>
 

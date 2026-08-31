@@ -1,3 +1,10 @@
+# Dependencies
+node_modules/
+website/node_modules/
+website/.next/
+website/out/
+website/.source/
+
 # Supabase
 **/supabase/.branches
 **/supabase/.temp
@@ -6,8 +13,10 @@ cli/seed.sh
 *.swp
 venv
 .env
+.env*.local
 *.egg-info/
 __pycache__/
 *.pyc
 .DS_Store
 target/
+cli/target/

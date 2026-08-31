@@ -47,6 +47,7 @@ vi.mock('~/lib/utils', async () => {
   }
 })
 
+import dayjs from '~/lib/dayjs'
 import Search from '~/components/search/Search'
 import SearchInput from '~/components/search/SearchInput'
 import SearchPackageRow from '~/components/search/SearchPackageRow'
@@ -73,18 +74,21 @@ describe('Search Integration', () => {
   })
 
   it('renders search package row with correct link and info', () => {
+    const createdAt = '2024-06-15T10:30:00Z'
     render(
       <SearchPackageRow
         handle="supabase"
         partialName="pg_graphql"
-        createdAt="2024-06-15T10:30:00Z"
+        createdAt={createdAt}
       />
     )
 
     const link = screen.getByRole('link')
     expect(link).toHaveAttribute('href', '/supabase/pg_graphql')
     expect(screen.getByText('supabase/pg_graphql')).toBeInTheDocument()
-    expect(screen.getByText('2024-06-15 10:30:00')).toBeInTheDocument()
+    expect(
+      screen.getByText(dayjs(createdAt).format('YYYY-MM-DD HH:mm:ss'))
+    ).toBeInTheDocument()
   })
 
   it('shows search results when query matches packages', async () => {

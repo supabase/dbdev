@@ -87,6 +87,7 @@ fn create_publish_package_request(payload: &'_ Payload) -> PublishPackageRequest
         relocatable: payload.metadata.relocatable,
         requires: &payload.metadata.requires,
         default_version: &payload.metadata.default_version,
+        repository: payload.metadata.repository.as_deref(),
     }
 }
 

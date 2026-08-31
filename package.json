@@ -1,5 +1,17 @@
 {
   "name": "dbdev",
   "private": true,
-  "packageManager": "pnpm@10.34.1"
+  "packageManager": "pnpm@10.34.1",
+  "scripts": {
+    "db:lite": "lite dev",
+    "db:lite:start": "lite start",
+    "dev:website": "pnpm --dir website dev",
+    "build:website": "pnpm --dir website build",
+    "test:website": "pnpm --dir website test:run",
+    "test:cli": "cargo test --manifest-path cli/Cargo.toml",
+    "test": "pnpm test:website && pnpm test:cli"
+  },
+  "devDependencies": {
+    "@supabase/lite": "^0.9.0"
+  }
 }

@@ -244,6 +244,8 @@ pub struct PublishPackageRequest<'a> {
     pub relocatable: bool,
     pub requires: &'a [String],
     pub default_version: &'a str,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub repository: Option<&'a str>,
 }
 
 #[derive(Serialize)]

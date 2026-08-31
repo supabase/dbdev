@@ -1,0 +1,47 @@
+---
+title: FAQ
+description: Frequently asked questions about dbdev and PostgreSQL Trusted Language Extensions
+---
+
+## Frequently Asked Questions
+
+### How does dbdev compare to PGXN?
+
+**PGXN (PostgreSQL Extension Network)** is designed for traditional C-based PostgreSQL extensions as well as SQL extensions. Installing extensions from PGXN typically requires compiler toolchains (`gcc`, `clang`, `make`), shell access, and filesystem superuser privileges to place `.so` binaries into Postgres's library directory.
+
+**dbdev** is built on top of AWS's [`pg_tle` (Trusted Language Extensions)](https://github.com/aws/pg_tle). 
+- Extensions published to dbdev are pure SQL or trusted procedural languages (like PL/pgSQL, PL/Rust, PL/v8).
+- They can be loaded directly into PostgreSQL memory without filesystem write access or host OS compilation.
+- This allows cloud-hosted managed databases (like Supabase, AWS RDS, Aurora) to safely install and run community extensions without root access or filesystem modification.
+
+---
+
+### How do I upgrade an existing extension?
+
+To publish a new version of an extension:
+1. Provide a new base install script (e.g. `my_ext--1.1.0.sql`) or an upgrade script (e.g. `my_ext--1.0.0--1.1.0.sql`).
+2. Update the `default_version = '1.1.0'` in your `.control` file.
+3. Run `dbdev publish` with your access token.
+
+When updating an installed extension in your database:
+```sql
+ALTER EXTENSION my_ext UPDATE TO '1.1.0';
+```
+
+---
+
+### How do I un-publish or deprecate a package/version?
+
+Once an extension version is published to dbdev, it is immutable by design so that other projects depending on that exact version in their migrations do not break. 
+
+To discourage usage of a broken or superseded release, you can deprecate the package by releasing an updated version or marking the repository metadata.
+
+---
+
+### Can I copy TLE extension SQL directly into my migration files?
+
+Yes! You can use the CLI command:
+```bash
+dbdev add -o ./supabase/migrations package -n "handle/extension_name"
+```
+This generates standard SQL migration files that bundle the extension directly into your migration history.
