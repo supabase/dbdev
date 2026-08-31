@@ -4,6 +4,7 @@
     "cli",
     "publish-extension",
     "install-a-package",
-    "extension-structure"
+    "extension-structure",
+    "faq"
   ]
 }

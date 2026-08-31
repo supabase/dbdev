@@ -170,6 +170,7 @@ export type Database = {
           package_alias: string | null
           package_name: string | null
           partial_name: string | null
+          repository_url: string | null
         }
         Relationships: []
       }

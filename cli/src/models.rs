@@ -18,6 +18,7 @@ pub struct Metadata {
     pub schema: Option<String>,
     pub relocatable: bool,
     pub requires: Vec<String>,
+    pub repository: Option<String>,
 }
 
 impl Metadata {
@@ -29,6 +30,7 @@ impl Metadata {
             relocatable: control_file_ref.relocatable()?,
             requires: control_file_ref.requires()?.clone(),
             schema: control_file_ref.schema()?.clone(),
+            repository: control_file_ref.repository()?.clone(),
         })
     }
 }
@@ -223,8 +225,10 @@ impl Payload {
     }
 }
 
+use std::collections::HashMap;
+
 impl ControlFileRef {
-    fn from_pathbuf(path: &Path) -> anyhow::Result<Self> {
+    pub fn from_pathbuf(path: &Path) -> anyhow::Result<Self> {
         let control_file_name = path
             .file_name()
             .and_then(OsStr::to_str)
@@ -239,83 +243,211 @@ impl ControlFileRef {
         })
     }
 
-    // Name of the extension. Used in the `create extesnion <extension_name>`
-    fn extension_name(&self) -> anyhow::Result<String> {
+    pub fn parse_entries(&self) -> HashMap<String, String> {
+        let mut entries = HashMap::new();
+
+        for line in self.contents.lines() {
+            let trimmed = line.trim();
+            if trimmed.is_empty() || trimmed.starts_with('#') {
+                continue;
+            }
+
+            if let Some((raw_key, raw_value)) = trimmed.split_once('=') {
+                let key = raw_key.trim().to_lowercase();
+                let val_str = raw_value.trim();
+
+                let parsed_val = if val_str.starts_with('\'') {
+                    let mut result = String::new();
+                    let mut chars = val_str[1..].chars().peekable();
+                    let mut closed = false;
+
+                    while let Some(ch) = chars.next() {
+                        if ch == '\'' {
+                            if chars.peek() == Some(&'\'') {
+                                // Escaped single quote via ''
+                                chars.next();
+                                result.push('\'');
+                            } else {
+                                closed = true;
+                                break;
+                            }
+                        } else if ch == '\\' {
+                            if let Some(next_ch) = chars.next() {
+                                match next_ch {
+                                    '\'' => result.push('\''),
+                                    '\\' => result.push('\\'),
+                                    'n' => result.push('\n'),
+                                    't' => result.push('\t'),
+                                    'r' => result.push('\r'),
+                                    other => {
+                                        result.push('\\');
+                                        result.push(other);
+                                    }
+                                }
+                            } else {
+                                result.push('\\');
+                            }
+                        } else {
+                            result.push(ch);
+                        }
+                    }
+
+                    if !closed {
+                        // If quote wasn't closed properly, fallback to trimmed string
+                        val_str
+                            .trim_start_matches('\'')
+                            .trim_end_matches('\'')
+                            .to_string()
+                    } else {
+                        result
+                    }
+                } else {
+                    // Unquoted value: strip trailing comment if any
+                    let no_comment = if let Some((before_comment, _)) = val_str.split_once('#') {
+                        before_comment.trim()
+                    } else {
+                        val_str
+                    };
+                    no_comment.to_string()
+                };
+
+                entries.insert(key, parsed_val);
+            }
+        }
+
+        entries
+    }
+
+    // Name of the extension. Used in the `create extension <extension_name>`
+    pub fn extension_name(&self) -> anyhow::Result<String> {
         self.filename
             .strip_suffix(".control")
             .context("failed to read extension name from control file")
             .map(str::to_string)
     }
 
-    // A comment (any string) about the extension. The comment is applied when initially creating
-    // an extension, but not during extension updates (since that might override user-added
-    // comments). Alternatively, the extension's comment can be set by writing a COMMENT command
-    // in the script file.
-    fn comment(&self) -> anyhow::Result<Option<String>> {
-        for line in self.contents.lines() {
-            if line.starts_with("comment") {
-                return Ok(Some(self.read_control_line_value(line)?));
-            }
-        }
-        Ok(None)
+    // A comment (any string) about the extension.
+    pub fn comment(&self) -> anyhow::Result<Option<String>> {
+        let entries = self.parse_entries();
+        Ok(entries.get("comment").cloned())
     }
 
-    // A list of names of extensions that this extension depends on, for example requires = 'foo,
-    // bar'. Those extensions must be installed before this one can be installed.
-    fn requires(&self) -> anyhow::Result<Vec<String>> {
-        for line in self.contents.lines() {
-            if line.starts_with("requires") {
-                let value = self.read_control_line_value(line)?;
-                let required_packages: Vec<String> =
-                    value.split(',').map(|x| x.trim().to_string()).collect();
-                return Ok(required_packages);
-            }
+    // A list of names of extensions that this extension depends on
+    pub fn requires(&self) -> anyhow::Result<Vec<String>> {
+        let entries = self.parse_entries();
+        if let Some(val) = entries.get("requires") {
+            let required_packages: Vec<String> = val
+                .split(',')
+                .map(|x| x.trim().to_string())
+                .filter(|x| !x.is_empty())
+                .collect();
+            Ok(required_packages)
+        } else {
+            Ok(vec![])
         }
-        Ok(vec![])
     }
 
     // The schema the extension wants to be installed in, if any
-    fn schema(&self) -> anyhow::Result<Option<String>> {
-        for line in self.contents.lines() {
-            if line.starts_with("schema") {
-                let value = self.read_control_line_value(line)?;
-                return Ok(Some(value.trim().to_string()));
-            }
-        }
-        Ok(None)
+    pub fn schema(&self) -> anyhow::Result<Option<String>> {
+        let entries = self.parse_entries();
+        Ok(entries.get("schema").cloned())
     }
 
-    fn relocatable(&self) -> anyhow::Result<bool> {
-        for line in self.contents.lines() {
-            if line.starts_with("relocatable") {
-                let value: bool = self.read_control_line_value(line)?.parse()?;
-                return Ok(value);
-            }
-        }
-        Ok(false)
+    // The home repository or homepage URL for the extension
+    pub fn repository(&self) -> anyhow::Result<Option<String>> {
+        let entries = self.parse_entries();
+        Ok(entries
+            .get("repository")
+            .or_else(|| entries.get("homepage"))
+            .or_else(|| entries.get("repository_url"))
+            .cloned())
     }
 
-    fn default_version(&self) -> anyhow::Result<String> {
-        for line in self.contents.lines() {
-            if line.starts_with("default_version") {
-                return self.read_control_line_value(line);
+    pub fn relocatable(&self) -> anyhow::Result<bool> {
+        let entries = self.parse_entries();
+        if let Some(val) = entries.get("relocatable") {
+            match val.to_lowercase().as_str() {
+                "true" | "yes" | "on" | "1" => Ok(true),
+                "false" | "no" | "off" | "0" => Ok(false),
+                other => other.parse::<bool>().context("invalid boolean for relocatable"),
+            }
+        } else {
+            Ok(false)
+        }
+    }
+
+    pub fn default_version(&self) -> anyhow::Result<String> {
+        let entries = self.parse_entries();
+        if let Some(val) = entries.get("default_version") {
+            if !val.is_empty() {
+                return Ok(val.clone());
             }
         }
         Err(anyhow::anyhow!(
             "`default_version` in control file is required"
         ))
     }
+}
 
-    fn read_control_line_value(&self, line: &str) -> anyhow::Result<String> {
-        let parts: Vec<&str> = line.split('=').collect();
-        match &parts[..] {
-            [_, value] => {
-                let mut base_value = value.trim();
-                base_value = base_value.strip_prefix('\'').unwrap_or(base_value);
-                base_value = base_value.strip_suffix('\'').unwrap_or(base_value);
-                Ok(base_value.to_string())
-            }
-            _ => Err(anyhow::anyhow!("invalid line in control file")),
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_control_file_parsing_robust() {
+        let control_content = r#"
+            # PostgreSQL extension control file
+            # Comment line with leading spaces
+            comment = 'A great extension with \'escaped\' quotes' # inline comment
+            default_version = '1.2.3'
+            relocatable = true
+            requires = 'pg_net,  supabase_vault , pg_graphql'
+            schema = 'public'
+            repository = 'https://github.com/supabase/my_ext'
+        "#;
+
+        let control_file = ControlFileRef {
+            filename: "my_ext.control".to_string(),
+            contents: control_content.to_string(),
+        };
+
+        assert_eq!(control_file.extension_name().unwrap(), "my_ext");
+        assert_eq!(
+            control_file.comment().unwrap().unwrap(),
+            "A great extension with 'escaped' quotes"
+        );
+        assert_eq!(control_file.default_version().unwrap(), "1.2.3");
+        assert_eq!(control_file.relocatable().unwrap(), true);
+        assert_eq!(
+            control_file.requires().unwrap(),
+            vec!["pg_net", "supabase_vault", "pg_graphql"]
+        );
+        assert_eq!(control_file.schema().unwrap().unwrap(), "public");
+        assert_eq!(
+            control_file.repository().unwrap().unwrap(),
+            "https://github.com/supabase/my_ext"
+        );
+    }
+
+    #[test]
+    fn test_control_file_boolean_variants() {
+        let bool_tests = [
+            ("relocatable = yes", true),
+            ("relocatable = ON", true),
+            ("relocatable = 1", true),
+            ("relocatable = 'true'", true),
+            ("relocatable = no", false),
+            ("relocatable = off", false),
+            ("relocatable = 0", false),
+            ("relocatable = 'false'", false),
+        ];
+
+        for (line, expected) in bool_tests {
+            let cf = ControlFileRef {
+                filename: "ext.control".to_string(),
+                contents: format!("default_version = '1.0.0'\n{}", line),
+            };
+            assert_eq!(cf.relocatable().unwrap(), expected, "Failed for {}", line);
         }
     }
 }

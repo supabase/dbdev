@@ -6,15 +6,25 @@ The [`supabase/dbdev`](https://github.com/supabase/dbdev) repository hosts the s
 
 The package registry `supabase/`, is a [Supabase](https://supabase.com) project where accounts, organizations, and packages are normalized into database tables. For more info of the registry, see the [architecture](#architecture) section
 
+#### Option 1: Lightweight Local Dev with `@supabase/lite` (Zero-Docker)
+
+Run a local in-memory/embedded Supabase stack instantly without Docker:
+
+```bash
+pnpm db:lite
+```
+
+#### Option 2: Full Docker Stack via Supabase CLI
+
 Requires:
 - [Supabase CLI](https://github.com/supabase/cli)
 - [docker](https://www.docker.com/)
 
-```
+```bash
 supabase start
 ```
 
-which returns a set of endpoints for each service
+which returns a set of endpoints for each service:
 
 ```text
 supabase local development setup is running.

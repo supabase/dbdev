@@ -11,7 +11,11 @@ import {
   prefetchPackages,
   usePackagesQuery,
 } from '~/data/packages/packages-query'
-import { prefetchProfile, useProfileQuery } from '~/data/profiles/profile-query'
+import {
+  getProfile,
+  prefetchProfile,
+  useProfileQuery,
+} from '~/data/profiles/profile-query'
 import { getAllProfiles } from '~/data/static-path-queries'
 import { NotFoundError } from '~/data/utils'
 import { useUser } from '~/lib/auth'
@@ -19,18 +23,30 @@ import { DEFAULT_AVATAR_SRC_URL } from '~/lib/avatars'
 import dayjs from '~/lib/dayjs'
 import { NextPageWithLayout } from '~/lib/types'
 import { firstStr, useParams } from '~/lib/utils'
+import FourOhFourPage from '../404'
 
 const AccountPage: NextPageWithLayout = () => {
   const router = useRouter()
   const user = useUser()
   const { handle } = useParams()
-  const { data: profile } = useProfileQuery({ handle })
+  const {
+    data: profile,
+    isError,
+    error,
+  } = useProfileQuery({ handle })
   const { data: packages, isSuccess: isPackagesSuccess } = usePackagesQuery({
     handle,
   })
   const { data: organizations } = useUsersOrganizationsQuery({
     userId: user?.id,
   })
+
+  if (isError) {
+    if (error instanceof NotFoundError) {
+      return <FourOhFourPage title="User or organization not found" />
+    }
+    return <FourOhFourPage title="User or organization not found" />
+  }
 
   const isUser = user?.id === profile?.id
   const isMember =
@@ -111,7 +127,10 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
     try {
       await Promise.all([
-        prefetchProfile(queryClient, { handle }),
+        queryClient.fetchQuery({
+          queryKey: ['profile', handle],
+          queryFn: ({ signal }) => getProfile({ handle }, signal),
+        }),
         prefetchPackages(queryClient, { handle }),
       ])
     } catch (error) {
