@@ -1,6 +1,8 @@
 import { ComponentPropsWithoutRef } from 'react'
 import ReactMarkdown from 'react-markdown'
 import rehypeHighlight from 'rehype-highlight'
+import rehypeRaw from 'rehype-raw'
+import rehypeSanitize from 'rehype-sanitize'
 import remarkGfm from 'remark-gfm'
 import { cn } from '~/lib/utils'
 import CopyButton from './copy-button'
@@ -30,6 +32,22 @@ function childrenToText(children: any): string {
   }
 
   return ''
+}
+
+type HastNode = {
+  properties?: { href?: unknown }
+  children?: HastNode[]
+}
+
+// rehype-sanitize prefixes ids and names with `user-content-` to prevent DOM
+// clobbering, so in-page links like footnotes need the same prefix to resolve
+function rehypePrefixInPageLinks() {
+  return function prefixLinks({ properties, children }: HastNode) {
+    if (typeof properties?.href === 'string' && /^#./.test(properties.href)) {
+      properties.href = `#user-content-${properties.href.slice(1)}`
+    }
+    children?.forEach(prefixLinks)
+  }
 }
 
 const DEFAULT_COMPONENTS: MarkdownProps['components'] = {
@@ -115,7 +133,16 @@ const Markdown = ({
 }: MarkdownProps) => (
   <ReactMarkdown
     remarkPlugins={[remarkGfm, ...(remarkPlugins || [])]}
-    rehypePlugins={[rehypeHighlight, ...(rehypePlugins || [])]}
+    // rehype-sanitize prefixes footnote ids itself
+    remarkRehypeOptions={{ clobberPrefix: '' }}
+    // Sanitize before highlighting so highlight.js classes are kept
+    rehypePlugins={[
+      rehypeRaw,
+      rehypeSanitize,
+      rehypePrefixInPageLinks,
+      rehypeHighlight,
+      ...(rehypePlugins || []),
+    ]}
     className={cn('prose lg:prose-xl max-w-none', className)}
     components={{
       ...DEFAULT_COMPONENTS,
